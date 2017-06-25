@@ -27,7 +27,7 @@ class HasManyAssociationAnnotatedTests: GRDBTestCase {
                 .fetchAll(db)
             
             // TODO: check request & results
-            XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, COUNT(\"right\".\"id\") FROM \"authors\" AS \"left\" LEFT JOIN \"books\" AS \"right\" ON (\"right\".\"authorId\" = \"left\".\"id\") GROUP BY \"left\".\"id\"")
+            XCTAssertEqual(lastSQLQuery, "SELECT \"authors\".*, COUNT(\"books\".\"id\") FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") GROUP BY \"authors\".\"id\"")
             
             assertMatch(graph, [
                 (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], 0),
@@ -50,7 +50,7 @@ class HasManyAssociationAnnotatedTests: GRDBTestCase {
                     .annotated(with: Author.books.count)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, COUNT(\"right\".\"id\") FROM \"authors\" AS \"left\" LEFT JOIN \"books\" AS \"right\" ON (\"right\".\"authorId\" = \"left\".\"id\") WHERE (\"left\".\"birthYear\" >= 1900) GROUP BY \"left\".\"id\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"authors\".*, COUNT(\"books\".\"id\") FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") WHERE (\"authors\".\"birthYear\" >= 1900) GROUP BY \"authors\".\"id\"")
                 
                 assertMatch(graph, [
                     (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], 0),
@@ -66,7 +66,7 @@ class HasManyAssociationAnnotatedTests: GRDBTestCase {
                     .filter(Column("birthYear") >= 1900)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, COUNT(\"right\".\"id\") FROM \"authors\" AS \"left\" LEFT JOIN \"books\" AS \"right\" ON (\"right\".\"authorId\" = \"left\".\"id\") WHERE (\"left\".\"birthYear\" >= 1900) GROUP BY \"left\".\"id\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"authors\".*, COUNT(\"books\".\"id\") FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") WHERE (\"authors\".\"birthYear\" >= 1900) GROUP BY \"authors\".\"id\"")
                 
                 assertMatch(graph, [
                     (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], 0),
@@ -82,7 +82,7 @@ class HasManyAssociationAnnotatedTests: GRDBTestCase {
                     .annotated(with: Author.books.count)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, COUNT(\"right\".\"id\") FROM \"authors\" AS \"left\" LEFT JOIN \"books\" AS \"right\" ON (\"right\".\"authorId\" = \"left\".\"id\") GROUP BY \"left\".\"id\" ORDER BY \"left\".\"name\" DESC")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"authors\".*, COUNT(\"books\".\"id\") FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") GROUP BY \"authors\".\"id\" ORDER BY \"authors\".\"name\" DESC")
                 
                 assertMatch(graph, [
                     (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], 5),
@@ -99,7 +99,7 @@ class HasManyAssociationAnnotatedTests: GRDBTestCase {
                     .order(Column("name").desc)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, COUNT(\"right\".\"id\") FROM \"authors\" AS \"left\" LEFT JOIN \"books\" AS \"right\" ON (\"right\".\"authorId\" = \"left\".\"id\") GROUP BY \"left\".\"id\" ORDER BY \"left\".\"name\" DESC")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"authors\".*, COUNT(\"books\".\"id\") FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") GROUP BY \"authors\".\"id\" ORDER BY \"authors\".\"name\" DESC")
                 
                 assertMatch(graph, [
                     (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], 5),
@@ -122,7 +122,7 @@ class HasManyAssociationAnnotatedTests: GRDBTestCase {
                     .annotated(with: Author.books.filter(Column("year") < 2000).count)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, COUNT(\"right\".\"id\") FROM \"authors\" AS \"left\" LEFT JOIN \"books\" AS \"right\" ON ((\"right\".\"authorId\" = \"left\".\"id\") AND (\"right\".\"year\" < 2000)) GROUP BY \"left\".\"id\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"authors\".*, COUNT(\"books\".\"id\") FROM \"authors\" LEFT JOIN \"books\" ON ((\"books\".\"authorId\" = \"authors\".\"id\") AND (\"books\".\"year\" < 2000)) GROUP BY \"authors\".\"id\"")
                 
                 assertMatch(graph, [
                     (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], 0),
@@ -138,7 +138,7 @@ class HasManyAssociationAnnotatedTests: GRDBTestCase {
                     .annotated(with: Author.books.order(Column("title")).count)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, COUNT(\"right\".\"id\") FROM \"authors\" AS \"left\" LEFT JOIN \"books\" AS \"right\" ON (\"right\".\"authorId\" = \"left\".\"id\") GROUP BY \"left\".\"id\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"authors\".*, COUNT(\"books\".\"id\") FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") GROUP BY \"authors\".\"id\"")
                 
                 assertMatch(graph, [
                     (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], 0),

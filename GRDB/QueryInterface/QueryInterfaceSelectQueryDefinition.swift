@@ -139,22 +139,15 @@ struct QueryInterfaceSelectQueryDefinition {
         return query
     }
     
-    func qualified(by qualifier: SQLSourceQualifier) -> QueryInterfaceSelectQueryDefinition {
-        let qualifiedSource: SQLSource?
-        if let source = source {
-            qualifiedSource = source.qualified(by: qualifier)
-        } else {
-            qualifiedSource = nil
-        }
-        
-        let appliedQualifier = qualifiedSource?.qualifier! ?? qualifier
+    func qualified(by qualifier: inout SQLSourceQualifier) -> QueryInterfaceSelectQueryDefinition {
+        let qualifiedSource = source.map { $0.qualified(by: &qualifier) }
         let selection = self.selection
-        let qualifiedSelection = selection.map { $0.qualified(by: appliedQualifier) }
-        let qualifiedFilter = whereExpression.map { $0.qualified(by: appliedQualifier) }
-        let qualifiedGroupByExpressions = groupByExpressions.map { $0.qualified(by: appliedQualifier) }
-        let qualifiedOrderings = eventuallyReversedOrderings.map { $0.qualified(by: appliedQualifier) } // "ORDER BY rowid DESC" has been qualified
+        let qualifiedSelection = selection.map { $0.qualified(by: qualifier) }
+        let qualifiedFilter = whereExpression.map { $0.qualified(by: qualifier) }
+        let qualifiedGroupByExpressions = groupByExpressions.map { $0.qualified(by: qualifier) }
+        let qualifiedOrderings = eventuallyReversedOrderings.map { $0.qualified(by: qualifier) } // "ORDER BY rowid DESC" has been qualified
         let qualifiedReversed = false // because qualifiedOrderings has been built on eventuallyReversedOrderings
-        let qualifiedHavingExpression = havingExpression?.qualified(by: appliedQualifier)
+        let qualifiedHavingExpression = havingExpression?.qualified(by: qualifier)
         
         return QueryInterfaceSelectQueryDefinition(
             select: qualifiedSelection,
@@ -244,10 +237,10 @@ indirect enum SQLSource {
         let onExpression: SQLExpression?
         let mapping: [(left: String, right: String)]
         
-        func qualified(by qualifier: SQLSourceQualifier) -> JoinDefinition {
+        func qualified(by qualifier: inout SQLSourceQualifier) -> JoinDefinition {
             return JoinDefinition(
                 joinOp: joinOp,
-                leftSource: leftSource.qualified(by: qualifier),
+                leftSource: leftSource.qualified(by: &qualifier),
                 rightSource: rightSource,
                 onExpression: onExpression,
                 mapping: mapping)
@@ -336,40 +329,38 @@ indirect enum SQLSource {
         }
     }
     
-    func qualified(by qualifier: SQLSourceQualifier) -> SQLSource {
+    func qualified(by qualifier: inout SQLSourceQualifier) -> SQLSource {
         switch self {
         case .table(let tableName, let oldQualifier):
-            if oldQualifier == nil {
+            if let oldQualifier = oldQualifier {
+                qualifier = oldQualifier
+                return self
+            } else {
+                qualifier.tableName = tableName
                 return .table(
                     name: tableName,
-                    qualifier: SQLSourceQualifier(tableName: tableName, alias: qualifier.alias))
-            } else {
-                return self
+                    qualifier: qualifier)
             }
         case .query(let query, let oldQualifier):
-            if oldQualifier == nil {
-                return .query(query: query, qualifier: qualifier)
-            } else {
+            if let oldQualifier = oldQualifier {
+                qualifier = oldQualifier
                 return self
+            } else {
+                return .query(query: query, qualifier: qualifier)
             }
         case .joined(let joinDef):
-            return .joined(joinDef.qualified(by: qualifier))
+            return .joined(joinDef.qualified(by: &qualifier))
         }
     }
 }
 
 public class SQLSourceQualifier {
-    let tableName: String?
-    let alias: String?
+    var tableName: String?
+    var alias: String?
     
-    init(alias: String?) {
+    init() {
         self.tableName = nil
-        self.alias = alias
-    }
-    
-    init(tableName: String, alias: String?) {
-        self.tableName = tableName
-        self.alias = alias
+        self.alias = nil
     }
     
     var qualifiedName: String? {

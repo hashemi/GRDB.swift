@@ -15,15 +15,14 @@ extension HasManyAnnotatedRequest : TypedRequest {
     public typealias RowDecoder = JoinedPair<Left, Annotation>
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
-        // TODO: don't alias unless necessary
-        let leftQualifier = SQLSourceQualifier(alias: "left")
-        let rightQualifier = SQLSourceQualifier(alias: "right")
+        var leftQualifier = SQLSourceQualifier()
+        var rightQualifier = SQLSourceQualifier()
         
         // SELECT * FROM left ... -> SELECT left.* FROM left ...
-        let leftQuery = leftRequest.query.qualified(by: leftQualifier)
+        let leftQuery = leftRequest.query.qualified(by: &leftQualifier)
         
         // SELECT * FROM right ... -> SELECT right.* FROM right ...
-        let rightQuery = annotation.association.rightRequest.query.qualified(by: rightQualifier)
+        let rightQuery = annotation.association.rightRequest.query.qualified(by: &rightQualifier)
         
         // SELECT left.*, right.annotation
         let joinedSelection = try leftQuery.selection + [annotation.expression(db).qualified(by: rightQualifier)]

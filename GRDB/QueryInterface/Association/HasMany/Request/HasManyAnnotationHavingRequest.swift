@@ -15,15 +15,14 @@ extension HasManyAnnotationHavingRequest : TypedRequest {
     public typealias RowDecoder = Left
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
-        // TODO: don't alias unless necessary
-        let leftQualifier = SQLSourceQualifier(alias: "left")
-        let rightQualifier = SQLSourceQualifier(alias: "right")
+        var leftQualifier = SQLSourceQualifier()
+        var rightQualifier = SQLSourceQualifier()
         
         // SELECT * FROM left ... -> SELECT left.* FROM left ...
-        let leftQuery = leftRequest.query.qualified(by: leftQualifier)
+        let leftQuery = leftRequest.query.qualified(by: &leftQualifier)
         
         // SELECT * FROM right ... -> SELECT right.* FROM right ...
-        let rightQuery = annotationHavingExpression.annotation.association.rightRequest.query.qualified(by: rightQualifier)
+        let rightQuery = annotationHavingExpression.annotation.association.rightRequest.query.qualified(by: &rightQualifier)
         
         // Join sources: SELECT ... FROM left LEFT JOIN right
         guard let leftSource = leftQuery.source else { fatalError("Support for sourceless joins is not implemented") }

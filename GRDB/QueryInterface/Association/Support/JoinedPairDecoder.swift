@@ -58,15 +58,14 @@ func prepareJoinedPairRequest(
     rightScope: String) throws
     -> (SelectStatement, RowAdapter?)
 {
-    // TODO: don't alias unless necessary
-    let leftQualifier = SQLSourceQualifier(alias: "left")
-    let rightQualifier = SQLSourceQualifier(alias: "right")
+    var leftQualifier = SQLSourceQualifier()
+    var rightQualifier = SQLSourceQualifier()
     
     // SELECT * FROM left ... -> SELECT left.* FROM left ...
-    let leftQuery = leftQuery.qualified(by: leftQualifier)
+    let leftQuery = leftQuery.qualified(by: &leftQualifier)
     
     // SELECT * FROM right ... -> SELECT right.* FROM right ...
-    let rightQuery = rightQuery.qualified(by: rightQualifier)
+    let rightQuery = rightQuery.qualified(by: &rightQualifier)
     
     // SELECT left.*, right.*
     let joinedSelection = leftQuery.selection + rightQuery.selection

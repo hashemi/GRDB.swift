@@ -21,7 +21,7 @@ class BelongsToAssociationLeftJoinedTests: GRDBTestCase {
                 .leftJoined(with: Book.author)
                 .fetchAll(db)
             
-            XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"books\" AS \"left\" LEFT JOIN \"authors\" AS \"right\" ON (\"right\".\"id\" = \"left\".\"authorId\")")
+            XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\")")
             
             assertMatch(graph, [
                 (["id": 1, "authorId": 2, "title": "Foe", "year": 1986], ["id": 2, "name": "J. M. Coetzee", "birthYear": 1940]),
@@ -49,7 +49,7 @@ class BelongsToAssociationLeftJoinedTests: GRDBTestCase {
                     .leftJoined(with: Book.author)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"books\" AS \"left\" LEFT JOIN \"authors\" AS \"right\" ON (\"right\".\"id\" = \"left\".\"authorId\") WHERE (\"left\".\"year\" < 2000)")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\") WHERE (\"books\".\"year\" < 2000)")
                 
                 assertMatch(graph, [
                     (["id": 1, "authorId": 2, "title": "Foe", "year": 1986], ["id": 2, "name": "J. M. Coetzee", "birthYear": 1940]),
@@ -67,7 +67,7 @@ class BelongsToAssociationLeftJoinedTests: GRDBTestCase {
                     .filter(Column("year") < 2000)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"books\" AS \"left\" LEFT JOIN \"authors\" AS \"right\" ON (\"right\".\"id\" = \"left\".\"authorId\") WHERE (\"left\".\"year\" < 2000)")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\") WHERE (\"books\".\"year\" < 2000)")
                 
                 assertMatch(graph, [
                     (["id": 1, "authorId": 2, "title": "Foe", "year": 1986], ["id": 2, "name": "J. M. Coetzee", "birthYear": 1940]),
@@ -85,7 +85,7 @@ class BelongsToAssociationLeftJoinedTests: GRDBTestCase {
                     .leftJoined(with: Book.author)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"books\" AS \"left\" LEFT JOIN \"authors\" AS \"right\" ON (\"right\".\"id\" = \"left\".\"authorId\") ORDER BY \"left\".\"title\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\") ORDER BY \"books\".\"title\"")
                 
                 assertMatch(graph, [
                     (["id": 5, "authorId": 4, "title": "2312", "year": 2012], ["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952]),
@@ -107,7 +107,7 @@ class BelongsToAssociationLeftJoinedTests: GRDBTestCase {
                     .order(Column("title"))
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"books\" AS \"left\" LEFT JOIN \"authors\" AS \"right\" ON (\"right\".\"id\" = \"left\".\"authorId\") ORDER BY \"left\".\"title\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\") ORDER BY \"books\".\"title\"")
                 
                 assertMatch(graph, [
                     (["id": 5, "authorId": 4, "title": "2312", "year": 2012], ["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952]),
@@ -135,7 +135,7 @@ class BelongsToAssociationLeftJoinedTests: GRDBTestCase {
                     .leftJoined(with: Book.author.filter(Column("birthYear") >= 1900))
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"books\" AS \"left\" LEFT JOIN \"authors\" AS \"right\" ON ((\"right\".\"id\" = \"left\".\"authorId\") AND (\"right\".\"birthYear\" >= 1900))")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON ((\"authors\".\"id\" = \"books\".\"authorId\") AND (\"authors\".\"birthYear\" >= 1900))")
                 
                 assertMatch(graph, [
                     (["id": 1, "authorId": 2, "title": "Foe", "year": 1986], ["id": 2, "name": "J. M. Coetzee", "birthYear": 1940]),
@@ -156,7 +156,7 @@ class BelongsToAssociationLeftJoinedTests: GRDBTestCase {
                     .leftJoined(with: Book.author.order(Column("name")))
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"books\" AS \"left\" LEFT JOIN \"authors\" AS \"right\" ON (\"right\".\"id\" = \"left\".\"authorId\") ORDER BY \"right\".\"name\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\") ORDER BY \"authors\".\"name\"")
                 
                 assertMatch(graph, [
                     (["id": 9, "authorId": nil, "title": "Unattributed", "year": 2017], nil),

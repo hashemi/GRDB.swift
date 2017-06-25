@@ -8,8 +8,8 @@ struct SQLStar : SQLSelectable {
     }
     
     func resultColumnSQL(_ arguments: inout StatementArguments?) -> String {
-        if let alias = qualifier?.alias {
-            return "\(alias.quotedDatabaseIdentifier).*"
+        if let qualifiedName = qualifier?.qualifiedName {
+            return "\(qualifiedName.quotedDatabaseIdentifier).*"
         } else {
             return "*"
         }

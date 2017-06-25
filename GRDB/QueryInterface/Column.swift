@@ -27,8 +27,8 @@ extension Column : SQLExpression {
     
     /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
     public func expressionSQL(_ arguments: inout StatementArguments?) -> String {
-        if let alias = qualifier?.alias {
-            return "\(alias.quotedDatabaseIdentifier).\(name.quotedDatabaseIdentifier)"
+        if let qualifiedName = qualifier?.qualifiedName {
+            return "\(qualifiedName.quotedDatabaseIdentifier).\(name.quotedDatabaseIdentifier)"
         } else {
             return name.quotedDatabaseIdentifier
         }

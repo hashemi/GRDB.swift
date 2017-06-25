@@ -21,7 +21,7 @@ class HasOneAssociationLeftJoinedTests: GRDBTestCase {
                 .leftJoined(with: Country.profile)
                 .fetchAll(db)
             
-            XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"countries\" AS \"left\" LEFT JOIN \"countryProfiles\" AS \"right\" ON (\"right\".\"countryCode\" = \"left\".\"code\")")
+            XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\")")
             
             assertMatch(graph, [
                 (["code": "FR", "name": "France"], ["countryCode": "FR", "area": 643801, "currency": "EUR"]),
@@ -44,7 +44,7 @@ class HasOneAssociationLeftJoinedTests: GRDBTestCase {
                     .leftJoined(with: Country.profile)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"countries\" AS \"left\" LEFT JOIN \"countryProfiles\" AS \"right\" ON (\"right\".\"countryCode\" = \"left\".\"code\") WHERE (\"left\".\"code\" <> 'FR')")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") WHERE (\"countries\".\"code\" <> 'FR')")
                 
                 assertMatch(graph, [
                     (["code": "US", "name": "United States"], ["countryCode": "US", "area": 9833520, "currency": "USD"]),
@@ -60,7 +60,7 @@ class HasOneAssociationLeftJoinedTests: GRDBTestCase {
                     .filter(Column("code") != "FR")
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"countries\" AS \"left\" LEFT JOIN \"countryProfiles\" AS \"right\" ON (\"right\".\"countryCode\" = \"left\".\"code\") WHERE (\"left\".\"code\" <> 'FR')")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") WHERE (\"countries\".\"code\" <> 'FR')")
                 
                 assertMatch(graph, [
                     (["code": "US", "name": "United States"], ["countryCode": "US", "area": 9833520, "currency": "USD"]),
@@ -76,7 +76,7 @@ class HasOneAssociationLeftJoinedTests: GRDBTestCase {
                     .leftJoined(with: Country.profile)
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"countries\" AS \"left\" LEFT JOIN \"countryProfiles\" AS \"right\" ON (\"right\".\"countryCode\" = \"left\".\"code\") ORDER BY \"left\".\"code\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"countries\".\"code\"")
                 
                 assertMatch(graph, [
                     (["code": "AA", "name": "Atlantis"], nil),
@@ -93,7 +93,7 @@ class HasOneAssociationLeftJoinedTests: GRDBTestCase {
                     .order(Column("code"))
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"countries\" AS \"left\" LEFT JOIN \"countryProfiles\" AS \"right\" ON (\"right\".\"countryCode\" = \"left\".\"code\") ORDER BY \"left\".\"code\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"countries\".\"code\"")
                 
                 assertMatch(graph, [
                     (["code": "AA", "name": "Atlantis"], nil),
@@ -115,7 +115,7 @@ class HasOneAssociationLeftJoinedTests: GRDBTestCase {
                     .leftJoined(with: Country.profile.filter(Column("currency") == "EUR"))
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"countries\" AS \"left\" LEFT JOIN \"countryProfiles\" AS \"right\" ON ((\"right\".\"countryCode\" = \"left\".\"code\") AND (\"right\".\"currency\" = \'EUR\'))")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON ((\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") AND (\"countryProfiles\".\"currency\" = \'EUR\'))")
                 
                 assertMatch(graph, [
                     (["code": "FR", "name": "France"], ["countryCode": "FR", "area": 643801, "currency": "EUR"]),
@@ -130,7 +130,7 @@ class HasOneAssociationLeftJoinedTests: GRDBTestCase {
                     .leftJoined(with: Country.profile.order(Column("area")))
                     .fetchAll(db)
                 
-                XCTAssertEqual(lastSQLQuery, "SELECT \"left\".*, \"right\".* FROM \"countries\" AS \"left\" LEFT JOIN \"countryProfiles\" AS \"right\" ON (\"right\".\"countryCode\" = \"left\".\"code\") ORDER BY \"right\".\"area\"")
+                XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"countryProfiles\".\"area\"")
                 
                 assertMatch(graph, [
                     (["code": "AA", "name": "Atlantis"], nil),

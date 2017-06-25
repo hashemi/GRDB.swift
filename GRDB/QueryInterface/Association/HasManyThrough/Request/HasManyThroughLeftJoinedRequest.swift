@@ -16,18 +16,18 @@ extension HasManyThroughLeftJoinedRequest : TypedRequest {
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
         // TODO: don't alias unless necessary
-        let leftQualifier = SQLSourceQualifier(alias: "left")
-        let middleQualifier = SQLSourceQualifier(alias: "middle")
-        let rightQualifier = SQLSourceQualifier(alias: "right")
+        var leftQualifier = SQLSourceQualifier()
+        var middleQualifier = SQLSourceQualifier()
+        var rightQualifier = SQLSourceQualifier()
         
         // SELECT * FROM left ... -> SELECT left.* FROM left ...
-        let leftQuery = leftRequest.query.qualified(by: leftQualifier)
+        let leftQuery = leftRequest.query.qualified(by: &leftQualifier)
         
         // SELECT * FROM left ... -> SELECT left.* FROM left ...
-        let middleQuery = association.middleRequest.query.qualified(by: middleQualifier)
+        let middleQuery = association.middleRequest.query.qualified(by: &middleQualifier)
         
         // SELECT * FROM right ... -> SELECT right.* FROM right ...
-        let rightQuery = association.rightRequest.query.qualified(by: rightQualifier)
+        let rightQuery = association.rightRequest.query.qualified(by: &rightQualifier)
         
         // SELECT left.*, right.*
         let joinedSelection = leftQuery.selection + rightQuery.selection

@@ -41,20 +41,20 @@ class HasManyThroughAssociationTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 let association = Left.hasMany(Middle.hasMany(Right.self), through: Left.hasOne(Middle.self))
-                try assertSQL(db, Left.all().joined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" AS \"left\" JOIN \"middle\" AS \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") JOIN \"right\" AS \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
-                try assertSQL(db, Left.all().leftJoined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" AS \"left\" LEFT JOIN \"middle\" AS \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") LEFT JOIN \"right\" AS \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
+                try assertSQL(db, Left.all().joined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" JOIN \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") JOIN \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
+                try assertSQL(db, Left.all().leftJoined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" LEFT JOIN \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") LEFT JOIN \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
 //                try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 2)")
             }
             do {
                 let association = Left.hasMany(Middle.hasMany(Right.self), through: Left.hasMany(Middle.self))
-                try assertSQL(db, Left.all().joined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" AS \"left\" JOIN \"middle\" AS \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") JOIN \"right\" AS \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
-                try assertSQL(db, Left.all().leftJoined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" AS \"left\" LEFT JOIN \"middle\" AS \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") LEFT JOIN \"right\" AS \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
+                try assertSQL(db, Left.all().joined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" JOIN \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") JOIN \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
+                try assertSQL(db, Left.all().leftJoined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" LEFT JOIN \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") LEFT JOIN \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
                 //                try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 2)")
             }
             do {
                 let association = Left.hasMany(Middle.hasOne(Right.self), through: Left.hasMany(Middle.self))
-                try assertSQL(db, Left.all().joined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" AS \"left\" JOIN \"middle\" AS \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") JOIN \"right\" AS \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
-                try assertSQL(db, Left.all().leftJoined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" AS \"left\" LEFT JOIN \"middle\" AS \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") LEFT JOIN \"right\" AS \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
+                try assertSQL(db, Left.all().joined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" JOIN \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") JOIN \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
+                try assertSQL(db, Left.all().leftJoined(with: association), "SELECT \"left\".*, \"right\".* FROM \"left\" LEFT JOIN \"middle\" ON (\"middle\".\"leftId\" = \"left\".\"id\") LEFT JOIN \"right\" ON (\"right\".\"middleId\" = \"left\".\"id\")")
                 //                try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 2)")
             }
         }
