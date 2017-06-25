@@ -1,4 +1,4 @@
-protocol RightRequestDerivable {
+public protocol RightRequestDerivable {
     associatedtype RightRowDecoder
     func mapRightRequest(_ transform: (QueryInterfaceRequest<RightRowDecoder>) -> QueryInterfaceRequest<RightRowDecoder>) -> Self
 }

@@ -17,8 +17,8 @@ extension HasOneRightRequest : TypedRequest {
 }
 
 extension HasOneRightRequest : RightRequestDerivable {
-    typealias RightRowDecoder = Right
-    func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> HasOneRightRequest<Left, Right> {
+    public typealias RightRowDecoder = Right
+    public func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> HasOneRightRequest<Left, Right> {
         return HasOneRightRequest(record: record, association: association.mapRightRequest(transform))
     }
 }

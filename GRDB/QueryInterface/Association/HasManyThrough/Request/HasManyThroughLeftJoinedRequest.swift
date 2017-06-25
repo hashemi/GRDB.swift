@@ -1,18 +1,18 @@
-public struct HasManyThroughLeftJoinedRequest<Left: TableMapping, Middle: TableMapping, Right: TableMapping> {
-    var leftRequest: QueryInterfaceRequest<Left>
-    let association: HasManyThroughAssociation<Left, Middle, Right>
+public struct HasManyThroughLeftJoinedRequest<MiddleAssociation: Association, RightAssociation: Association> where MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated {
+    var leftRequest: QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
+    let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
 extension HasManyThroughLeftJoinedRequest : LeftRequestDerivable {
-    typealias LeftRowDecoder = Left
+    typealias LeftRowDecoder = MiddleAssociation.LeftAssociated
     
-    func mapLeftRequest(_ transform: (QueryInterfaceRequest<Left>) -> (QueryInterfaceRequest<Left>)) -> HasManyThroughLeftJoinedRequest<Left, Middle, Right> {
+    func mapLeftRequest(_ transform: (QueryInterfaceRequest<LeftRowDecoder>) -> (QueryInterfaceRequest<LeftRowDecoder>)) -> HasManyThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> {
         return HasManyThroughLeftJoinedRequest(leftRequest: transform(leftRequest), association: association)
     }
 }
 
 extension HasManyThroughLeftJoinedRequest : TypedRequest {
-    public typealias RowDecoder = JoinedPair<Left, Right?>
+    public typealias RowDecoder = JoinedPair<MiddleAssociation.LeftAssociated, RightAssociation.RightAssociated?>
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
         // TODO: don't alias unless necessary
@@ -23,11 +23,11 @@ extension HasManyThroughLeftJoinedRequest : TypedRequest {
         // SELECT * FROM left ... -> SELECT left.* FROM left ...
         let leftQuery = leftRequest.query.qualified(by: &leftQualifier)
         
-        // SELECT * FROM left ... -> SELECT left.* FROM left ...
-        let middleQuery = association.middleRequest.query.qualified(by: &middleQualifier)
+        // SELECT * FROM middle ... -> SELECT middle.* FROM middle ...
+        let middleQuery = association.middleAssociation.rightRequest.query.qualified(by: &middleQualifier)
         
         // SELECT * FROM right ... -> SELECT right.* FROM right ...
-        let rightQuery = association.rightRequest.query.qualified(by: &rightQualifier)
+        let rightQuery = association.rightAssociation.rightRequest.query.qualified(by: &rightQualifier)
         
         // SELECT left.*, right.*
         let joinedSelection = leftQuery.selection + rightQuery.selection
@@ -44,10 +44,10 @@ extension HasManyThroughLeftJoinedRequest : TypedRequest {
                 leftSource: leftSource,
                 rightSource: middleSource,
                 onExpression: middleQuery.whereExpression,
-                mapping: association.middleMapping(db))),
+                mapping: association.middleAssociation.mapping(db))),
             rightSource: rightSource,
             onExpression: rightQuery.whereExpression,
-            mapping: association.rightMapping(db)))
+            mapping: association.rightAssociation.mapping(db)))
         
         // ORDER BY left.***, right.***
         let joinedOrderings = leftQuery.eventuallyReversedOrderings + rightQuery.eventuallyReversedOrderings
@@ -77,13 +77,13 @@ extension HasManyThroughLeftJoinedRequest : TypedRequest {
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func leftJoined<Middle, Right>(with association: HasManyThroughAssociation<RowDecoder, Middle, Right>) -> HasManyThroughLeftJoinedRequest<RowDecoder, Middle, Right> where Middle: TableMapping, Right: TableMapping {
+    public func leftJoined<MiddleAssociation, RightAssociation>(with association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == RowDecoder {
         return HasManyThroughLeftJoinedRequest(leftRequest: self, association: association)
     }
 }
 
 extension TableMapping {
-    public static func leftJoined<Middle, Right>(with association: HasManyThroughAssociation<Self, Middle, Right>) -> HasManyThroughLeftJoinedRequest<Self, Middle, Right> where Middle: TableMapping, Right: TableMapping {
+    public static func leftJoined<MiddleAssociation, RightAssociation>(with association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == Self {
         return all().leftJoined(with: association)
     }
 }

@@ -17,8 +17,8 @@ extension BelongsToRightRequest : TypedRequest {
 }
 
 extension BelongsToRightRequest : RightRequestDerivable {
-    typealias RightRowDecoder = Right
-    func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> BelongsToRightRequest<Left, Right> {
+    public typealias RightRowDecoder = Right
+    public func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> BelongsToRightRequest<Left, Right> {
         return BelongsToRightRequest(record: record, association: association.mapRightRequest(transform))
     }
 }

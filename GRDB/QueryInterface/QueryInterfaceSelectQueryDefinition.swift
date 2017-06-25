@@ -254,8 +254,8 @@ indirect enum SQLSource {
             sql += rightSource.sourceSQL(&arguments)
             
             // We're generating sql: sources must have been qualified by now
-            let leftQualifier = leftSource.qualifier!
-            let rightQualifier = rightSource.qualifier!
+            let leftQualifier = leftSource.rightQualifier!
+            let rightQualifier = rightSource.leftQualifier!
             
             var onClauses = mapping
                 .map { arrow -> SQLExpression in
@@ -278,11 +278,27 @@ indirect enum SQLSource {
         }
     }
     
-    var qualifier: SQLSourceQualifier? {
+//    var qualifier: SQLSourceQualifier? {
+//        switch self {
+//        case .table(_, let qualifier): return qualifier
+//        case .query(_, let qualifier): return qualifier
+//        case .joined(let joinDef): return joinDef.leftSource.qualifier
+//        }
+//    }
+    
+    var leftQualifier: SQLSourceQualifier? {
         switch self {
         case .table(_, let qualifier): return qualifier
         case .query(_, let qualifier): return qualifier
-        case .joined(let joinDef): return joinDef.leftSource.qualifier
+        case .joined(let joinDef): return joinDef.leftSource.leftQualifier
+        }
+    }
+    
+    var rightQualifier: SQLSourceQualifier? {
+        switch self {
+        case .table(_, let qualifier): return qualifier
+        case .query(_, let qualifier): return qualifier
+        case .joined(let joinDef): return joinDef.rightSource.rightQualifier
         }
     }
     

@@ -17,8 +17,8 @@ extension HasManyRightRequest : TypedRequest {
 }
 
 extension HasManyRightRequest : RightRequestDerivable {
-    typealias RightRowDecoder = Right
-    func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> HasManyRightRequest<Left, Right> {
+    public typealias RightRowDecoder = Right
+    public func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> HasManyRightRequest<Left, Right> {
         return HasManyRightRequest(record: record, association: association.mapRightRequest(transform))
     }
 }

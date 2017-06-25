@@ -1,8 +1,11 @@
-public struct BelongsToAssociation<Left: TableMapping, Right: TableMapping> {
-    let joinMappingRequest: JoinMappingRequest
-    let rightRequest: QueryInterfaceRequest<Right>
+public struct BelongsToAssociation<Left: TableMapping, Right: TableMapping> : Association {
+    public typealias LeftAssociated = Left
+    public typealias RightAssociated = Right
     
-    func mapping(_ db: Database) throws -> [(left: String, right: String)] {
+    let joinMappingRequest: JoinMappingRequest
+    public let rightRequest: QueryInterfaceRequest<Right>
+    
+    public func mapping(_ db: Database) throws -> [(left: String, right: String)] {
         let mappings = try joinMappingRequest.fetchAll(db)
         switch mappings.count {
         case 0:
@@ -16,8 +19,8 @@ public struct BelongsToAssociation<Left: TableMapping, Right: TableMapping> {
 }
 
 extension BelongsToAssociation : RightRequestDerivable {
-    typealias RightRowDecoder = Right
-    func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> BelongsToAssociation<Left, Right> {
+    public typealias RightRowDecoder = Right
+    public func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> BelongsToAssociation<Left, Right> {
         return BelongsToAssociation(joinMappingRequest: joinMappingRequest, rightRequest: transform(self.rightRequest))
     }
 }

@@ -1,13 +1,13 @@
-public struct HasManyThroughRightRequest<Left: MutablePersistable, Middle: TableMapping, Right: TableMapping> {
-    let record: Left
-    let association: HasManyThroughAssociation<Left, Middle, Right>
+public struct HasManyThroughRightRequest<MiddleAssociation: Association, RightAssociation: Association> where MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated, MiddleAssociation.LeftAssociated: MutablePersistable {
+    let record: MiddleAssociation.LeftAssociated
+    let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
 extension HasManyThroughRightRequest : TypedRequest {
-    public typealias RowDecoder = Right
+    public typealias RowDecoder = RightAssociation.RightAssociated
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
-        let middleMapping = try association.middleMapping(db)
+        let middleMapping = try association.middleAssociation.mapping(db)
         let container = PersistenceContainer(record)
         let rowValue = RowValue(middleMapping.map { container[caseInsensitive: $0.left]?.databaseValue ?? .null })
         
@@ -15,10 +15,10 @@ extension HasManyThroughRightRequest : TypedRequest {
         var rightQualifier = SQLSourceQualifier()
         
         // SELECT * FROM middle ... -> SELECT middle.* FROM middle WHERE middle.leftId = left.id ...
-        let middleQuery = association.middleRequest.filter(middleMapping.map { Column($0.right) } == rowValue).query.qualified(by: &middleQualifier)
+        let middleQuery = association.middleAssociation.rightRequest.filter(middleMapping.map { Column($0.right) } == rowValue).query.qualified(by: &middleQualifier)
         
         // SELECT * FROM right ... -> SELECT right.* FROM right ...
-        let rightQuery = association.rightRequest.query.qualified(by: &rightQualifier)
+        let rightQuery = association.rightAssociation.rightRequest.query.qualified(by: &rightQualifier)
         
         // ... FROM right JOIN middle
         guard let middleSource = middleQuery.source else { fatalError("Support for sourceless joins is not implemented") }
@@ -28,7 +28,7 @@ extension HasManyThroughRightRequest : TypedRequest {
             leftSource: rightSource,
             rightSource: middleSource,
             onExpression: middleQuery.whereExpression,
-            mapping: association.rightMapping(db).map { (left: $0.right, right: $0.left ) }))
+            mapping: association.rightAssociation.mapping(db).map { (left: $0.right, right: $0.left ) }))
         
         // ORDER BY right.***, middle.***
         let joinedOrderings = rightQuery.eventuallyReversedOrderings + middleQuery.eventuallyReversedOrderings
@@ -48,32 +48,32 @@ extension HasManyThroughRightRequest : TypedRequest {
 }
 
 extension HasManyThroughRightRequest : RightRequestDerivable {
-    typealias RightRowDecoder = Right
-    func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> HasManyThroughRightRequest<Left, Middle, Right> {
+    public typealias RightRowDecoder = RightAssociation.RightAssociated
+    public func mapRightRequest(_ transform: (QueryInterfaceRequest<RightAssociation.RightAssociated>) -> QueryInterfaceRequest<RightAssociation.RightAssociated>) -> HasManyThroughRightRequest<MiddleAssociation, RightAssociation> {
         return HasManyThroughRightRequest(record: record, association: association.mapRightRequest(transform))
     }
 }
 
-extension HasManyThroughAssociation where Left: MutablePersistable {
-    func makeRequest(from record: Left) -> HasManyThroughRightRequest<Left, Middle, Right> {
+extension HasManyThroughAssociation where MiddleAssociation.LeftAssociated: MutablePersistable {
+    func makeRequest(from record: MiddleAssociation.LeftAssociated) -> HasManyThroughRightRequest<MiddleAssociation, RightAssociation> {
         return HasManyThroughRightRequest(record: record, association: self)
     }
 }
 
 extension MutablePersistable {
-    public func makeRequest<Middle, Right>(_ association: HasManyThroughAssociation<Self, Middle, Right>) -> HasManyThroughRightRequest<Self, Middle, Right> where Middle: TableMapping, Right: TableMapping {
+    public func makeRequest<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughRightRequest<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == Self {
         return association.makeRequest(from: self)
     }
     
-    public func fetchCursor<Middle, Right>(_ db: Database, _ association: HasManyThroughAssociation<Self, Middle, Right>) throws -> DatabaseCursor<Right> where Middle: TableMapping, Right: TableMapping & RowConvertible {
+    public func fetchCursor<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) throws -> DatabaseCursor<RightAssociation.RightAssociated> where MiddleAssociation.LeftAssociated == Self, RightAssociation.RightAssociated: RowConvertible {
         return try association.makeRequest(from: self).fetchCursor(db)
     }
     
-    public func fetchAll<Middle, Right>(_ db: Database, _ association: HasManyThroughAssociation<Self, Middle, Right>) throws -> [Right] where Middle: TableMapping, Right: TableMapping & RowConvertible {
+    public func fetchAll<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) throws -> [RightAssociation.RightAssociated] where MiddleAssociation.LeftAssociated == Self, RightAssociation.RightAssociated: RowConvertible {
         return try association.makeRequest(from: self).fetchAll(db)
     }
     
-    public func fetchOne<Middle, Right>(_ db: Database, _ association: HasManyThroughAssociation<Self, Middle, Right>) throws -> Right? where Middle: TableMapping, Right: TableMapping & RowConvertible {
+    public func fetchOne<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) throws -> RightAssociation.RightAssociated? where MiddleAssociation.LeftAssociated == Self, RightAssociation.RightAssociated: RowConvertible {
         return try association.makeRequest(from: self).fetchOne(db)
     }
 }
