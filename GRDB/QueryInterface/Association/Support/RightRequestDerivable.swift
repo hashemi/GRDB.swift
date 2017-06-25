@@ -1,3 +1,4 @@
+// Make internal once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
 public protocol RightRequestDerivable {
     associatedtype RightRowDecoder
     func mapRightRequest(_ transform: (QueryInterfaceRequest<RightRowDecoder>) -> QueryInterfaceRequest<RightRowDecoder>) -> Self

@@ -1,10 +1,10 @@
 import XCTest
 #if GRDBCIPHER
-    @testable import GRDBCipher
+    import GRDBCipher
 #elseif GRDBCUSTOMSQLITE
-    @testable import GRDBCustomSQLite
+    import GRDBCustomSQLite
 #else
-    @testable import GRDB
+    import GRDB
 #endif
 
 private typealias Author = AssociationFixture.Author

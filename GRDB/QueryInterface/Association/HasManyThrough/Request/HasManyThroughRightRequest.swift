@@ -1,4 +1,5 @@
-public struct HasManyThroughRightRequest<MiddleAssociation: Association, RightAssociation: Association> where MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated, MiddleAssociation.LeftAssociated: MutablePersistable {
+// Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
+public struct HasManyThroughRightRequest<MiddleAssociation: Association, RightAssociation: Association> where MiddleAssociation.LeftAssociated: MutablePersistable, MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated, RightAssociation: RightRequestDerivable, RightAssociation.RightRowDecoder == RightAssociation.RightAssociated {
     let record: MiddleAssociation.LeftAssociated
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
