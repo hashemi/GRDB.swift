@@ -127,7 +127,7 @@ class HasManyThroughAssociationHasManyBelongsToLeftJoinedTests: GRDBTestCase {
                     (["code": "FR", "name": "France"], ["id": 1, "name": "Arthur"]),
                     (["code": "FR", "name": "France"], ["id": 2, "name": "Barbara"]),
                     (["code": "US", "name": "United States"], ["id": 2, "name": "Barbara"]),
-                    (["code": "US", "name": "United States"], nil), // TODO: wonder how this could be useful
+                    (["code": "US", "name": "United States"], nil), // TODO: this is inconsistent with HasManyAssociationLeftJoinedRequest. Possible fix: don't allow non-null citizenship with null citizen
                     (["code": "DE", "name": "Germany"], nil),
                     ])
             }
