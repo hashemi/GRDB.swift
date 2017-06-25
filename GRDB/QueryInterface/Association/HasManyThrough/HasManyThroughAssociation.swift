@@ -40,3 +40,29 @@ extension HasManyThroughAssociation : RightRequestDerivable {
             rightRequest: transform(self.rightRequest))
     }
 }
+
+extension TableMapping {
+    public static func hasMany<Middle, Right>(_ right: HasManyAssociation<Middle, Right>, through middle: HasManyAssociation<Self, Middle>) -> HasManyThroughAssociation<Self, Middle, Right> where Middle: TableMapping, Right: TableMapping {
+        return HasManyThroughAssociation(
+            middleJoinMappingRequest: middle.joinMappingRequest,
+            middleRequest: middle.rightRequest,
+            rightJoinMappingRequest: right.joinMappingRequest,
+            rightRequest: right.rightRequest)
+    }
+    
+    public static func hasMany<Middle, Right>(_ right: HasOneAssociation<Middle, Right>, through middle: HasManyAssociation<Self, Middle>) -> HasManyThroughAssociation<Self, Middle, Right> where Middle: TableMapping, Right: TableMapping {
+        return HasManyThroughAssociation(
+            middleJoinMappingRequest: middle.joinMappingRequest,
+            middleRequest: middle.rightRequest,
+            rightJoinMappingRequest: right.joinMappingRequest,
+            rightRequest: right.rightRequest)
+    }
+    
+    public static func hasMany<Middle, Right>(_ right: HasManyAssociation<Middle, Right>, through middle: HasOneAssociation<Self, Middle>) -> HasManyThroughAssociation<Self, Middle, Right> where Middle: TableMapping, Right: TableMapping {
+        return HasManyThroughAssociation(
+            middleJoinMappingRequest: middle.joinMappingRequest,
+            middleRequest: middle.rightRequest,
+            rightJoinMappingRequest: right.joinMappingRequest,
+            rightRequest: right.rightRequest)
+    }
+}

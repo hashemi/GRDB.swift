@@ -440,6 +440,28 @@
 		563A5E1D1EFE7E8B0065F741 /* BelongsToRightRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E0A1EFE7E8B0065F741 /* BelongsToRightRequest.swift */; };
 		563A5E1E1EFE7E8B0065F741 /* BelongsToRightRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E0A1EFE7E8B0065F741 /* BelongsToRightRequest.swift */; };
 		563A5E1F1EFE7E8B0065F741 /* BelongsToRightRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E0A1EFE7E8B0065F741 /* BelongsToRightRequest.swift */; };
+		563A5E341EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */; };
+		563A5E351EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */; };
+		563A5E361EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */; };
+		563A5E371EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */; };
+		563A5E381EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */; };
+		563A5E391EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */; };
+		563A5E3A1EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */; };
+		563A5E3E1EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */; };
+		563A5E3F1EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */; };
+		563A5E401EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */; };
+		563A5E411EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */; };
+		563A5E421EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */; };
+		563A5E431EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */; };
+		563A5E441EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */; };
+		563A5E451EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */; };
+		563A5E471EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */; };
+		563A5E481EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */; };
+		563A5E491EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */; };
+		563A5E4A1EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */; };
+		563A5E4B1EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */; };
+		563A5E4C1EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */; };
+		563A5E4D1EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */; };
 		564448441EF2F7D100DD2861 /* HasManyThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */; };
 		564448451EF2F7D100DD2861 /* HasManyThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */; };
 		564448461EF2F7D100DD2861 /* HasManyThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */; };
@@ -447,13 +469,6 @@
 		564448481EF2F7D100DD2861 /* HasManyThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */; };
 		564448491EF2F7D100DD2861 /* HasManyThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */; };
 		5644484A1EF2F7D100DD2861 /* HasManyThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */; };
-		564448541EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448531EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift */; };
-		564448551EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448531EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift */; };
-		564448561EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448531EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift */; };
-		564448571EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448531EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift */; };
-		564448581EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448531EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift */; };
-		564448591EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448531EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift */; };
-		5644485A1EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448531EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift */; };
 		564448831EF56B1B00DD2861 /* DatabaseAfterNextTransactionCommitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448821EF56B1B00DD2861 /* DatabaseAfterNextTransactionCommitTests.swift */; };
 		564448841EF56B1B00DD2861 /* DatabaseAfterNextTransactionCommitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448821EF56B1B00DD2861 /* DatabaseAfterNextTransactionCommitTests.swift */; };
 		564448851EF56B1B00DD2861 /* DatabaseAfterNextTransactionCommitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448821EF56B1B00DD2861 /* DatabaseAfterNextTransactionCommitTests.swift */; };
@@ -2214,8 +2229,10 @@
 		563A5E081EFE7E8B0065F741 /* BelongsToJoinedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BelongsToJoinedRequest.swift; sourceTree = "<group>"; };
 		563A5E091EFE7E8B0065F741 /* BelongsToLeftJoinedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BelongsToLeftJoinedRequest.swift; sourceTree = "<group>"; };
 		563A5E0A1EFE7E8B0065F741 /* BelongsToRightRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BelongsToRightRequest.swift; sourceTree = "<group>"; };
+		563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughJoinedRequest.swift; sourceTree = "<group>"; };
+		563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAssociationTests.swift; sourceTree = "<group>"; };
+		563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughLeftJoinedRequest.swift; sourceTree = "<group>"; };
 		564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAssociation.swift; sourceTree = "<group>"; };
-		564448531EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughJoinedRequest.swift; sourceTree = "<group>"; };
 		564448821EF56B1B00DD2861 /* DatabaseAfterNextTransactionCommitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseAfterNextTransactionCommitTests.swift; sourceTree = "<group>"; };
 		564A50C61BFF4B7F00B3A3A2 /* DatabaseCollationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseCollationTests.swift; sourceTree = "<group>"; };
 		565029C71E914DB700615A2C /* TableMappingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableMappingTests.swift; sourceTree = "<group>"; };
@@ -2887,11 +2904,28 @@
 			path = Request;
 			sourceTree = "<group>";
 		};
+		563A5E321EFFBF920065F741 /* Request */ = {
+			isa = PBXGroup;
+			children = (
+				563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */,
+				563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */,
+			);
+			path = Request;
+			sourceTree = "<group>";
+		};
+		563A5E3C1EFFC1E10065F741 /* HasManyThrough */ = {
+			isa = PBXGroup;
+			children = (
+				563A5E3D1EFFC2130065F741 /* HasManyThroughAssociationTests.swift */,
+			);
+			name = HasManyThrough;
+			sourceTree = "<group>";
+		};
 		564448421EF2F7BD00DD2861 /* HasManyThrough */ = {
 			isa = PBXGroup;
 			children = (
 				564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */,
-				564448531EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift */,
+				563A5E321EFFBF920065F741 /* Request */,
 			);
 			path = HasManyThrough;
 			sourceTree = "<group>";
@@ -2922,6 +2956,7 @@
 				56871D421EEA6904006D7CD5 /* AssociationFixture.swift */,
 				56CC43F61EEA56B600A7EB9F /* BelongsTo */,
 				56CC43F41EEA56A200A7EB9F /* HasMany */,
+				563A5E3C1EFFC1E10065F741 /* HasManyThrough */,
 				56CC43F51EEA56AA00A7EB9F /* HasOne */,
 			);
 			name = Association;
@@ -4303,6 +4338,7 @@
 				56CEB4F21EAA2EFA00BFAF62 /* RowConvertible.swift in Sources */,
 				560FC51C1CB003810014AA8E /* QueryInterfaceRequest.swift in Sources */,
 				560FC51D1CB003810014AA8E /* SQLCollatedExpression.swift in Sources */,
+				563A5E481EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */,
 				56D1215B1ED34978001347D2 /* Fixits-0.109.0.swift in Sources */,
 				566475D41D981D5E00FF74B8 /* SQLOperators.swift in Sources */,
 				563A5DBB1EFE7BDE0065F741 /* HasManyIncludingRequest.swift in Sources */,
@@ -4372,7 +4408,6 @@
 				56B964BA1DA51D0A0002DA19 /* FTS5Pattern.swift in Sources */,
 				563A5DDB1EFE7C040065F741 /* HasOneJoinedRequest.swift in Sources */,
 				560FC5391CB003810014AA8E /* DatabaseReader.swift in Sources */,
-				564448551EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */,
 				567B88C31EE95F8500F6112C /* HasOneAssociation.swift in Sources */,
 				560FC53A1CB003810014AA8E /* NSNull.swift in Sources */,
 				56CEB51A1EAA328900BFAF62 /* FTS5+QueryInterface.swift in Sources */,
@@ -4392,6 +4427,7 @@
 				5657AABA1D107001006283EF /* NSData.swift in Sources */,
 				560FC5421CB003810014AA8E /* StatementColumnConvertible.swift in Sources */,
 				563A5DE21EFE7C040065F741 /* HasOneLeftJoinedRequest.swift in Sources */,
+				563A5E351EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5541EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B9649E1DA51B4C0002DA19 /* FTS5.swift in Sources */,
 				563A5D5E1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
@@ -4435,6 +4471,7 @@
 				560FC5741CB00B880014AA8E /* DatabasePoolFunctionTests.swift in Sources */,
 				56871D561EEE63BF006D7CD5 /* BelongsToAssociationLeftJoinedTests.swift in Sources */,
 				560FC5761CB00B880014AA8E /* RowCopiedFromStatementTests.swift in Sources */,
+				563A5E3F1EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */,
 				560FC5771CB00B880014AA8E /* DatabaseQueueSchemaCacheTests.swift in Sources */,
 				562756441E963AAC0035B653 /* DatabaseWriterTests.swift in Sources */,
 				56AF746C1D41FB9C005E9FF3 /* DatabaseValueConvertibleEscapingTests.swift in Sources */,
@@ -4550,6 +4587,7 @@
 			files = (
 				56B964BF1DA51D0A0002DA19 /* FTS5Pattern.swift in Sources */,
 				56D51D061EA789FA0074638A /* RowConvertible+TableMapping.swift in Sources */,
+				563A5E3A1EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56D8B9371EF287D20037BBD5 /* HasManyAnnotation.swift in Sources */,
 				565490CE1D5AE252005622CB /* NSNull.swift in Sources */,
 				565490E41D5AE252005622CB /* TableMapping.swift in Sources */,
@@ -4559,6 +4597,7 @@
 				56CEB51F1EAA328900BFAF62 /* FTS5+QueryInterface.swift in Sources */,
 				563A5DB91EFE7BDE0065F741 /* HasManyAnnotationHavingRequest.swift in Sources */,
 				56CC43C71EE9E15B00A7EB9F /* JoinMappingRequest.swift in Sources */,
+				563A5E4D1EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */,
 				565490E21D5AE252005622CB /* Record.swift in Sources */,
 				565490C11D5AE236005622CB /* Request.swift in Sources */,
 				5698AD1C1DAAD17F0056AF8C /* FTS5Tokenizer.swift in Sources */,
@@ -4616,7 +4655,6 @@
 				565490C41D5AE236005622CB /* SchedulingWatchdog.swift in Sources */,
 				56CEB54B1EAA359A00BFAF62 /* Column.swift in Sources */,
 				565490CC1D5AE252005622CB /* (null) in Sources */,
-				5644485A1EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56BF6D351DEF47DA006039A3 /* Fixits-0-84-0.swift in Sources */,
 				563A5D6B1EFE59A80065F741 /* LeftRequestDerivable.swift in Sources */,
 				563A5E1F1EFE7E8B0065F741 /* BelongsToRightRequest.swift in Sources */,
@@ -4710,6 +4748,7 @@
 				566AD8C81D531BEB002EC1A8 /* TableDefinitionTests.swift in Sources */,
 				56871D571EEE63BF006D7CD5 /* BelongsToAssociationLeftJoinedTests.swift in Sources */,
 				567156321CB16729007DC145 /* DatabasePoolFunctionTests.swift in Sources */,
+				563A5E401EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */,
 				567156341CB16729007DC145 /* RowCopiedFromStatementTests.swift in Sources */,
 				562756451E963AAC0035B653 /* DatabaseWriterTests.swift in Sources */,
 				569C1EB41CF07DDD0042627B /* SchedulingWatchdogTests.swift in Sources */,
@@ -4833,6 +4872,7 @@
 				56CEB4F51EAA2EFA00BFAF62 /* RowConvertible.swift in Sources */,
 				56AFC9F11CB1A8BB00F48B96 /* QueryInterfaceRequest.swift in Sources */,
 				56AFC9F21CB1A8BB00F48B96 /* SQLCollatedExpression.swift in Sources */,
+				563A5E4B1EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */,
 				56D1215E1ED34978001347D2 /* Fixits-0.109.0.swift in Sources */,
 				566475D71D981D5E00FF74B8 /* SQLOperators.swift in Sources */,
 				563A5DBE1EFE7BDE0065F741 /* HasManyIncludingRequest.swift in Sources */,
@@ -4902,7 +4942,6 @@
 				56B964BD1DA51D0A0002DA19 /* FTS5Pattern.swift in Sources */,
 				563A5DDE1EFE7C040065F741 /* HasOneJoinedRequest.swift in Sources */,
 				56AFCA0F1CB1A8BB00F48B96 /* NSNull.swift in Sources */,
-				564448581EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */,
 				567B88C61EE95F8500F6112C /* HasOneAssociation.swift in Sources */,
 				56AFCA101CB1A8BB00F48B96 /* DatabaseQueue.swift in Sources */,
 				56CEB51D1EAA328900BFAF62 /* FTS5+QueryInterface.swift in Sources */,
@@ -4922,6 +4961,7 @@
 				56AFCA181CB1A8BB00F48B96 /* FetchedRecordsController.swift in Sources */,
 				56AFCA191CB1A8BB00F48B96 /* DatabaseValue.swift in Sources */,
 				563A5DE51EFE7C040065F741 /* HasOneLeftJoinedRequest.swift in Sources */,
+				563A5E381EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5571EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B964A11DA51B4C0002DA19 /* FTS5.swift in Sources */,
 				563A5D611EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
@@ -4965,6 +5005,7 @@
 				562393351DEDFC5700A6B01F /* AnyCursorTests.swift in Sources */,
 				56871D5A1EEE63BF006D7CD5 /* BelongsToAssociationLeftJoinedTests.swift in Sources */,
 				5698ACDC1DA925430056AF8C /* RowTestCase.swift in Sources */,
+				563A5E431EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */,
 				56AFCA451CB1AA9900F48B96 /* DatabaseQueueSchemaCacheTests.swift in Sources */,
 				562756481E963AAC0035B653 /* DatabaseWriterTests.swift in Sources */,
 				56AFCA461CB1AA9900F48B96 /* RecordPrimaryKeyMultipleTests.swift in Sources */,
@@ -5111,6 +5152,7 @@
 				562393361DEDFC5700A6B01F /* AnyCursorTests.swift in Sources */,
 				56871D5B1EEE63BF006D7CD5 /* BelongsToAssociationLeftJoinedTests.swift in Sources */,
 				5698ACDD1DA925430056AF8C /* RowTestCase.swift in Sources */,
+				563A5E441EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */,
 				56AFCA9A1CB1ABC800F48B96 /* StatementColumnConvertibleTests.swift in Sources */,
 				562756491E963AAC0035B653 /* DatabaseWriterTests.swift in Sources */,
 				56AFCA9B1CB1ABC800F48B96 /* DatabasePoolFunctionTests.swift in Sources */,
@@ -5263,9 +5305,9 @@
 				56CEB54F1EAA359A00BFAF62 /* SQLExpressible.swift in Sources */,
 				56A238941B9C750B0082EB20 /* DatabaseMigrator.swift in Sources */,
 				5605F16A1C672E4000235C62 /* NSString.swift in Sources */,
-				564448571EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56A8C2331D1914540096E9D4 /* UUID.swift in Sources */,
 				56BF6D321DEF47DA006039A3 /* Fixits-0-84-0.swift in Sources */,
+				563A5E4A1EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */,
 				563A5DDD1EFE7C040065F741 /* HasOneJoinedRequest.swift in Sources */,
 				56CC43CC1EE9E32000A7EB9F /* JoinedPairDecoder.swift in Sources */,
 				567B88C51EE95F8500F6112C /* HasOneAssociation.swift in Sources */,
@@ -5298,6 +5340,7 @@
 				56BF6D391DEF47DA006039A3 /* Fixits-0-90-1.swift in Sources */,
 				563363C11C942C04000BE133 /* DatabaseReader.swift in Sources */,
 				5659F4A31EA8D997004A4992 /* Result.swift in Sources */,
+				563A5E371EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CC43C41EE9E15B00A7EB9F /* JoinMappingRequest.swift in Sources */,
 				56B964BC1DA51D0A0002DA19 /* FTS5Pattern.swift in Sources */,
 				5605F1661C672E4000235C62 /* NSNull.swift in Sources */,
@@ -5365,6 +5408,7 @@
 				56B021CD1D8C0D3900B239BB /* MutablePersistablePersistenceConflictPolicyTests.swift in Sources */,
 				56871D591EEE63BF006D7CD5 /* BelongsToAssociationLeftJoinedTests.swift in Sources */,
 				569531271C9087B700CF1A2B /* DatabaseQueueSchemaCacheTests.swift in Sources */,
+				563A5E421EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */,
 				56B14E831D4DAE54000BF4A3 /* RowFromDictionaryLiteralTests.swift in Sources */,
 				562393341DEDFC5700A6B01F /* AnyCursorTests.swift in Sources */,
 				5698AC841DA380A20056AF8C /* VirtualTableModuleTests.swift in Sources */,
@@ -5511,6 +5555,7 @@
 				56D496891D81316E008276D7 /* DatabaseValueConvertibleFetchTests.swift in Sources */,
 				56871D551EEE63BF006D7CD5 /* BelongsToAssociationLeftJoinedTests.swift in Sources */,
 				56D4967C1D8130DB008276D7 /* CGFloatTests.swift in Sources */,
+				563A5E3E1EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */,
 				56D496631D81304E008276D7 /* FoundationURLTests.swift in Sources */,
 				56D496B71D81344B008276D7 /* RecordUniqueIndexTests.swift in Sources */,
 				56D496671D813086008276D7 /* Record+QueryInterfaceRequestTests.swift in Sources */,
@@ -5634,6 +5679,7 @@
 				56CEB4F11EAA2EFA00BFAF62 /* RowConvertible.swift in Sources */,
 				56300B781C53F592005A543B /* QueryInterfaceRequest.swift in Sources */,
 				5605F18D1C6B1A8700235C62 /* SQLCollatedExpression.swift in Sources */,
+				563A5E471EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */,
 				56D1215A1ED34978001347D2 /* Fixits-0.109.0.swift in Sources */,
 				566475D31D981D5E00FF74B8 /* SQLOperators.swift in Sources */,
 				563A5DBA1EFE7BDE0065F741 /* HasManyIncludingRequest.swift in Sources */,
@@ -5703,7 +5749,6 @@
 				56B964B91DA51D0A0002DA19 /* FTS5Pattern.swift in Sources */,
 				563A5DDA1EFE7C040065F741 /* HasOneJoinedRequest.swift in Sources */,
 				563363C01C942C04000BE133 /* DatabaseReader.swift in Sources */,
-				564448541EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */,
 				567B88C21EE95F8500F6112C /* HasOneAssociation.swift in Sources */,
 				5605F1651C672E4000235C62 /* NSNull.swift in Sources */,
 				56CEB5191EAA328900BFAF62 /* FTS5+QueryInterface.swift in Sources */,
@@ -5723,6 +5768,7 @@
 				5657AAB91D107001006283EF /* NSData.swift in Sources */,
 				560D92421C672C3E00F4F92B /* StatementColumnConvertible.swift in Sources */,
 				563A5DE11EFE7C040065F741 /* HasOneLeftJoinedRequest.swift in Sources */,
+				563A5E341EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5531EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B9649D1DA51B4C0002DA19 /* FTS5.swift in Sources */,
 				563A5D5D1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
@@ -5743,6 +5789,7 @@
 				56CEB4F61EAA2EFA00BFAF62 /* RowConvertible.swift in Sources */,
 				56BB6EAE1D3009B100A1CA52 /* SchedulingWatchdog.swift in Sources */,
 				F3BA801A1CFB2876003DC1BA /* StatementColumnConvertible.swift in Sources */,
+				563A5E4C1EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */,
 				56D1215F1ED34978001347D2 /* Fixits-0.109.0.swift in Sources */,
 				566475D81D981D5E00FF74B8 /* SQLOperators.swift in Sources */,
 				563A5DBF1EFE7BDE0065F741 /* HasManyIncludingRequest.swift in Sources */,
@@ -5812,7 +5859,6 @@
 				56BF6D3B1DEF47DA006039A3 /* Fixits-0-90-1.swift in Sources */,
 				563A5DDF1EFE7C040065F741 /* HasOneJoinedRequest.swift in Sources */,
 				56B964BE1DA51D0A0002DA19 /* FTS5Pattern.swift in Sources */,
-				564448591EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */,
 				567B88C71EE95F8500F6112C /* HasOneAssociation.swift in Sources */,
 				F3BA80211CFB288C003DC1BA /* NSNull.swift in Sources */,
 				56CEB51E1EAA328900BFAF62 /* FTS5+QueryInterface.swift in Sources */,
@@ -5832,6 +5878,7 @@
 				F3BA800E1CFB2876003DC1BA /* DatabaseQueue.swift in Sources */,
 				F3BA80191CFB2876003DC1BA /* Statement.swift in Sources */,
 				563A5DE61EFE7C040065F741 /* HasOneLeftJoinedRequest.swift in Sources */,
+				563A5E391EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5581EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B964A21DA51B4C0002DA19 /* FTS5.swift in Sources */,
 				563A5D621EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
@@ -5875,6 +5922,7 @@
 				56B14E861D4DAE54000BF4A3 /* RowFromDictionaryLiteralTests.swift in Sources */,
 				56871D5C1EEE63BF006D7CD5 /* BelongsToAssociationLeftJoinedTests.swift in Sources */,
 				566AD8CD1D531BEE002EC1A8 /* TableDefinitionTests.swift in Sources */,
+				563A5E451EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */,
 				5698AC871DA380A20056AF8C /* VirtualTableModuleTests.swift in Sources */,
 				F3BA80D11CFB2FF3003DC1BA /* MutablePersistableTests.swift in Sources */,
 				F3BA80CF1CFB2FEA003DC1BA /* SchedulingWatchdogTests.swift in Sources */,
@@ -5998,6 +6046,7 @@
 				56CEB4F31EAA2EFA00BFAF62 /* RowConvertible.swift in Sources */,
 				56BB6EAB1D3009B100A1CA52 /* SchedulingWatchdog.swift in Sources */,
 				F3BA80761CFB2E55003DC1BA /* StatementColumnConvertible.swift in Sources */,
+				563A5E491EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift in Sources */,
 				56D1215C1ED34978001347D2 /* Fixits-0.109.0.swift in Sources */,
 				566475D51D981D5E00FF74B8 /* SQLOperators.swift in Sources */,
 				563A5DBC1EFE7BDE0065F741 /* HasManyIncludingRequest.swift in Sources */,
@@ -6067,7 +6116,6 @@
 				56BF6D381DEF47DA006039A3 /* Fixits-0-90-1.swift in Sources */,
 				563A5DDC1EFE7C040065F741 /* HasOneJoinedRequest.swift in Sources */,
 				56B964BB1DA51D0A0002DA19 /* FTS5Pattern.swift in Sources */,
-				564448561EF2FA9F00DD2861 /* HasManyThroughJoinedRequest.swift in Sources */,
 				567B88C41EE95F8500F6112C /* HasOneAssociation.swift in Sources */,
 				F3BA807D1CFB2E61003DC1BA /* NSNull.swift in Sources */,
 				56CEB51B1EAA328900BFAF62 /* FTS5+QueryInterface.swift in Sources */,
@@ -6087,6 +6135,7 @@
 				F3BA806A1CFB2E55003DC1BA /* DatabaseQueue.swift in Sources */,
 				F3BA80751CFB2E55003DC1BA /* Statement.swift in Sources */,
 				563A5DE31EFE7C040065F741 /* HasOneLeftJoinedRequest.swift in Sources */,
+				563A5E361EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5551EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B9649F1DA51B4C0002DA19 /* FTS5.swift in Sources */,
 				563A5D5F1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
@@ -6130,6 +6179,7 @@
 				56DAA2D51DE99DAB006E10C8 /* DatabaseCursorTests.swift in Sources */,
 				56871D581EEE63BF006D7CD5 /* BelongsToAssociationLeftJoinedTests.swift in Sources */,
 				F3BA80FB1CFB3021003DC1BA /* StatementArgumentsTests.swift in Sources */,
+				563A5E411EFFC2130065F741 /* HasManyThroughAssociationTests.swift in Sources */,
 				F3BA80EE1CFB3017003DC1BA /* RowAdapterTests.swift in Sources */,
 				F3BA80D31CFB2FF4003DC1BA /* MutablePersistableTests.swift in Sources */,
 				562393751DEE104400A6B01F /* MapCursorTests.swift in Sources */,
