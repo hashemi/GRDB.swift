@@ -47,6 +47,66 @@ extension RowConvertible {
     }
 }
 
+// Support for XXXJoinedRequest and XXXLeftJoinedRequest
+func prepareJoinedPairRequest(
+    _ db: Database,
+    leftQuery: QueryInterfaceSelectQueryDefinition,
+    rightQuery: QueryInterfaceSelectQueryDefinition,
+    joinOperator: SQLJoinOperator,
+    mapping: [(left: String, right: String)],
+    leftScope: String,
+    rightScope: String) throws
+    -> (SelectStatement, RowAdapter?)
+{
+    // TODO: don't alias unless necessary
+    let leftQualifier = SQLSourceQualifier(alias: "left")
+    let rightQualifier = SQLSourceQualifier(alias: "right")
+    
+    // SELECT * FROM left ... -> SELECT left.* FROM left ...
+    let leftQuery = leftQuery.qualified(by: leftQualifier)
+    
+    // SELECT * FROM right ... -> SELECT right.* FROM right ...
+    let rightQuery = rightQuery.qualified(by: rightQualifier)
+    
+    // SELECT left.*, right.*
+    let joinedSelection = leftQuery.selection + rightQuery.selection
+    
+    // ... FROM left JOIN right
+    guard let leftSource = leftQuery.source else { fatalError("Support for sourceless joins is not implemented") }
+    guard let rightSource = rightQuery.source else { fatalError("Support for sourceless joins is not implemented") }
+    let joinedSource = SQLSource.joined(SQLSource.JoinDefinition(
+        joinOp: joinOperator,
+        leftSource: leftSource,
+        rightSource: rightSource,
+        onExpression: rightQuery.whereExpression,
+        mapping: mapping))
+    
+    // ORDER BY left.***, right.***
+    let joinedOrderings = leftQuery.eventuallyReversedOrderings + rightQuery.eventuallyReversedOrderings
+    
+    // Define row scopes
+    let leftCount = try leftQuery.numberOfColumns(db)
+    let rightCount = try rightQuery.numberOfColumns(db)
+    let joinedAdapter = ScopeAdapter([
+        // Left columns start at index 0
+        leftScope: RangeRowAdapter(0..<leftCount),
+        // Right columns start after left columns
+        rightScope: RangeRowAdapter(leftCount..<(leftCount + rightCount))])
+    
+    return try QueryInterfaceSelectQueryDefinition(
+        select: joinedSelection,
+        isDistinct: leftQuery.isDistinct,
+        from: joinedSource,
+        filter: leftQuery.whereExpression,
+        groupBy: leftQuery.groupByExpressions,
+        orderBy: joinedOrderings,
+        isReversed: false,
+        having: leftQuery.havingExpression,
+        limit: leftQuery.limit)
+        .adapted { _ in joinedAdapter }
+        .prepare(db)
+}
+
 // MARK: - Inner Join (RowConvertible, RowConvertible)
 
 extension JoinedPairDecoder where LeftDecoder: RowConvertible, RightDecoder: RowConvertible {
