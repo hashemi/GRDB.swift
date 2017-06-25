@@ -1,4 +1,4 @@
-public struct HasOneAssociation<Left: TableMapping, Right: TableMapping> : Association {
+public struct HasOneAssociation<Left: TableMapping, Right: TableMapping> : AssociationToOne {
     public typealias LeftAssociated = Left
     public typealias RightAssociated = Right
     

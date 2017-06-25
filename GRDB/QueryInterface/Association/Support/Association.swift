@@ -5,3 +5,6 @@ public protocol Association {
     var rightRequest: QueryInterfaceRequest<RightAssociated> { get }
     func mapping(_ db: Database) throws -> [(left: String, right: String)]
 }
+
+public protocol AssociationToOne : Association {
+}
