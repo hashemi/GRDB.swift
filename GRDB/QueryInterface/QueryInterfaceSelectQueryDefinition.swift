@@ -59,26 +59,7 @@ struct QueryInterfaceSelectQueryDefinition {
             sql += " HAVING " + havingExpression.expressionSQL(&arguments)
         }
         
-        var orderings = self.orderings
-        if isReversed {
-            if orderings.isEmpty {
-                // https://www.sqlite.org/lang_createtable.html#rowid
-                //
-                // > The rowid value can be accessed using one of the special
-                // > case-independent names "rowid", "oid", or "_rowid_" in
-                // > place of a column name. If a table contains a user defined
-                // > column named "rowid", "oid" or "_rowid_", then that name
-                // > always refers the explicitly declared column and cannot be
-                // > used to retrieve the integer rowid value.
-                //
-                // Here we assume that rowid is not a custom column.
-                // TODO: support for user-defined rowid column.
-                // TODO: support for WITHOUT ROWID tables.
-                orderings = [Column.rowID.desc]
-            } else {
-                orderings = orderings.map { $0.reversed }
-            }
-        }
+        let orderings = self.eventuallyReversedOrderings
         if !orderings.isEmpty {
             sql += " ORDER BY " + orderings.map { $0.orderingTermSQL(&arguments) }.joined(separator: ", ")
         }
@@ -122,12 +103,69 @@ struct QueryInterfaceSelectQueryDefinition {
         return statement
     }
     
+    func numberOfColumns(_ db: Database) throws -> Int {
+        return try selection.reduce(0) { try $0 + $1.numberOfColumns(db) }
+    }
+    
+    var eventuallyReversedOrderings: [SQLOrderingTerm] {
+        if isReversed {
+            if orderings.isEmpty {
+                // https://www.sqlite.org/lang_createtable.html#rowid
+                //
+                // > The rowid value can be accessed using one of the special
+                // > case-independent names "rowid", "oid", or "_rowid_" in
+                // > place of a column name. If a table contains a user defined
+                // > column named "rowid", "oid" or "_rowid_", then that name
+                // > always refers the explicitly declared column and cannot be
+                // > used to retrieve the integer rowid value.
+                //
+                // Here we assume that rowid is not a custom column.
+                // TODO: support for user-defined rowid column.
+                // TODO: support for WITHOUT ROWID tables.
+                return [Column.rowID.desc]
+            } else {
+                return orderings.map { $0.reversed }
+            }
+        } else {
+            return orderings
+        }
+    }
+    
     /// Remove ordering
-    var unorderedQuery: QueryInterfaceSelectQueryDefinition {
+    var unordered: QueryInterfaceSelectQueryDefinition {
         var query = self
         query.isReversed = false
         query.orderings = []
         return query
+    }
+    
+    func qualified(by qualifier: SQLSourceQualifier) -> QueryInterfaceSelectQueryDefinition {
+        let qualifiedSource: SQLSource?
+        if let source = source {
+            qualifiedSource = source.qualified(by: qualifier)
+        } else {
+            qualifiedSource = nil
+        }
+        
+        let appliedQualifier = qualifiedSource?.qualifier! ?? qualifier
+        let selection = self.selection
+        let qualifiedSelection = selection.map { $0.qualified(by: appliedQualifier) }
+        let qualifiedFilter = whereExpression.map { $0.qualified(by: appliedQualifier) }
+        let qualifiedGroupByExpressions = groupByExpressions.map { $0.qualified(by: appliedQualifier) }
+        let qualifiedOrderings = eventuallyReversedOrderings.map { $0.qualified(by: appliedQualifier) } // "ORDER BY rowid DESC" has been qualified
+        let qualifiedReversed = false // because qualifiedOrderings has been built on eventuallyReversedOrderings
+        let qualifiedHavingExpression = havingExpression?.qualified(by: appliedQualifier)
+        
+        return QueryInterfaceSelectQueryDefinition(
+            select: qualifiedSelection,
+            isDistinct: isDistinct,
+            from: qualifiedSource,
+            filter: qualifiedFilter,
+            groupBy: qualifiedGroupByExpressions,
+            orderBy: qualifiedOrderings,
+            isReversed: qualifiedReversed,
+            having: qualifiedHavingExpression,
+            limit: limit)
     }
 }
 
@@ -158,10 +196,10 @@ extension QueryInterfaceSelectQueryDefinition : Request {
         
         assert(!selection.isEmpty)
         if selection.count == 1 {
-            guard let count = self.selection[0].count(distinct: isDistinct) else {
+            guard let count = selection[0].count(distinct: isDistinct) else {
                 return trivialCountQuery
             }
-            var countQuery = unorderedQuery
+            var countQuery = unordered
             countQuery.isDistinct = false
             countQuery.selection = [count.sqlSelectable]
             return countQuery
@@ -175,7 +213,7 @@ extension QueryInterfaceSelectQueryDefinition : Request {
             // SELECT expr1, expr2, ... FROM tableName ...
             // ->
             // SELECT COUNT(*) FROM tableName ...
-            var countQuery = unorderedQuery
+            var countQuery = unordered
             countQuery.selection = [SQLExpressionCount(SQLStar())]
             return countQuery
         }
@@ -185,29 +223,157 @@ extension QueryInterfaceSelectQueryDefinition : Request {
     private var trivialCountQuery: QueryInterfaceSelectQueryDefinition {
         return QueryInterfaceSelectQueryDefinition(
             select: [SQLExpressionCount(SQLStar())],
-            from: .query(query: unorderedQuery, alias: nil))
+            from: .query(query: unordered, qualifier: nil))
     }
 }
 
+enum SQLJoinOperator : String {
+    case join = "JOIN"
+    case leftJoin = "LEFT JOIN"
+}
+
 indirect enum SQLSource {
-    case table(name: String, alias: String?)
-    case query(query: QueryInterfaceSelectQueryDefinition, alias: String?)
+    case table(name: String, qualifier: SQLSourceQualifier?)
+    case query(query: QueryInterfaceSelectQueryDefinition, qualifier: SQLSourceQualifier?)
+    case joined(JoinDefinition)
     
+    struct JoinDefinition {
+        let joinOp: SQLJoinOperator
+        let leftSource: SQLSource
+        let rightSource: SQLSource
+        let onExpression: SQLExpression?
+        let mapping: [(left: String, right: String)]
+        
+        func qualified(by qualifier: SQLSourceQualifier) -> JoinDefinition {
+            return JoinDefinition(
+                joinOp: joinOp,
+                leftSource: leftSource.qualified(by: qualifier),
+                rightSource: rightSource,
+                onExpression: onExpression,
+                mapping: mapping)
+        }
+        
+        func sourceSQL(_ arguments: inout StatementArguments?) -> String {
+            // left JOIN right ON ...
+            var sql = ""
+            sql += leftSource.sourceSQL(&arguments)
+            sql += " \(joinOp.rawValue) "
+            sql += rightSource.sourceSQL(&arguments)
+            
+            // We're generating sql: sources must have been qualified by now
+            let leftQualifier = leftSource.qualifier!
+            let rightQualifier = rightSource.qualifier!
+            
+            var onClauses = mapping
+                .map { arrow -> SQLExpression in
+                    // right.leftId == left.id
+                    let leftColumn = Column(arrow.left).qualified(by: leftQualifier)
+                    let rightColumn = Column(arrow.right).qualified(by: rightQualifier)
+                    return (rightColumn == leftColumn) }
+            
+            if let onExpression = onExpression {
+                // right.name = 'foo'
+                onClauses.append(onExpression)
+            }
+            
+            if !onClauses.isEmpty {
+                let onClause = onClauses.suffix(from: 1).reduce(onClauses.first!, &&)
+                sql += " ON " + onClause.expressionSQL(&arguments)
+            }
+            
+            return sql
+        }
+    }
+    
+    var qualifier: SQLSourceQualifier? {
+        switch self {
+        case .table(_, let qualifier): return qualifier
+        case .query(_, let qualifier): return qualifier
+        case .joined(let joinDef): return joinDef.leftSource.qualifier
+        }
+    }
+    
+    /// An alias or an actual table name
+    var qualifiedName: String? {
+        switch self {
+        case .table(let tableName, let qualifier):
+            return qualifier?.qualifiedName ?? tableName
+        case .query(_, let qualifier):
+            return qualifier?.qualifiedName
+        case .joined(let joinDefinition):
+            return joinDefinition.leftSource.qualifiedName
+        }
+    }
+    
+    /// An actual table name, not an alias
+    var tableName: String? {
+        switch self {
+        case .table(let tableName, _):
+            return tableName
+        case .query(let query, _):
+            return query.source?.tableName
+        case .joined(let joinDefinition):
+            return joinDefinition.leftSource.tableName
+        }
+    }
+
     func sourceSQL(_ arguments: inout StatementArguments?) -> String {
         switch self {
-        case .table(let table, let alias):
-            if let alias = alias {
+        case .table(let table, let qualifier):
+            if let alias = qualifier?.alias {
                 return table.quotedDatabaseIdentifier + " AS " + alias.quotedDatabaseIdentifier
             } else {
                 return table.quotedDatabaseIdentifier
             }
-        case .query(let query, let alias):
-            if let alias = alias {
+        case .query(let query, let qualifier):
+            if let alias = qualifier?.alias {
                 return "(" + query.sql(&arguments) + ") AS " + alias.quotedDatabaseIdentifier
             } else {
                 return "(" + query.sql(&arguments) + ")"
             }
+        case .joined(let joinDef):
+            return joinDef.sourceSQL(&arguments)
         }
+    }
+    
+    func qualified(by qualifier: SQLSourceQualifier) -> SQLSource {
+        switch self {
+        case .table(let tableName, let oldQualifier):
+            if oldQualifier == nil {
+                return .table(
+                    name: tableName,
+                    qualifier: SQLSourceQualifier(tableName: tableName, alias: qualifier.alias))
+            } else {
+                return self
+            }
+        case .query(let query, let oldQualifier):
+            if oldQualifier == nil {
+                return .query(query: query, qualifier: qualifier)
+            } else {
+                return self
+            }
+        case .joined(let joinDef):
+            return .joined(joinDef.qualified(by: qualifier))
+        }
+    }
+}
+
+public class SQLSourceQualifier {
+    let tableName: String?
+    let alias: String?
+    
+    init(alias: String?) {
+        self.tableName = nil
+        self.alias = alias
+    }
+    
+    init(tableName: String, alias: String?) {
+        self.tableName = tableName
+        self.alias = alias
+    }
+    
+    var qualifiedName: String? {
+        return alias ?? tableName
     }
 }
 

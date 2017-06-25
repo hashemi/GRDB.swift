@@ -336,6 +336,11 @@ extension DatabaseValue : SQLExpression {
     }
     
     /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
+    public func qualified(by qualifier: SQLSourceQualifier) -> DatabaseValue {
+        return self
+    }
+    
+    /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
     public var negated: SQLExpression {
         switch storage {
         case .null:

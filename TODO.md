@@ -15,6 +15,14 @@
 - [ ] ColumnDefinition.indexed()
 - [ ] Write regression tests for #156 and #157
 
+Associations
+
+- [ ] Index a column right at its creation: `create(table: "...") { t in t.column("name", .text).indexed() }`
+- [ ] has_many :through
+- [ ] has_one :through
+- [ ] has_and_belongs_to_many
+- [ ] Recursive associations
+
 Not sure
 
 - [ ] Support for resource values (see https://developer.apple.com/library/ios/qa/qa1719/_index.html)

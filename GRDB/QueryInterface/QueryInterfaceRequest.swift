@@ -272,7 +272,7 @@ extension TableMapping {
         } else {
             selection = [SQLStar()]
         }
-        return QueryInterfaceRequest(query: QueryInterfaceSelectQueryDefinition(select: selection, from: .table(name: databaseTableName, alias: nil)))
+        return QueryInterfaceRequest(query: QueryInterfaceSelectQueryDefinition(select: selection, from: .table(name: databaseTableName, qualifier: nil)))
     }
     
     /// Creates a QueryInterfaceRequest which fetches no record.

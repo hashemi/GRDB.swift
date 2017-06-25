@@ -1,15 +1,28 @@
 // MARK: - SQLStar
 
 struct SQLStar : SQLSelectable {
+    let qualifier: SQLSourceQualifier?
+    
+    init(qualifier: SQLSourceQualifier? = nil) {
+        self.qualifier = qualifier
+    }
+    
     func resultColumnSQL(_ arguments: inout StatementArguments?) -> String {
-        return "*"
+        if let alias = qualifier?.alias {
+            return "\(alias.quotedDatabaseIdentifier).*"
+        } else {
+            return "*"
+        }
     }
     
     func countedSQL(_ arguments: inout StatementArguments?) -> String {
+        GRDBPrecondition(qualifier == nil, "Not implemented")
         return "*"
     }
     
     func count(distinct: Bool) -> SQLCount? {
+        GRDBPrecondition(qualifier == nil, "Not implemented")
+        
         // SELECT DISTINCT * FROM tableName ...
         guard !distinct else {
             return nil
@@ -19,6 +32,21 @@ struct SQLStar : SQLSelectable {
         // ->
         // SELECT COUNT(*) FROM tableName ...
         return .star
+    }
+    
+    func numberOfColumns(_ db: Database) throws -> Int {
+        guard let tableName = qualifier?.tableName else {
+            fatalError("GRDB bug: can't count number of columns in unknown table")
+        }
+        return try db.columnCount(in: tableName)
+    }
+    
+    func qualified(by qualifier: SQLSourceQualifier) -> SQLStar {
+        if self.qualifier == nil {
+            return SQLStar(qualifier: qualifier)
+        } else {
+            return self
+        }
     }
 }
 
@@ -44,5 +72,13 @@ struct SQLAliasedExpression : SQLSelectable {
     
     func count(distinct: Bool) -> SQLCount? {
         return expression.count(distinct: distinct)
+    }
+    
+    func qualified(by qualifier: SQLSourceQualifier) -> SQLAliasedExpression {
+        return SQLAliasedExpression(expression.qualified(by: qualifier), alias: alias)
+    }
+    
+    func numberOfColumns(_ db: Database) throws -> Int {
+        return 1
     }
 }

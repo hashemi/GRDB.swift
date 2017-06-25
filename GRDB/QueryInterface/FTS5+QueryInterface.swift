@@ -13,16 +13,13 @@
         /// If the search pattern is nil, the request does not match any
         /// database row.
         public func matching(_ pattern: FTS5Pattern?) -> QueryInterfaceRequest<T> {
-            switch query.source {
-            case .table(let name, let alias)?:
-                if let pattern = pattern {
-                    return filter(SQLExpressionBinary(.match, Column(alias ?? name), pattern))
-                } else {
-                    return filter(false)
-                }
-            default:
-                // Programmer error
+            guard let qualifiedName = query.source?.qualifiedName else {
                 fatalError("fts5 match requires a table")
+            }
+            if let pattern = pattern {
+                return filter(SQLExpressionBinary(.match, Column(qualifiedName), pattern))
+            } else {
+                return filter(false)
             }
         }
     }

@@ -62,6 +62,10 @@ public class Statement {
     }
     
     deinit {
+        // TODO: finalize statements in the correct queue.
+        // We close databases in the correct queue in from SerializedDatabase.deinit
+        // But we don't take care of statements. See https://github.com/ccgus/fmdb/issues/553#issuecomment-308958835
+        // for more information.
         sqlite3_finalize(sqliteStatement)
     }
     
@@ -233,7 +237,7 @@ public final class SelectStatement : Statement {
         return Dictionary(keyValueSequence: self.columnNames.enumerated().map { ($1.lowercased(), $0) }.reversed())
     }()
     
-    /// Returns the index of the leftmost column named `name`, in a
+    /// The index of the leftmost column named `name`, in a
     /// case-insensitive way.
     func index(ofColumn name: String) -> Int? {
         return columnIndexes[name.lowercased()]
@@ -325,6 +329,15 @@ public final class DatabaseCursor<Element> : Cursor {
         self.statement = statement
         self.sqliteStatement = statement.sqliteStatement
         self.element = element
+    }
+    
+    /// The index of the leftmost column named `name`, in a
+    /// case-insensitive way.
+    ///
+    ///     let cursor = try Row.fetchCursor(db, "SELECT a, b FROM t")
+    ///     cursor.statementIndex(ofColumn: "b") // 1
+    func statementIndex(ofColumn column: String) -> Int? {
+        return statement.index(ofColumn: column)
     }
     
     /// Advances to the next element and returns it, or `nil` if no next element

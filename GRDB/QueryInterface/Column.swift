@@ -8,9 +8,18 @@ public struct Column {
     /// The name of the column
     public let name: String
     
+    /// The eventual qualifier
+    let qualifier: SQLSourceQualifier?
+    
     /// Creates a column given its name.
     public init(_ name: String) {
         self.name = name
+        self.qualifier = nil
+    }
+    
+    init(_ name: String, qualifier: SQLSourceQualifier) {
+        self.name = name
+        self.qualifier = qualifier
     }
 }
 
@@ -18,6 +27,19 @@ extension Column : SQLExpression {
     
     /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
     public func expressionSQL(_ arguments: inout StatementArguments?) -> String {
-        return name.quotedDatabaseIdentifier
+        if let alias = qualifier?.alias {
+            return "\(alias.quotedDatabaseIdentifier).\(name.quotedDatabaseIdentifier)"
+        } else {
+            return name.quotedDatabaseIdentifier
+        }
+    }
+    
+    /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
+    public func qualified(by qualifier: SQLSourceQualifier) -> Column {
+        if self.qualifier == nil {
+            return Column(name, qualifier: qualifier)
+        } else {
+            return self
+        }
     }
 }

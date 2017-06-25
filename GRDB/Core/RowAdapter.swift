@@ -389,6 +389,11 @@ struct AdapterRowImpl : RowImpl {
         return base.isFetched
     }
     
+    func containsNonNullValues(at indexes: IndexSet) -> Bool {
+        let mappedIndexes = IndexSet(indexes.map { mapping.baseColumnIndex(atMappingIndex: $0) })
+        return base.containsNonNullValues(at: mappedIndexes)
+    }
+    
     func databaseValue(atUncheckedIndex index: Int) -> DatabaseValue {
         return base.value(atIndex: mapping.baseColumnIndex(atMappingIndex: index))
     }

@@ -116,6 +116,57 @@ public func == (lhs: SQLSpecificExpressible, rhs: SQLSpecificExpressible) -> SQL
     return SQLExpressionBinary(.equal, lhs.sqlExpression, rhs.sqlExpression)
 }
 
+// TODO: problem is: (x == y) should output (x IS NULL) when y is DatabaseValue.null. Replace with some runtime checks.
+/// An SQL expression that compares two expressions with the `=` SQL operator.
+///
+///     // name = 'Arthur'
+///     Column("name") == "name".databaseValue
+///
+/// When the right operand is NULL, `IS NULL` is used instead.
+///
+///     // name IS NULL
+///     Column("name") == DatabaseValue.null
+public func == (lhs: SQLSpecificExpressible, rhs: DatabaseValue) -> SQLExpression {
+    // TODO: test
+    // TODO: add func !=
+    return lhs == rhs.storage.value
+}
+
+// TODO: problem is: (x == y) should output (x IS NULL) when y is DatabaseValue.null. Replace with some runtime checks.
+/// An SQL expression that compares two expressions with the `=` SQL operator.
+///
+///     // name = 'Arthur'
+///     Column("name") == "name".databaseValue
+///
+/// When the right operand is NULL, `IS NULL` is used instead.
+///
+///     // name IS NULL
+///     Column("name") == DatabaseValue.null
+public func == (lhs: DatabaseValue, rhs: SQLSpecificExpressible) -> SQLExpression {
+    // TODO: test
+    // TODO: add func !=
+    return lhs.storage.value == rhs
+}
+
+/// TODO: is it equivalent to SQLite row value comparison?
+func == <T>(lhs: [T], rhs: RowValue) -> SQLExpression where T: SQLSpecificExpressible {
+    // TODO: test
+    // TODO: add func !=
+    // TODO: add reversed operator
+    GRDBPrecondition(lhs.count == rhs.count, "non matching count")
+    if lhs.isEmpty {
+        return false.sqlExpression
+    }
+    return zip(lhs, rhs.dbValues).reduce(nil, { (expression: SQLExpression?, pair) in
+        let (column, dbValue) = pair
+        if let expression = expression {
+            return expression && (column == dbValue)
+        } else {
+            return (column == dbValue)
+        }
+    })!
+}
+
 /// An SQL expression that compares two expressions with the `<>` SQL operator.
 ///
 ///     // name <> 'Arthur'
