@@ -1,5 +1,12 @@
 // Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
-public struct HasManyThroughAnnotationHavingRequest<MiddleAssociation: Association, RightAssociation: Association, Annotation> where MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated, RightAssociation: RightRequestDerivable, RightAssociation.RightRowDecoder == RightAssociation.RightAssociated {
+public struct HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAssociation, Annotation>
+    where
+    MiddleAssociation: Association,
+    RightAssociation: Association,
+    RightAssociation: RightRequestDerivable,
+    RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated,
+    RightAssociation.RightAssociated == RightAssociation.RightRowDecoder
+{
     var leftRequest: QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
     let annotationHavingExpression: HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation>
 }

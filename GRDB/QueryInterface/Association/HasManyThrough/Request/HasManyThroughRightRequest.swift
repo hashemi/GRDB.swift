@@ -8,15 +8,16 @@ extension HasManyThroughRightRequest : TypedRequest {
     public typealias RowDecoder = RightAssociation.RightAssociated
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
-        let middleMapping = try association.middleAssociation.mapping(db)
-        let container = PersistenceContainer(record)
-        let rowValue = RowValue(middleMapping.map { container[caseInsensitive: $0.left]?.databaseValue ?? .null })
-        
         var middleQualifier = SQLSourceQualifier()
         var rightQualifier = SQLSourceQualifier()
         
         // SELECT * FROM middle ... -> SELECT middle.* FROM middle WHERE middle.leftId = left.id ...
-        let middleQuery = association.middleAssociation.rightRequest.filter(middleMapping.map { Column($0.right) } == rowValue).query.qualified(by: &middleQualifier)
+        let middleMapping = try association.middleAssociation.mapping(db)
+        let container = PersistenceContainer(record)
+        let rowValue = RowValue(middleMapping.map { container[caseInsensitive: $0.left]?.databaseValue ?? .null })
+        let middleQuery = association.middleAssociation.rightRequest
+            .filter(middleMapping.map { Column($0.right) } == rowValue)
+            .query.qualified(by: &middleQualifier)
         
         // SELECT * FROM right ... -> SELECT right.* FROM right ...
         let rightQuery = association.rightAssociation.rightRequest.query.qualified(by: &rightQualifier)
