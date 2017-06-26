@@ -6,15 +6,9 @@ public struct HasManyAssociation<Left: TableMapping, Right: TableMapping> : Asso
     public let rightRequest: QueryInterfaceRequest<Right>
     
     public func mapping(_ db: Database) throws -> [(left: String, right: String)] {
-        let mappings = try joinMappingRequest.fetchAll(db)
-        switch mappings.count {
-        case 0:
-            fatalError("Could not infer foreign key from \(Right.databaseTableName) to \(Left.databaseTableName)")
-        case 1:
-            return mappings[0].map { (left: $0.destination, right: $0.origin) }
-        default:
-            fatalError("Ambiguous foreign key from \(Right.databaseTableName) to \(Left.databaseTableName)")
-        }
+        return try joinMappingRequest
+            .fetchMapping(db)
+            .map { (left: $0.destination, right: $0.origin) }
     }
 }
 

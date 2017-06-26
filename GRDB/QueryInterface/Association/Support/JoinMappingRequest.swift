@@ -18,13 +18,13 @@ struct JoinMappingRequest {
         self.destinationColumns = destinationColumns
     }
     
-    func fetchAll(_ db: Database) throws -> [[(origin: String, destination: String)]] {
+    func fetchMapping(_ db: Database) throws -> [(origin: String, destination: String)] {
         if let originColumns = originColumns, let destinationColumns = destinationColumns {
             // Total information: no need to query the database schema.
             GRDBPrecondition(originColumns.count == destinationColumns.count, "Number of columns don't match")
-            return [zip(originColumns, destinationColumns).map {
+            return zip(originColumns, destinationColumns).map {
                 (origin: $0, destination: $1)
-                }]
+            }
         }
         
         // Incomplete information: let's look for schema foreign keys
@@ -49,8 +49,15 @@ struct JoinMappingRequest {
             return true
         }
         
-        guard foreignKeys.isEmpty else {
-            return foreignKeys.map { $0.mapping }
+        // Matching foreign key(s) found
+        if let foreignKey = foreignKeys.first {
+            if foreignKeys.count == 1 {
+                // Non-ambiguous
+                return foreignKey.mapping
+            } else {
+                // Ambiguous: can't choose
+                fatalError("Ambiguous foreign key from \(originTable) to \(destinationTable)")
+            }
         }
         
         // No matching foreign key found: use the destination primary key
@@ -62,12 +69,12 @@ struct JoinMappingRequest {
                 destinationColumns = [Column.rowID.name]
             }
             if (originColumns.count == destinationColumns.count) {
-                return [zip(originColumns, destinationColumns).map {
+                return zip(originColumns, destinationColumns).map {
                     (origin: $0, destination: $1)
-                    }]
+                }
             }
         }
         
-        return []
+        fatalError("Could not infer foreign key from \(originTable) to \(destinationTable)")
     }
 }
