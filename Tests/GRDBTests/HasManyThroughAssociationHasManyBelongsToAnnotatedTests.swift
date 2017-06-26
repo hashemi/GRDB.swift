@@ -40,7 +40,7 @@ class HasManyThroughAssociationHasManyBelongsToAnnotatedTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                // filter before leftJoined
+                // filter before
                 let graph = try Country
                     .filter(Column("code") != "FR")
                     .annotated(with: Country.citizens.count)
@@ -55,7 +55,7 @@ class HasManyThroughAssociationHasManyBelongsToAnnotatedTests: GRDBTestCase {
             }
             
             do {
-                // filter after leftJoined
+                // filter after
                 let graph = try Country
                     .annotated(with: Country.citizens.count)
                     .filter(Column("code") != "FR")

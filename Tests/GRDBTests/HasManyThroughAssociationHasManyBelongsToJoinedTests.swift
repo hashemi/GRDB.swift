@@ -40,7 +40,7 @@ class HasManyThroughAssociationHasManyBelongsToJoinedTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                // filter before joined
+                // filter before
                 let graph = try Country
                     .filter(Column("code") != "FR")
                     .joined(with: Country.citizens)
@@ -55,7 +55,7 @@ class HasManyThroughAssociationHasManyBelongsToJoinedTests: GRDBTestCase {
             }
             
             do {
-                // filter after joined
+                // filter after
                 let graph = try Country
                     .joined(with: Country.citizens)
                     .filter(Column("code") != "FR")

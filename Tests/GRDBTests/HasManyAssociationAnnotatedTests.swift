@@ -44,7 +44,7 @@ class HasManyAssociationAnnotatedTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                // filter before leftJoined
+                // filter before
                 let graph = try Author
                     .filter(Column("birthYear") >= 1900)
                     .annotated(with: Author.books.count)
@@ -60,7 +60,7 @@ class HasManyAssociationAnnotatedTests: GRDBTestCase {
             }
             
             do {
-                // filter after leftJoined
+                // filter after
                 let graph = try Author
                     .annotated(with: Author.books.count)
                     .filter(Column("birthYear") >= 1900)

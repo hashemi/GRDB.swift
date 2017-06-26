@@ -43,7 +43,7 @@ class BelongsToAssociationLeftJoinedTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                // filter before leftJoined
+                // filter before
                 let graph = try Book
                     .filter(Column("year") < 2000)
                     .leftJoined(with: Book.author)
@@ -61,7 +61,7 @@ class BelongsToAssociationLeftJoinedTests: GRDBTestCase {
             }
             
             do {
-                // filter after leftJoined
+                // filter after
                 let graph = try Book
                     .leftJoined(with: Book.author)
                     .filter(Column("year") < 2000)

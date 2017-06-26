@@ -47,7 +47,7 @@ class HasManyAssociationJoinedTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                // filter before joined
+                // filter before
                 let graph = try Author
                     .filter(Column("birthYear") >= 1900)
                     .joined(with: Author.books)
@@ -67,7 +67,7 @@ class HasManyAssociationJoinedTests: GRDBTestCase {
             }
             
             do {
-                // filter after joined
+                // filter after
                 let graph = try Author
                     .joined(with: Author.books)
                     .filter(Column("birthYear") >= 1900)

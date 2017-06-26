@@ -37,7 +37,7 @@ class HasOneAssociationJoinedTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                // filter before joined
+                // filter before
                 let graph = try Country
                     .filter(Column("code") != "FR")
                     .joined(with: Country.profile)
@@ -52,7 +52,7 @@ class HasOneAssociationJoinedTests: GRDBTestCase {
             }
             
             do {
-                // filter after joined
+                // filter after
                 let graph = try Country
                     .joined(with: Country.profile)
                     .filter(Column("code") != "FR")

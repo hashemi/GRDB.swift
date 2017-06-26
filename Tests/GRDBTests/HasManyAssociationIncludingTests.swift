@@ -52,7 +52,7 @@ class HasManyAssociationIncludingTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                // filter before including
+                // filter before
                 let graph = try Author
                     .filter(Column("birthYear") >= 1900)
                     .including(Author.books)
@@ -78,7 +78,7 @@ class HasManyAssociationIncludingTests: GRDBTestCase {
             }
             
             do {
-                // filter after including
+                // filter after
                 let graph = try Author
                     .including(Author.books)
                     .filter(Column("birthYear") >= 1900)

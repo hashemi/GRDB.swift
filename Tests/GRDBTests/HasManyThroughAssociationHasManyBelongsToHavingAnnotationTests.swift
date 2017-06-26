@@ -39,7 +39,7 @@ class HasManyThroughAssociationHasManyBelongsToHavingAnnotationTests: GRDBTestCa
         
         try dbQueue.inDatabase { db in
             do {
-                // filter before leftJoined
+                // filter before
                 let graph = try Country
                     .filter(Column("code") != "FR")
                     .filter(Country.citizens.count > 0)
@@ -53,7 +53,7 @@ class HasManyThroughAssociationHasManyBelongsToHavingAnnotationTests: GRDBTestCa
             }
             
             do {
-                // filter after leftJoined
+                // filter after
                 let graph = try Country
                     .filter(Country.citizens.count > 0)
                     .filter(Column("code") != "FR")
