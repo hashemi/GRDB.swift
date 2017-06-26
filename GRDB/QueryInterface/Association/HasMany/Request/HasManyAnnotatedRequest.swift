@@ -27,7 +27,7 @@ extension HasManyAnnotatedRequest : TypedRequest {
         // SELECT left.*, right.annotation
         let joinedSelection = try leftQuery.selection + [annotation.expression(db).qualified(by: rightQualifier)]
         
-        // ... FROM left JOIN right
+        // ... FROM left LEFT JOIN right
         guard let leftSource = leftQuery.source else { fatalError("Support for sourceless joins is not implemented") }
         guard let rightSource = rightQuery.source else { fatalError("Support for sourceless joins is not implemented") }
         let joinedSource = try SQLSource.joined(SQLSource.JoinDefinition(

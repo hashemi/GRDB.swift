@@ -3496,12 +3496,12 @@
 			isa = PBXGroup;
 			children = (
 				56D8B9381EF2895F0037BBD5 /* HasManyAssociationAnnotatedTests.swift */,
+				563A5D4B1EFD87110065F741 /* HasManyAssociationHavingAnnotationTests.swift */,
 				567B88191EE5CC1C00F6112C /* HasManyAssociationIncludingTests.swift */,
 				56A2CDCA1EE82D1A004B57B4 /* HasManyAssociationJoinedTests.swift */,
 				56A2CDEA1EE85F77004B57B4 /* HasManyAssociationLeftJoinedTests.swift */,
 				567B883A1EE728E900F6112C /* HasManyAssociationMutablePersistableTests.swift */,
 				567B88251EE7248400F6112C /* HasManyAssociationTests.swift */,
-				563A5D4B1EFD87110065F741 /* HasManyAssociationHavingAnnotationTests.swift */,
 			);
 			name = HasMany;
 			sourceTree = "<group>";
