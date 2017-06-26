@@ -269,22 +269,14 @@ indirect enum SQLSource {
                 onClauses.append(onExpression)
             }
             
-            if !onClauses.isEmpty {
-                let onClause = onClauses.suffix(from: 1).reduce(onClauses.first!, &&)
+            if let first = onClauses.first {
+                let onClause = onClauses.suffix(from: 1).reduce(first, &&)
                 sql += " ON " + onClause.expressionSQL(&arguments)
             }
             
             return sql
         }
     }
-    
-//    var qualifier: SQLSourceQualifier? {
-//        switch self {
-//        case .table(_, let qualifier): return qualifier
-//        case .query(_, let qualifier): return qualifier
-//        case .joined(let joinDef): return joinDef.leftSource.qualifier
-//        }
-//    }
     
     var leftQualifier: SQLSourceQualifier? {
         switch self {
