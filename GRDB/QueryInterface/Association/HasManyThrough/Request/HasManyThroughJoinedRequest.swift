@@ -79,7 +79,7 @@ extension HasManyThroughJoinedRequest : TypedRequest {
             isReversed: false,
             having: leftQuery.havingExpression,
             limit: leftQuery.limit)
-            .adapted { _ in joinedAdapter }
+            .adapted(joinedAdapter)
             .prepare(db)
     }
 }

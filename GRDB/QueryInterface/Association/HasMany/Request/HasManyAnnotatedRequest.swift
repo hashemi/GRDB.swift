@@ -67,7 +67,7 @@ extension HasManyAnnotatedRequest : TypedRequest {
             isReversed: leftQuery.isReversed,
             having: leftQuery.havingExpression,
             limit: leftQuery.limit)
-            .adapted { _ in joinedAdapter }
+            .adapted(joinedAdapter)
             .prepare(db)
     }
 }

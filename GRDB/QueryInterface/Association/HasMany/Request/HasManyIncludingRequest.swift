@@ -44,19 +44,12 @@ extension HasManyIncludingRequest where Left: RowConvertible, Right: RowConverti
         
         // SELECT * FROM right WHERE leftId IN (...)
         do {
-            // TODO: pick another technique when association.rightRequest has
-            // distinct/group/having/limit clause.
-            //
-            // TODO: Raw SQL snippets may be used to involve left and right columns at
-            // the same time: consider joins.
-            let rightRequest: QueryInterfaceRequest<Right>
-            if mapping.count == 1 {
-                let leftKeyValues = leftKeys.lazy.map { $0.dbValues[0] }
-                let rightColumn = mapping[0].right
-                rightRequest = association.rightRequest.filter(leftKeyValues.contains(Column(rightColumn)))
-            } else {
-                fatalError("not implemented")
+            guard mapping.count == 1 else {
+                fatalError("not implemented: support for compound foreign keys")
             }
+            let leftKeyValues = leftKeys.lazy.map { $0.dbValues[0] }
+            let rightColumn = mapping[0].right
+            let rightRequest = association.rightRequest.filter(leftKeyValues.contains(Column(rightColumn)))
             let cursor = try Row.fetchCursor(db, rightRequest)
             let foreignKeyIndexes = mapping.map { arrow -> Int in
                 if let index = cursor.statementIndex(ofColumn: arrow.right) {

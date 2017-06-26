@@ -24,25 +24,19 @@ class HasManyThroughAssociationHasManyBelongsToIncludingTests: GRDBTestCase {
                 .fetchAll(db)
             
             XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\"")
-            XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"citizens\" WHERE (\"countryCode\" IN (1, 2, 3, 4))")
+            XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US', 'DE')))")
             
             assertMatch(graph, [
-                (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
-                (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
-                    ["id": 1, "countryCode": 2, "title": "Foe", "year": 1986],
-                    ["id": 2, "countryCode": 2, "title": "Three Stories", "year": 2014],
+                (["code": "FR", "name": "France"], [
+                    ["id": 1, "name": "Arthur"],
+                    ["id": 2, "name": "Barbara"],
                     ]),
-                (["id": 3, "name": "Herman Melville", "birthYear": 1819], [
-                    ["id": 3, "countryCode": 3, "title": "Moby-Dick", "year": 1851],
+                (["code": "US", "name": "United States"], [
+                    ["id": 2, "name": "Barbara"],
+                    ["id": 3, "name": "Craig"],
                     ]),
-                (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
-                    ["id": 4, "countryCode": 4, "title": "New York 2140", "year": 2017],
-                    ["id": 5, "countryCode": 4, "title": "2312", "year": 2012],
-                    ["id": 6, "countryCode": 4, "title": "Blue Mars", "year": 1996],
-                    ["id": 7, "countryCode": 4, "title": "Green Mars", "year": 1994],
-                    ["id": 8, "countryCode": 4, "title": "Red Mars", "year": 1993],
-                    ]),
-                ])
+                (["code": "DE", "name": "Germany"], []),
+            ])
         }
     }
     
@@ -54,26 +48,19 @@ class HasManyThroughAssociationHasManyBelongsToIncludingTests: GRDBTestCase {
             do {
                 // filter before
                 let graph = try Country
-                    .filter(Column("birthYear") >= 1900)
+                    .filter(Column("code") != "FR")
                     .including(Country.citizens)
                     .fetchAll(db)
                 
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" WHERE (\"birthYear\" >= 1900)")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"citizens\" WHERE (\"countryCode\" IN (1, 2, 4))")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" WHERE (\"code\" <> 'FR')")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('US', 'DE')))")
                 
                 assertMatch(graph, [
-                    (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
-                    (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
-                        ["id": 1, "countryCode": 2, "title": "Foe", "year": 1986],
-                        ["id": 2, "countryCode": 2, "title": "Three Stories", "year": 2014],
+                    (["code": "US", "name": "United States"], [
+                        ["id": 2, "name": "Barbara"],
+                        ["id": 3, "name": "Craig"],
                         ]),
-                    (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
-                        ["id": 4, "countryCode": 4, "title": "New York 2140", "year": 2017],
-                        ["id": 5, "countryCode": 4, "title": "2312", "year": 2012],
-                        ["id": 6, "countryCode": 4, "title": "Blue Mars", "year": 1996],
-                        ["id": 7, "countryCode": 4, "title": "Green Mars", "year": 1994],
-                        ["id": 8, "countryCode": 4, "title": "Red Mars", "year": 1993],
-                        ]),
+                    (["code": "DE", "name": "Germany"], []),
                     ])
             }
             
@@ -81,25 +68,18 @@ class HasManyThroughAssociationHasManyBelongsToIncludingTests: GRDBTestCase {
                 // filter after
                 let graph = try Country
                     .including(Country.citizens)
-                    .filter(Column("birthYear") >= 1900)
+                    .filter(Column("code") != "FR")
                     .fetchAll(db)
                 
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" WHERE (\"birthYear\" >= 1900)")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"citizens\" WHERE (\"countryCode\" IN (1, 2, 4))")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" WHERE (\"code\" <> 'FR')")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('US', 'DE')))")
                 
                 assertMatch(graph, [
-                    (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
-                    (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
-                        ["id": 1, "countryCode": 2, "title": "Foe", "year": 1986],
-                        ["id": 2, "countryCode": 2, "title": "Three Stories", "year": 2014],
+                    (["code": "US", "name": "United States"], [
+                        ["id": 2, "name": "Barbara"],
+                        ["id": 3, "name": "Craig"],
                         ]),
-                    (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
-                        ["id": 4, "countryCode": 4, "title": "New York 2140", "year": 2017],
-                        ["id": 5, "countryCode": 4, "title": "2312", "year": 2012],
-                        ["id": 6, "countryCode": 4, "title": "Blue Mars", "year": 1996],
-                        ["id": 7, "countryCode": 4, "title": "Green Mars", "year": 1994],
-                        ["id": 8, "countryCode": 4, "title": "Red Mars", "year": 1993],
-                        ]),
+                    (["code": "DE", "name": "Germany"], []),
                     ])
             }
             
@@ -111,24 +91,18 @@ class HasManyThroughAssociationHasManyBelongsToIncludingTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" ORDER BY \"name\" DESC")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"citizens\" WHERE (\"countryCode\" IN (4, 2, 3, 1))")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('US', 'DE', 'FR')))")
                 
                 assertMatch(graph, [
-                    (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
-                        ["id": 4, "countryCode": 4, "title": "New York 2140", "year": 2017],
-                        ["id": 5, "countryCode": 4, "title": "2312", "year": 2012],
-                        ["id": 6, "countryCode": 4, "title": "Blue Mars", "year": 1996],
-                        ["id": 7, "countryCode": 4, "title": "Green Mars", "year": 1994],
-                        ["id": 8, "countryCode": 4, "title": "Red Mars", "year": 1993],
+                    (["code": "US", "name": "United States"], [
+                        ["id": 2, "name": "Barbara"],
+                        ["id": 3, "name": "Craig"],
                         ]),
-                    (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
-                        ["id": 1, "countryCode": 2, "title": "Foe", "year": 1986],
-                        ["id": 2, "countryCode": 2, "title": "Three Stories", "year": 2014],
+                    (["code": "DE", "name": "Germany"], []),
+                    (["code": "FR", "name": "France"], [
+                        ["id": 1, "name": "Arthur"],
+                        ["id": 2, "name": "Barbara"],
                         ]),
-                    (["id": 3, "name": "Herman Melville", "birthYear": 1819], [
-                        ["id": 3, "countryCode": 3, "title": "Moby-Dick", "year": 1851],
-                        ]),
-                    (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
                     ])
             }
             
@@ -140,24 +114,18 @@ class HasManyThroughAssociationHasManyBelongsToIncludingTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" ORDER BY \"name\" DESC")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"citizens\" WHERE (\"countryCode\" IN (4, 2, 3, 1))")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('US', 'DE', 'FR')))")
                 
                 assertMatch(graph, [
-                    (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
-                        ["id": 4, "countryCode": 4, "title": "New York 2140", "year": 2017],
-                        ["id": 5, "countryCode": 4, "title": "2312", "year": 2012],
-                        ["id": 6, "countryCode": 4, "title": "Blue Mars", "year": 1996],
-                        ["id": 7, "countryCode": 4, "title": "Green Mars", "year": 1994],
-                        ["id": 8, "countryCode": 4, "title": "Red Mars", "year": 1993],
+                    (["code": "US", "name": "United States"], [
+                        ["id": 2, "name": "Barbara"],
+                        ["id": 3, "name": "Craig"],
                         ]),
-                    (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
-                        ["id": 1, "countryCode": 2, "title": "Foe", "year": 1986],
-                        ["id": 2, "countryCode": 2, "title": "Three Stories", "year": 2014],
+                    (["code": "DE", "name": "Germany"], []),
+                    (["code": "FR", "name": "France"], [
+                        ["id": 1, "name": "Arthur"],
+                        ["id": 2, "name": "Barbara"],
                         ]),
-                    (["id": 3, "name": "Herman Melville", "birthYear": 1819], [
-                        ["id": 3, "countryCode": 3, "title": "Moby-Dick", "year": 1851],
-                        ]),
-                    (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
                     ])
             }
         }
@@ -171,53 +139,43 @@ class HasManyThroughAssociationHasManyBelongsToIncludingTests: GRDBTestCase {
             do {
                 // filtered citizens
                 let graph = try Country
-                    .including(Country.citizens.filter(Column("year") < 2000))
+                    .including(Country.citizens.filter(Column("name") != "Craig"))
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\"")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"citizens\" WHERE ((\"year\" < 2000) AND (\"countryCode\" IN (1, 2, 3, 4)))")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US', 'DE'))) WHERE (\"persons\".\"name\" <> 'Craig')")
                 
                 assertMatch(graph, [
-                    (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
-                    (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
-                        ["id": 1, "countryCode": 2, "title": "Foe", "year": 1986],
+                    (["code": "FR", "name": "France"], [
+                        ["id": 1, "name": "Arthur"],
+                        ["id": 2, "name": "Barbara"],
                         ]),
-                    (["id": 3, "name": "Herman Melville", "birthYear": 1819], [
-                        ["id": 3, "countryCode": 3, "title": "Moby-Dick", "year": 1851],
+                    (["code": "US", "name": "United States"], [
+                        ["id": 2, "name": "Barbara"],
                         ]),
-                    (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
-                        ["id": 6, "countryCode": 4, "title": "Blue Mars", "year": 1996],
-                        ["id": 7, "countryCode": 4, "title": "Green Mars", "year": 1994],
-                        ["id": 8, "countryCode": 4, "title": "Red Mars", "year": 1993],
-                        ]),
+                    (["code": "DE", "name": "Germany"], []),
                     ])
             }
             
             do {
                 // ordered citizens
                 let graph = try Country
-                    .including(Country.citizens.order(Column("title")))
+                    .including(Country.citizens.order(Column("name").desc))
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\"")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"citizens\" WHERE (\"countryCode\" IN (1, 2, 3, 4)) ORDER BY \"title\"")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US', 'DE'))) ORDER BY \"persons\".\"name\" DESC")
                 
                 assertMatch(graph, [
-                    (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
-                    (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
-                        ["id": 1, "countryCode": 2, "title": "Foe", "year": 1986],
-                        ["id": 2, "countryCode": 2, "title": "Three Stories", "year": 2014],
+                    (["code": "FR", "name": "France"], [
+                        ["id": 2, "name": "Barbara"],
+                        ["id": 1, "name": "Arthur"],
                         ]),
-                    (["id": 3, "name": "Herman Melville", "birthYear": 1819], [
-                        ["id": 3, "countryCode": 3, "title": "Moby-Dick", "year": 1851],
+                    (["code": "US", "name": "United States"], [
+                        ["id": 3, "name": "Craig"],
+                        ["id": 2, "name": "Barbara"],
                         ]),
-                    (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
-                        ["id": 5, "countryCode": 4, "title": "2312", "year": 2012],
-                        ["id": 6, "countryCode": 4, "title": "Blue Mars", "year": 1996],
-                        ["id": 7, "countryCode": 4, "title": "Green Mars", "year": 1994],
-                        ["id": 4, "countryCode": 4, "title": "New York 2140", "year": 2017],
-                        ["id": 8, "countryCode": 4, "title": "Red Mars", "year": 1993],
-                        ]),
+                    (["code": "DE", "name": "Germany"], []),
                     ])
             }
         }

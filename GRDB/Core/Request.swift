@@ -59,6 +59,13 @@ extension Request {
     /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
     ///
     /// Returns an adapted request.
+    public func adapted(_ adapter: RowAdapter) -> AdaptedRequest<Self> {
+        return AdaptedRequest(self, { _ in adapter })
+    }
+    
+    /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
+    ///
+    /// Returns an adapted request.
     public func adapted(_ adapter: @escaping (Database) throws -> RowAdapter) -> AdaptedRequest<Self> {
         return AdaptedRequest(self, adapter)
     }
@@ -202,6 +209,13 @@ public protocol TypedRequest : Request {
 }
 
 extension TypedRequest {
+    /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
+    ///
+    /// Returns an adapted typed request.
+    public func adapted(_ adapter: RowAdapter) -> AdaptedTypedRequest<Self> {
+        return AdaptedTypedRequest(self, { _ in adapter })
+    }
+
     /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
     ///
     /// Returns an adapted typed request.
