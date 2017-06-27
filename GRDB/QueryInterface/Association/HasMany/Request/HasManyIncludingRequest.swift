@@ -1,26 +1,27 @@
 public struct HasManyIncludingRequest<Left, Right>
     where
-    Left: TableMapping,
+    Left: RequestDerivable,
+    Left: TypedRequest,
+    Left.RowDecoder: TableMapping,
     Right: TableMapping
 {
-    typealias LeftRequest = QueryInterfaceRequest<Left>
-    
-    var leftRequest: LeftRequest
-    let association: HasManyAssociation<Left, Right>
+    var leftRequest: Left
+    let association: HasManyAssociation<Left.RowDecoder, Right>
 }
 
 extension HasManyIncludingRequest : LeftRequestDerivable {
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyIncludingRequest<Left, Right> {
+    typealias LeftRequest = Left
+    func mapLeftRequest(_ transform: (Left) -> (Left)) -> HasManyIncludingRequest<Left, Right> {
         return HasManyIncludingRequest(
             leftRequest: transform(leftRequest),
             association: association)
     }
 }
 
-extension HasManyIncludingRequest where Left: RowConvertible, Right: RowConvertible {
-    public func fetchAll(_ db: Database) throws -> [(left: Left, right: [Right])] {
+extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: RowConvertible {
+    public func fetchAll(_ db: Database) throws -> [(left: Left.RowDecoder, right: [Right])] {
         let mapping = try association.mapping(db)
-        var result: [(left: Left, right: [Right])] = []
+        var result: [(left: Left.RowDecoder, right: [Right])] = []
         var leftKeys: [RowValue] = []
         var resultIndexes : [RowValue: Int] = [:]
         
@@ -31,12 +32,12 @@ extension HasManyIncludingRequest where Left: RowConvertible, Right: RowConverti
                 if let index = cursor.statementIndex(ofColumn: arrow.left) {
                     return index
                 } else {
-                    fatalError("Column \(Left.databaseTableName).\(arrow.left) is not selected")
+                    fatalError("Column \(Left.RowDecoder.databaseTableName).\(arrow.left) is not selected")
                 }
             }
             let enumeratedCursor = cursor.enumerated()
             while let (recordIndex, row) = try enumeratedCursor.next() {
-                let left = Left(row: row)
+                let left = Left.RowDecoder(row: row)
                 let key = RowValue(foreignKeyIndexes.map { row.value(atIndex: $0) })
                 leftKeys.append(key)
                 resultIndexes[key] = recordIndex
@@ -77,13 +78,13 @@ extension HasManyIncludingRequest where Left: RowConvertible, Right: RowConverti
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func including<Right>(_ association: HasManyAssociation<RowDecoder, Right>) -> HasManyIncludingRequest<RowDecoder, Right> where Right: TableMapping {
+    public func including<Right>(_ association: HasManyAssociation<RowDecoder, Right>) -> HasManyIncludingRequest<QueryInterfaceRequest<RowDecoder>, Right> where Right: TableMapping {
         return HasManyIncludingRequest(leftRequest: self, association: association)
     }
 }
 
 extension TableMapping {
-    public static func including<Right>(_ association: HasManyAssociation<Self, Right>) -> HasManyIncludingRequest<Self, Right> where Right: TableMapping {
+    public static func including<Right>(_ association: HasManyAssociation<Self, Right>) -> HasManyIncludingRequest<QueryInterfaceRequest<Self>, Right> where Right: TableMapping {
         return all().including(association)
     }
 }
