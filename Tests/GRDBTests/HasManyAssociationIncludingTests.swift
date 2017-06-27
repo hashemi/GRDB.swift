@@ -222,4 +222,60 @@ class HasManyAssociationIncludingTests: GRDBTestCase {
             }
         }
     }
+    
+    func testHavingAnnotationIncluding() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                // filter before
+                let graph = try Author
+                    .filter(Author.books.count > 1) // TODO: test for another hasMany annotation, and for a hasManyThrough annotation
+                    .including(Author.books)
+                    .fetchAll(db)
+                
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT \"authors\".* FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") GROUP BY \"authors\".\"id\" HAVING (COUNT(\"books\".\"id\") > 1)")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (2, 4))")
+                
+                assertMatch(graph, [
+                    (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
+                        ["id": 1, "authorId": 2, "title": "Foe", "year": 1986],
+                        ["id": 2, "authorId": 2, "title": "Three Stories", "year": 2014],
+                        ]),
+                    (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
+                        ["id": 4, "authorId": 4, "title": "New York 2140", "year": 2017],
+                        ["id": 5, "authorId": 4, "title": "2312", "year": 2012],
+                        ["id": 6, "authorId": 4, "title": "Blue Mars", "year": 1996],
+                        ["id": 7, "authorId": 4, "title": "Green Mars", "year": 1994],
+                        ["id": 8, "authorId": 4, "title": "Red Mars", "year": 1993],
+                        ]),
+                    ])
+            }
+            do {
+                // filter after
+                let graph = try Author
+                    .including(Author.books)
+                    .filter(Author.books.count > 1)
+                    .fetchAll(db)
+                
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT \"authors\".* FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") GROUP BY \"authors\".\"id\" HAVING (COUNT(\"books\".\"id\") > 1)")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (2, 4))")
+                
+                assertMatch(graph, [
+                    (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
+                        ["id": 1, "authorId": 2, "title": "Foe", "year": 1986],
+                        ["id": 2, "authorId": 2, "title": "Three Stories", "year": 2014],
+                        ]),
+                    (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
+                        ["id": 4, "authorId": 4, "title": "New York 2140", "year": 2017],
+                        ["id": 5, "authorId": 4, "title": "2312", "year": 2012],
+                        ["id": 6, "authorId": 4, "title": "Blue Mars", "year": 1996],
+                        ["id": 7, "authorId": 4, "title": "Green Mars", "year": 1994],
+                        ["id": 8, "authorId": 4, "title": "Red Mars", "year": 1993],
+                        ]),
+                    ])
+            }
+        }
+    }
 }

@@ -78,8 +78,8 @@ extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: 
     }
 }
 
-extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func including<Right>(_ association: HasManyAssociation<RowDecoder, Right>) -> HasManyIncludingRequest<QueryInterfaceRequest<RowDecoder>, Right> where Right: TableMapping {
+extension TypedRequest where Self: RequestDerivable, RowDecoder: TableMapping {
+    public func including<Right>(_ association: HasManyAssociation<RowDecoder, Right>) -> HasManyIncludingRequest<Self, Right> where Right: TableMapping {
         return HasManyIncludingRequest(leftRequest: self, association: association)
     }
 }
@@ -87,5 +87,21 @@ extension QueryInterfaceRequest where RowDecoder: TableMapping {
 extension TableMapping {
     public static func including<Right>(_ association: HasManyAssociation<Self, Right>) -> HasManyIncludingRequest<QueryInterfaceRequest<Self>, Right> where Right: TableMapping {
         return all().including(association)
+    }
+}
+
+extension HasManyIncludingRequest where Left: QueryInterfaceRequestConvertible {
+    public func filter<Right2, Annotation>(_ expression: HasManyAnnotationHavingExpression<Left.RowDecoder, Right2, Annotation>) -> HasManyIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation>, Right> where Right2: TableMapping {
+        // Use type inference when Swift is able to do it
+        return HasManyIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation>, Right>(
+            leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
+            association: association)
+    }
+    
+    public func filter<MiddleAssociation2, RightAssociation2, Annotation>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation2, RightAssociation2, Annotation>) -> HasManyIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation>, Right> where MiddleAssociation2.LeftAssociated == Left.RowDecoder {
+        // Use type inference when Swift is able to do it
+        return HasManyIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation>, Right>(
+            leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
+            association: association)
     }
 }

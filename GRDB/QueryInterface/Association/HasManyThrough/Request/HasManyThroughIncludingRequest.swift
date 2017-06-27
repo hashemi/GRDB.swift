@@ -1,26 +1,30 @@
 // Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
-public struct HasManyThroughIncludingRequest<MiddleAssociation, RightAssociation>
+public struct HasManyThroughIncludingRequest<Left, MiddleAssociation, RightAssociation>
     where
+    Left: RequestDerivable,
+    Left: TypedRequest,
+    Left.RowDecoder: TableMapping,
     MiddleAssociation: Association,
+    MiddleAssociation.LeftAssociated == Left.RowDecoder,
     RightAssociation: Association,
     RightAssociation: RightRequestDerivable,
     RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated
 {
-    typealias LeftRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
-    
-    var leftRequest: LeftRequest
+    var leftRequest: Left
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
 extension HasManyThroughIncludingRequest : LeftRequestDerivable {
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyThroughIncludingRequest<MiddleAssociation, RightAssociation> {
+    typealias LeftRequest = Left
+    
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyThroughIncludingRequest<Left, MiddleAssociation, RightAssociation> {
         return HasManyThroughIncludingRequest(
             leftRequest: transform(leftRequest),
             association: association)
     }
 }
 
-extension HasManyThroughIncludingRequest where MiddleAssociation.LeftAssociated: RowConvertible, RightAssociation.RightAssociated : RowConvertible {
+extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, RightAssociation.RightAssociated : RowConvertible {
     public func fetchAll(_ db: Database) throws -> [(left: MiddleAssociation.LeftAssociated, right: [RightAssociation.RightAssociated])] {
         let middleMapping = try association.middleAssociation.mapping(db)
         guard middleMapping.count == 1 else {
@@ -110,14 +114,30 @@ extension HasManyThroughIncludingRequest where MiddleAssociation.LeftAssociated:
     }
 }
 
-extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func including<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughIncludingRequest<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == RowDecoder {
+extension TypedRequest where Self: RequestDerivable, RowDecoder: TableMapping {
+    public func including<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughIncludingRequest<Self, MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == RowDecoder {
         return HasManyThroughIncludingRequest(leftRequest: self, association: association)
     }
 }
 
 extension TableMapping {
-    public static func including<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughIncludingRequest<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == Self {
+    public static func including<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughIncludingRequest<QueryInterfaceRequest<Self>, MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == Self {
         return all().including(association)
+    }
+}
+
+extension HasManyThroughIncludingRequest where Left: QueryInterfaceRequestConvertible {
+    public func filter<Right2, Annotation>(_ expression: HasManyAnnotationHavingExpression<Left.RowDecoder, Right2, Annotation>) -> HasManyThroughIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation>, MiddleAssociation, RightAssociation> where Right2: TableMapping {
+        // Use type inference when Swift is able to do it
+        return HasManyThroughIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation>, MiddleAssociation, RightAssociation>(
+            leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
+            association: association)
+    }
+    
+    public func filter<MiddleAssociation2, RightAssociation2, Annotation>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation2, RightAssociation2, Annotation>) -> HasManyThroughIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation>, MiddleAssociation, RightAssociation> where Left.RowDecoder == MiddleAssociation2.LeftAssociated {
+        // Use type inference when Swift is able to do it
+        return HasManyThroughIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation>, MiddleAssociation, RightAssociation>(
+            leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
+            association: association)
     }
 }

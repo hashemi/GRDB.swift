@@ -180,4 +180,54 @@ class HasManyThroughAssociationHasManyBelongsToIncludingTests: GRDBTestCase {
             }
         }
     }
+    
+    func testHavingAnnotationIncluding() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try HasManyThroughAssociationHasManyBelongsToFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                // filter before
+                let graph = try Country
+                    .filter(Country.citizens.count == 2) // TODO: test for another hasManyThrough annotation, and for a hasMany annotation
+                    .including(Country.citizens)
+                    .fetchAll(db)
+                
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT \"countries\".* FROM \"countries\" LEFT JOIN \"citizenships\" ON (\"citizenships\".\"countryCode\" = \"countries\".\"code\") LEFT JOIN \"persons\" ON (\"persons\".\"id\" = \"citizenships\".\"personId\") GROUP BY \"countries\".\"code\" HAVING (COUNT(\"persons\".\"id\") = 2)")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US')))")
+                
+                assertMatch(graph, [
+                    (["code": "FR", "name": "France"], [
+                        ["id": 1, "name": "Arthur"],
+                        ["id": 2, "name": "Barbara"],
+                        ]),
+                    (["code": "US", "name": "United States"], [
+                        ["id": 2, "name": "Barbara"],
+                        ["id": 3, "name": "Craig"],
+                        ]),
+                    ])
+            }
+            do {
+                // filter after
+                let graph = try Country
+                    .including(Country.citizens)
+                    .filter(Country.citizens.count == 2)
+                    .fetchAll(db)
+                
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT \"countries\".* FROM \"countries\" LEFT JOIN \"citizenships\" ON (\"citizenships\".\"countryCode\" = \"countries\".\"code\") LEFT JOIN \"persons\" ON (\"persons\".\"id\" = \"citizenships\".\"personId\") GROUP BY \"countries\".\"code\" HAVING (COUNT(\"persons\".\"id\") = 2)")
+                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US')))")
+                
+                assertMatch(graph, [
+                    (["code": "FR", "name": "France"], [
+                        ["id": 1, "name": "Arthur"],
+                        ["id": 2, "name": "Barbara"],
+                        ]),
+                    (["code": "US", "name": "United States"], [
+                        ["id": 2, "name": "Barbara"],
+                        ["id": 3, "name": "Craig"],
+                        ]),
+                    ])
+            }
+        }
+    }
 }
