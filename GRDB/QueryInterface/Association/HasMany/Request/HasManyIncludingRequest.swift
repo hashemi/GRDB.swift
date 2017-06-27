@@ -11,6 +11,7 @@ public struct HasManyIncludingRequest<Left, Right>
 
 extension HasManyIncludingRequest : LeftRequestDerivable {
     typealias LeftRequest = Left
+    
     func mapLeftRequest(_ transform: (Left) -> (Left)) -> HasManyIncludingRequest<Left, Right> {
         return HasManyIncludingRequest(
             leftRequest: transform(leftRequest),
