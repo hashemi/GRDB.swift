@@ -10,7 +10,7 @@ import XCTest
 private typealias Country = AssociationFixture.Country
 private typealias CountryProfile = AssociationFixture.CountryProfile
 
-class HasOneAssociationMutablePersistableTests: GRDBTestCase {
+class HasOneRightRequestTests: GRDBTestCase {
     
     func testRequest() throws {
         let dbQueue = try makeDatabaseQueue()

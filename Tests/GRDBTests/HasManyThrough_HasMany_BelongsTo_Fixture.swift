@@ -7,7 +7,7 @@ import XCTest
     import GRDB
 #endif
 
-struct HasManyThroughAssociationHasManyBelongsToFixture {
+struct HasManyThrough_HasMany_BelongsTo_Fixture {
     
     struct Country : TableMapping, RowConvertible, Persistable {
         static let databaseTableName = "countries"

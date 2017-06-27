@@ -10,7 +10,7 @@ import XCTest
 private typealias Author = AssociationFixture.Author
 private typealias Book = AssociationFixture.Book
 
-class HasManyAssociationIncludingTests: GRDBTestCase {
+class HasManyIncludingRequestTests: GRDBTestCase {
     
     // TODO: tests for left implicit row id, and compound keys
     
@@ -223,7 +223,7 @@ class HasManyAssociationIncludingTests: GRDBTestCase {
         }
     }
     
-    func testHavingAnnotationIncluding() throws {
+    func testAnnotationPredicate() throws {
         let dbQueue = try makeDatabaseQueue()
         try AssociationFixture().migrator.migrate(dbQueue)
         

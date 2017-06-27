@@ -7,16 +7,16 @@ import XCTest
     import GRDB
 #endif
 
-private typealias Country = HasManyThroughAssociationHasManyBelongsToFixture.Country
-private typealias Person = HasManyThroughAssociationHasManyBelongsToFixture.Person
+private typealias Country = HasManyThrough_HasMany_BelongsTo_Fixture.Country
+private typealias Person = HasManyThrough_HasMany_BelongsTo_Fixture.Person
 
-class HasManyThroughAssociationHasManyBelongsToAnnotatedTests: GRDBTestCase {
+class HasManyThroughAnnotationRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
     
     // TODO: conditions on middle table
     
     func testSimplestRequest() throws {
         let dbQueue = try makeDatabaseQueue()
-        try HasManyThroughAssociationHasManyBelongsToFixture().migrator.migrate(dbQueue)
+        try HasManyThrough_HasMany_BelongsTo_Fixture().migrator.migrate(dbQueue)
         
         try dbQueue.inDatabase { db in
             let graph = try Country
@@ -36,7 +36,7 @@ class HasManyThroughAssociationHasManyBelongsToAnnotatedTests: GRDBTestCase {
     
     func testLeftRequestDerivation() throws {
         let dbQueue = try makeDatabaseQueue()
-        try HasManyThroughAssociationHasManyBelongsToFixture().migrator.migrate(dbQueue)
+        try HasManyThrough_HasMany_BelongsTo_Fixture().migrator.migrate(dbQueue)
         
         try dbQueue.inDatabase { db in
             do {
@@ -105,7 +105,7 @@ class HasManyThroughAssociationHasManyBelongsToAnnotatedTests: GRDBTestCase {
     
     func testRightRequestDerivation() throws {
         let dbQueue = try makeDatabaseQueue()
-        try HasManyThroughAssociationHasManyBelongsToFixture().migrator.migrate(dbQueue)
+        try HasManyThrough_HasMany_BelongsTo_Fixture().migrator.migrate(dbQueue)
         
         try dbQueue.inDatabase { db in
             do {

@@ -10,7 +10,7 @@ import XCTest
 private typealias Author = AssociationFixture.Author
 private typealias Book = AssociationFixture.Book
 
-class HasManyAssociationAnnotatedTests: GRDBTestCase {
+class HasManyAnnotationRequestTests: GRDBTestCase {
     
     // TODO: tests for left implicit row id, and compound keys
     // TODO: test fetchOne, fetchCursor

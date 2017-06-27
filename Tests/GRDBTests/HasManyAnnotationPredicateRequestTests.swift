@@ -10,7 +10,7 @@ import XCTest
 private typealias Author = AssociationFixture.Author
 private typealias Book = AssociationFixture.Book
 
-class HasManyAssociationHavingAnnotationTests: GRDBTestCase {
+class HasManyAnnotationPredicateRequestTests: GRDBTestCase {
     
     func testSimplestRequest() throws {
         let dbQueue = try makeDatabaseQueue()
