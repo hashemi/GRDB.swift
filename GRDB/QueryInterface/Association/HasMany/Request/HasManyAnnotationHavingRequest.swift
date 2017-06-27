@@ -1,22 +1,22 @@
-public struct HasManyAnnotationHavingRequest<Left, Right, Annotation> where
+public struct HasManyAnnotationPredicateRequest<Left, Right, Annotation> where
     Left: TableMapping,
     Right: TableMapping
 {
     typealias LeftRequest = QueryInterfaceRequest<Left>
     
     var leftRequest: LeftRequest
-    let annotationHavingExpression: HasManyAnnotationHavingExpression<Left, Right, Annotation>
+    let annotationPredicate: HasManyAnnotationPredicate<Left, Right, Annotation>
 }
 
-extension HasManyAnnotationHavingRequest : LeftRequestDerivable {
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyAnnotationHavingRequest<Left, Right, Annotation> {
-        return HasManyAnnotationHavingRequest(
+extension HasManyAnnotationPredicateRequest : LeftRequestDerivable {
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyAnnotationPredicateRequest<Left, Right, Annotation> {
+        return HasManyAnnotationPredicateRequest(
             leftRequest: transform(leftRequest),
-            annotationHavingExpression: annotationHavingExpression)
+            annotationPredicate: annotationPredicate)
     }
 }
 
-extension HasManyAnnotationHavingRequest : TypedRequest {
+extension HasManyAnnotationPredicateRequest : TypedRequest {
     public typealias RowDecoder = Left
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
@@ -27,7 +27,7 @@ extension HasManyAnnotationHavingRequest : TypedRequest {
         let leftQuery = leftRequest.query.qualified(by: &leftQualifier)
         
         // SELECT * FROM right ... -> SELECT right.* FROM right ...
-        let rightQuery = annotationHavingExpression.annotation.association.rightRequest.query.qualified(by: &rightQualifier)
+        let rightQuery = annotationPredicate.annotation.association.rightRequest.query.qualified(by: &rightQualifier)
         
         // Join sources: SELECT ... FROM left LEFT JOIN right
         guard let leftSource = leftQuery.source else { fatalError("Support for sourceless joins is not implemented") }
@@ -37,7 +37,7 @@ extension HasManyAnnotationHavingRequest : TypedRequest {
             leftSource: leftSource,
             rightSource: rightSource,
             onExpression: rightQuery.whereExpression,
-            mapping: annotationHavingExpression.annotation.association.mapping(db)))
+            mapping: annotationPredicate.annotation.association.mapping(db)))
         
         // ... GROUP BY left.id
         guard let leftTableName = leftQuery.source?.tableName else {
@@ -51,7 +51,7 @@ extension HasManyAnnotationHavingRequest : TypedRequest {
         let joinedGroupByExpressions = pkColumns + leftQuery.groupByExpressions
         
         // Having: HAVING annotationExpression
-        let rightHavingExpression = try annotationHavingExpression.havingExpression(annotationHavingExpression.annotation.expression(db)).qualified(by: rightQualifier)
+        let rightHavingExpression = try annotationPredicate.predicate(annotationPredicate.annotation.expression(db)).qualified(by: rightQualifier)
         let joinedHavingExpression = (leftQuery.havingExpression.map { rightHavingExpression && $0 } ?? rightHavingExpression).qualified(by: rightQualifier)
         
         return try QueryInterfaceSelectQueryDefinition(
@@ -69,19 +69,19 @@ extension HasManyAnnotationHavingRequest : TypedRequest {
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func filter<Right, Annotation>(_ expression: HasManyAnnotationHavingExpression<RowDecoder, Right, Annotation>)
-        -> HasManyAnnotationHavingRequest<RowDecoder, Right, Annotation>
+    public func filter<Right, Annotation>(_ annotationPredicate: HasManyAnnotationPredicate<RowDecoder, Right, Annotation>)
+        -> HasManyAnnotationPredicateRequest<RowDecoder, Right, Annotation>
         where Right: TableMapping
     {
-        return HasManyAnnotationHavingRequest(leftRequest: self, annotationHavingExpression: expression)
+        return HasManyAnnotationPredicateRequest(leftRequest: self, annotationPredicate: annotationPredicate)
     }
 }
 
 extension TableMapping {
-    public static func filter<Right, Annotation>(_ expression: HasManyAnnotationHavingExpression<Self, Right, Annotation>)
-        -> HasManyAnnotationHavingRequest<Self, Right, Annotation>
+    public static func filter<Right, Annotation>(_ annotationPredicate: HasManyAnnotationPredicate<Self, Right, Annotation>)
+        -> HasManyAnnotationPredicateRequest<Self, Right, Annotation>
         where Right: TableMapping
     {
-        return all().filter(expression)
+        return all().filter(annotationPredicate)
     }
 }

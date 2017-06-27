@@ -1,4 +1,4 @@
-public struct HasManyThroughAnnotatedRequest<MiddleAssociation, RightAssociation, Annotation> where
+public struct HasManyThroughAnnotationRequest<MiddleAssociation, RightAssociation, Annotation> where
     MiddleAssociation: Association,
     RightAssociation: Association,
     RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
@@ -10,15 +10,15 @@ public struct HasManyThroughAnnotatedRequest<MiddleAssociation, RightAssociation
     let annotation: HasManyThroughAnnotation<MiddleAssociation, RightAssociation, Annotation>
 }
 
-extension HasManyThroughAnnotatedRequest : LeftRequestDerivable {
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyThroughAnnotatedRequest<MiddleAssociation, RightAssociation, Annotation> {
-        return HasManyThroughAnnotatedRequest(
+extension HasManyThroughAnnotationRequest : LeftRequestDerivable {
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyThroughAnnotationRequest<MiddleAssociation, RightAssociation, Annotation> {
+        return HasManyThroughAnnotationRequest(
             leftRequest: transform(leftRequest),
             annotation: annotation)
     }
 }
 
-extension HasManyThroughAnnotatedRequest : TypedRequest {
+extension HasManyThroughAnnotationRequest : TypedRequest {
     public typealias RowDecoder = JoinedPair<MiddleAssociation.LeftAssociated, Annotation>
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
@@ -92,16 +92,16 @@ extension HasManyThroughAnnotatedRequest : TypedRequest {
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
     public func annotated<MiddleAssociation, RightAssociation, Annotation>(with annotation: HasManyThroughAnnotation<MiddleAssociation, RightAssociation, Annotation>)
-        -> HasManyThroughAnnotatedRequest<MiddleAssociation, RightAssociation, Annotation>
+        -> HasManyThroughAnnotationRequest<MiddleAssociation, RightAssociation, Annotation>
         where MiddleAssociation.LeftAssociated == RowDecoder
     {
-        return HasManyThroughAnnotatedRequest(leftRequest: self, annotation: annotation)
+        return HasManyThroughAnnotationRequest(leftRequest: self, annotation: annotation)
     }
 }
 
 extension TableMapping {
     public static func annotated<MiddleAssociation, RightAssociation, Annotation>(with annotation: HasManyThroughAnnotation<MiddleAssociation, RightAssociation, Annotation>)
-        -> HasManyThroughAnnotatedRequest<MiddleAssociation, RightAssociation, Annotation>
+        -> HasManyThroughAnnotationRequest<MiddleAssociation, RightAssociation, Annotation>
         where MiddleAssociation.LeftAssociated == Self
     {
         return all().annotated(with: annotation)

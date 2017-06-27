@@ -28,7 +28,7 @@ extension HasManyThroughAssociation {
         })
     }
     
-    public var isEmpty: HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Int> {
+    public var isEmpty: HasManyThroughAnnotationPredicate<MiddleAssociation, RightAssociation, Int> {
         return count == 0
     }
 }

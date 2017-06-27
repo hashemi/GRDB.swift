@@ -342,13 +342,13 @@
 		563A5D511EFD87110065F741 /* HasManyAssociationHavingAnnotationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D4B1EFD87110065F741 /* HasManyAssociationHavingAnnotationTests.swift */; };
 		563A5D521EFD87110065F741 /* HasManyAssociationHavingAnnotationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D4B1EFD87110065F741 /* HasManyAssociationHavingAnnotationTests.swift */; };
 		563A5D531EFD87110065F741 /* HasManyAssociationHavingAnnotationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D4B1EFD87110065F741 /* HasManyAssociationHavingAnnotationTests.swift */; };
-		563A5D5D1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift */; };
-		563A5D5E1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift */; };
-		563A5D5F1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift */; };
-		563A5D601EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift */; };
-		563A5D611EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift */; };
-		563A5D621EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift */; };
-		563A5D631EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift */; };
+		563A5D5D1EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationPredicate.swift */; };
+		563A5D5E1EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationPredicate.swift */; };
+		563A5D5F1EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationPredicate.swift */; };
+		563A5D601EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationPredicate.swift */; };
+		563A5D611EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationPredicate.swift */; };
+		563A5D621EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationPredicate.swift */; };
+		563A5D631EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D5C1EFD8C110065F741 /* HasManyAnnotationPredicate.swift */; };
 		563A5D651EFE59A80065F741 /* LeftRequestDerivable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D641EFE59A80065F741 /* LeftRequestDerivable.swift */; };
 		563A5D661EFE59A80065F741 /* LeftRequestDerivable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D641EFE59A80065F741 /* LeftRequestDerivable.swift */; };
 		563A5D671EFE59A80065F741 /* LeftRequestDerivable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5D641EFE59A80065F741 /* LeftRequestDerivable.swift */; };
@@ -559,20 +559,20 @@
 		563A5EC51F0019CC0065F741 /* HasOneThroughRightRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EAB1F0019CC0065F741 /* HasOneThroughRightRequest.swift */; };
 		563A5EC61F0019CC0065F741 /* HasOneThroughRightRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EAB1F0019CC0065F741 /* HasOneThroughRightRequest.swift */; };
 		563A5EC71F0019CC0065F741 /* HasOneThroughRightRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EAB1F0019CC0065F741 /* HasOneThroughRightRequest.swift */; };
-		563A5ECB1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift */; };
-		563A5ECC1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift */; };
-		563A5ECD1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift */; };
-		563A5ECE1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift */; };
-		563A5ECF1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift */; };
-		563A5ED01F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift */; };
-		563A5ED11F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift */; };
-		563A5ED21F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift */; };
-		563A5ED31F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift */; };
-		563A5ED41F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift */; };
-		563A5ED51F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift */; };
-		563A5ED61F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift */; };
-		563A5ED71F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift */; };
-		563A5ED81F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift */; };
+		563A5ECB1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift */; };
+		563A5ECC1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift */; };
+		563A5ECD1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift */; };
+		563A5ECE1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift */; };
+		563A5ECF1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift */; };
+		563A5ED01F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift */; };
+		563A5ED11F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC81F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift */; };
+		563A5ED21F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift */; };
+		563A5ED31F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift */; };
+		563A5ED41F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift */; };
+		563A5ED51F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift */; };
+		563A5ED61F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift */; };
+		563A5ED71F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift */; };
+		563A5ED81F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift */; };
 		563A5ED91F001A2E0065F741 /* HasManyThroughIncludingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5ECA1F001A2E0065F741 /* HasManyThroughIncludingRequest.swift */; };
 		563A5EDA1F001A2E0065F741 /* HasManyThroughIncludingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5ECA1F001A2E0065F741 /* HasManyThroughIncludingRequest.swift */; };
 		563A5EDB1F001A2E0065F741 /* HasManyThroughIncludingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5ECA1F001A2E0065F741 /* HasManyThroughIncludingRequest.swift */; };
@@ -587,13 +587,13 @@
 		563A5EE61F001AD10065F741 /* HasManyThroughAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE01F001AD10065F741 /* HasManyThroughAnnotation.swift */; };
 		563A5EE71F001AD10065F741 /* HasManyThroughAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE01F001AD10065F741 /* HasManyThroughAnnotation.swift */; };
 		563A5EE81F001AD10065F741 /* HasManyThroughAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE01F001AD10065F741 /* HasManyThroughAnnotation.swift */; };
-		563A5EE91F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift */; };
-		563A5EEA1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift */; };
-		563A5EEB1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift */; };
-		563A5EEC1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift */; };
-		563A5EED1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift */; };
-		563A5EEE1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift */; };
-		563A5EEF1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift */; };
+		563A5EE91F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift */; };
+		563A5EEA1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift */; };
+		563A5EEB1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift */; };
+		563A5EEC1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift */; };
+		563A5EED1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift */; };
+		563A5EEE1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift */; };
+		563A5EEF1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563A5EE11F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift */; };
 		564448441EF2F7D100DD2861 /* HasManyThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */; };
 		564448451EF2F7D100DD2861 /* HasManyThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */; };
 		564448461EF2F7D100DD2861 /* HasManyThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */; };
@@ -2354,7 +2354,7 @@
 		5637AF351F029B6A00F56762 /* QueryInterfaceRequestConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryInterfaceRequestConvertible.swift; sourceTree = "<group>"; };
 		56381C501EE6E45A00CD0E9D /* RowValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RowValue.swift; sourceTree = "<group>"; };
 		563A5D4B1EFD87110065F741 /* HasManyAssociationHavingAnnotationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyAssociationHavingAnnotationTests.swift; sourceTree = "<group>"; };
-		563A5D5C1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyAnnotationHavingExpression.swift; sourceTree = "<group>"; };
+		563A5D5C1EFD8C110065F741 /* HasManyAnnotationPredicate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyAnnotationPredicate.swift; sourceTree = "<group>"; };
 		563A5D641EFE59A80065F741 /* LeftRequestDerivable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftRequestDerivable.swift; sourceTree = "<group>"; };
 		563A5D6C1EFE5C520065F741 /* RightRequestDerivable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RightRequestDerivable.swift; sourceTree = "<group>"; };
 		563A5DA61EFE7BDE0065F741 /* HasManyAnnotatedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyAnnotatedRequest.swift; sourceTree = "<group>"; };
@@ -2384,11 +2384,11 @@
 		563A5EA91F0019CC0065F741 /* HasOneThroughJoinedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasOneThroughJoinedRequest.swift; sourceTree = "<group>"; };
 		563A5EAA1F0019CC0065F741 /* HasOneThroughLeftJoinedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasOneThroughLeftJoinedRequest.swift; sourceTree = "<group>"; };
 		563A5EAB1F0019CC0065F741 /* HasOneThroughRightRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasOneThroughRightRequest.swift; sourceTree = "<group>"; };
-		563A5EC81F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAnnotatedRequest.swift; sourceTree = "<group>"; };
-		563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAnnotationHavingRequest.swift; sourceTree = "<group>"; };
+		563A5EC81F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAnnotationRequest.swift; sourceTree = "<group>"; };
+		563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAnnotationPredicateRequest.swift; sourceTree = "<group>"; };
 		563A5ECA1F001A2E0065F741 /* HasManyThroughIncludingRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughIncludingRequest.swift; sourceTree = "<group>"; };
 		563A5EE01F001AD10065F741 /* HasManyThroughAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAnnotation.swift; sourceTree = "<group>"; };
-		563A5EE11F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAnnotationHavingExpression.swift; sourceTree = "<group>"; };
+		563A5EE11F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAnnotationPredicate.swift; sourceTree = "<group>"; };
 		564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasManyThroughAssociation.swift; sourceTree = "<group>"; };
 		564448821EF56B1B00DD2861 /* DatabaseAfterNextTransactionCommitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseAfterNextTransactionCommitTests.swift; sourceTree = "<group>"; };
 		564A50C61BFF4B7F00B3A3A2 /* DatabaseCollationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseCollationTests.swift; sourceTree = "<group>"; };
@@ -3066,8 +3066,8 @@
 		563A5E321EFFBF920065F741 /* Request */ = {
 			isa = PBXGroup;
 			children = (
-				563A5EC81F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift */,
-				563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift */,
+				563A5EC81F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift */,
+				563A5EC91F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift */,
 				563A5ECA1F001A2E0065F741 /* HasManyThroughIncludingRequest.swift */,
 				563A5E331EFFBF920065F741 /* HasManyThroughJoinedRequest.swift */,
 				563A5E461EFFC94B0065F741 /* HasManyThroughLeftJoinedRequest.swift */,
@@ -3113,7 +3113,7 @@
 			isa = PBXGroup;
 			children = (
 				563A5EE01F001AD10065F741 /* HasManyThroughAnnotation.swift */,
-				563A5EE11F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift */,
+				563A5EE11F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift */,
 				564448431EF2F7D100DD2861 /* HasManyThroughAssociation.swift */,
 				563A5E321EFFBF920065F741 /* Request */,
 			);
@@ -3178,7 +3178,7 @@
 			isa = PBXGroup;
 			children = (
 				56D8B9301EF287D20037BBD5 /* HasManyAnnotation.swift */,
-				563A5D5C1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift */,
+				563A5D5C1EFD8C110065F741 /* HasManyAnnotationPredicate.swift */,
 				567B88891EE95F8500F6112C /* HasManyAssociation.swift */,
 				563A5DA51EFE7BDE0065F741 /* Request */,
 			);
@@ -4553,9 +4553,9 @@
 				560FC5231CB003810014AA8E /* Configuration.swift in Sources */,
 				566475CD1D981D5E00FF74B8 /* SQLFunctions.swift in Sources */,
 				563A5DAD1EFE7BDE0065F741 /* HasManyAnnotatedRequest.swift in Sources */,
-				563A5EEA1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */,
+				563A5EEA1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */,
 				5698AC381D9E5A590056AF8C /* FTS3Pattern.swift in Sources */,
-				563A5ECC1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */,
+				563A5ECC1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */,
 				5659F4991EA8D989004A4992 /* Pool.swift in Sources */,
 				56CEB54D1EAA359A00BFAF62 /* SQLExpressible.swift in Sources */,
 				5664759B1D97D8A000FF74B8 /* SQLCollection.swift in Sources */,
@@ -4580,7 +4580,7 @@
 				56BF6D301DEF47DA006039A3 /* Fixits-0-84-0.swift in Sources */,
 				560FC52A1CB003810014AA8E /* DatabaseError.swift in Sources */,
 				56D51D011EA789FA0074638A /* RowConvertible+TableMapping.swift in Sources */,
-				563A5ED31F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */,
+				563A5ED31F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */,
 				566475BB1D981AD200FF74B8 /* SQLSpecificExpressible+QueryInterface.swift in Sources */,
 				563A5DB41EFE7BDE0065F741 /* HasManyAnnotationHavingRequest.swift in Sources */,
 				560FC52B1CB003810014AA8E /* DatabaseValue.swift in Sources */,
@@ -4636,7 +4636,7 @@
 				563A5E351EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5541EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B9649E1DA51B4C0002DA19 /* FTS5.swift in Sources */,
-				563A5D5E1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
+				563A5D5E1EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4829,7 +4829,7 @@
 				563A5EC71F0019CC0065F741 /* HasOneThroughRightRequest.swift in Sources */,
 				565490D81D5AE252005622CB /* DatabaseMigrator.swift in Sources */,
 				56CEB5601EAA359A00BFAF62 /* SQLOrdering.swift in Sources */,
-				563A5D631EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
+				563A5D631EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */,
 				565490C21D5AE236005622CB /* Row.swift in Sources */,
 				565490C71D5AE236005622CB /* StatementColumnConvertible.swift in Sources */,
 				565490D91D5AE252005622CB /* Migration.swift in Sources */,
@@ -4872,7 +4872,7 @@
 				565490C01D5AE236005622CB /* DatabaseWriter.swift in Sources */,
 				565490C41D5AE236005622CB /* SchedulingWatchdog.swift in Sources */,
 				56CEB54B1EAA359A00BFAF62 /* Column.swift in Sources */,
-				563A5ED11F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */,
+				563A5ED11F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */,
 				564A65B61F026EE50003126C /* RequestDerivable.swift in Sources */,
 				565490CC1D5AE252005622CB /* (null) in Sources */,
 				56BF6D351DEF47DA006039A3 /* Fixits-0-84-0.swift in Sources */,
@@ -4883,7 +4883,7 @@
 				56CEB5521EAA359A00BFAF62 /* SQLExpressible.swift in Sources */,
 				565490DB1D5AE252005622CB /* SQLCollatedExpression.swift in Sources */,
 				565490C61D5AE236005622CB /* Statement.swift in Sources */,
-				563A5EEF1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */,
+				563A5EEF1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */,
 				56CEB5071EAA2F4D00BFAF62 /* FTS4.swift in Sources */,
 				56CEB4F71EAA2EFA00BFAF62 /* RowConvertible.swift in Sources */,
 				56F5ABD91D814330001F60CB /* Data.swift in Sources */,
@@ -4905,7 +4905,7 @@
 				565490CB1D5AE252005622CB /* (null) in Sources */,
 				563A5DE01EFE7C040065F741 /* HasOneJoinedRequest.swift in Sources */,
 				567DAF1B1EAB61ED00FC0928 /* grdb_config.c in Sources */,
-				563A5ED81F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */,
+				563A5ED81F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */,
 				563A5DCE1EFE7BDE0065F741 /* HasManyLeftJoinedRequest.swift in Sources */,
 				565490D61D5AE252005622CB /* StandardLibrary.swift in Sources */,
 				565490B81D5AE236005622CB /* DatabaseError.swift in Sources */,
@@ -5125,9 +5125,9 @@
 				56AFC9F71CB1A8BB00F48B96 /* RawRepresentable.swift in Sources */,
 				566475D01D981D5E00FF74B8 /* SQLFunctions.swift in Sources */,
 				563A5DB01EFE7BDE0065F741 /* HasManyAnnotatedRequest.swift in Sources */,
-				563A5EED1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */,
+				563A5EED1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */,
 				5698AC3B1D9E5A590056AF8C /* FTS3Pattern.swift in Sources */,
-				563A5ECF1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */,
+				563A5ECF1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */,
 				5659F49C1EA8D989004A4992 /* Pool.swift in Sources */,
 				56CEB5501EAA359A00BFAF62 /* SQLExpressible.swift in Sources */,
 				5664759E1D97D8A000FF74B8 /* SQLCollection.swift in Sources */,
@@ -5152,7 +5152,7 @@
 				56BF6D331DEF47DA006039A3 /* Fixits-0-84-0.swift in Sources */,
 				56AFC9FF1CB1A8BB00F48B96 /* DatabaseValueConvertible.swift in Sources */,
 				56D51D041EA789FA0074638A /* RowConvertible+TableMapping.swift in Sources */,
-				563A5ED61F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */,
+				563A5ED61F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */,
 				566475BE1D981AD200FF74B8 /* SQLSpecificExpressible+QueryInterface.swift in Sources */,
 				563A5DB71EFE7BDE0065F741 /* HasManyAnnotationHavingRequest.swift in Sources */,
 				56AFCA001CB1A8BB00F48B96 /* Record.swift in Sources */,
@@ -5208,7 +5208,7 @@
 				563A5E381EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5571EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B964A11DA51B4C0002DA19 /* FTS5.swift in Sources */,
-				563A5D611EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
+				563A5D611EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5595,7 +5595,7 @@
 				5605F1941C6B1A8700235C62 /* QueryInterfaceSelectQueryDefinition.swift in Sources */,
 				56B7F43B1BEB42D500E39BBF /* Migration.swift in Sources */,
 				5690C3431D23E82A00E59934 /* Data.swift in Sources */,
-				563A5ED51F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */,
+				563A5ED51F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */,
 				563A5D681EFE59A80065F741 /* LeftRequestDerivable.swift in Sources */,
 				563A5DE41EFE7C040065F741 /* HasOneLeftJoinedRequest.swift in Sources */,
 				56FC987B1D969DEF00E3C842 /* SQLExpression+QueryInterface.swift in Sources */,
@@ -5619,8 +5619,8 @@
 				5698AD241DABAEFA0056AF8C /* FTS5WrapperTokenizer.swift in Sources */,
 				5605F1681C672E4000235C62 /* NSNumber.swift in Sources */,
 				56CEB5041EAA2F4D00BFAF62 /* FTS4.swift in Sources */,
-				563A5ECE1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */,
-				563A5EEC1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */,
+				563A5ECE1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */,
+				563A5EEC1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */,
 				5605F1741C672E4000235C62 /* StandardLibrary.swift in Sources */,
 				560D92481C672C4B00F4F92B /* Persistable.swift in Sources */,
 				567DAF181EAB61ED00FC0928 /* grdb_config.c in Sources */,
@@ -5631,7 +5631,7 @@
 				56A238861B9C75030082EB20 /* DatabaseValue.swift in Sources */,
 				563A5DCB1EFE7BDE0065F741 /* HasManyLeftJoinedRequest.swift in Sources */,
 				56CEB55D1EAA359A00BFAF62 /* SQLOrdering.swift in Sources */,
-				563A5D601EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
+				563A5D601EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */,
 				56CEB5641EAA359A00BFAF62 /* SQLSelectable.swift in Sources */,
 				56381C541EE6E45A00CD0E9D /* RowValue.swift in Sources */,
 				56B964A01DA51B4C0002DA19 /* FTS5.swift in Sources */,
@@ -5982,9 +5982,9 @@
 				56A2387B1B9C75030082EB20 /* Configuration.swift in Sources */,
 				566475CC1D981D5E00FF74B8 /* SQLFunctions.swift in Sources */,
 				563A5DAC1EFE7BDE0065F741 /* HasManyAnnotatedRequest.swift in Sources */,
-				563A5EE91F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */,
+				563A5EE91F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */,
 				5698AC371D9E5A590056AF8C /* FTS3Pattern.swift in Sources */,
-				563A5ECB1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */,
+				563A5ECB1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */,
 				5659F4981EA8D989004A4992 /* Pool.swift in Sources */,
 				56CEB54C1EAA359A00BFAF62 /* SQLExpressible.swift in Sources */,
 				5664759A1D97D8A000FF74B8 /* SQLCollection.swift in Sources */,
@@ -6009,7 +6009,7 @@
 				56BF6D2F1DEF47DA006039A3 /* Fixits-0-84-0.swift in Sources */,
 				56A238811B9C75030082EB20 /* DatabaseError.swift in Sources */,
 				56D51D001EA789FA0074638A /* RowConvertible+TableMapping.swift in Sources */,
-				563A5ED21F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */,
+				563A5ED21F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */,
 				566475BA1D981AD200FF74B8 /* SQLSpecificExpressible+QueryInterface.swift in Sources */,
 				563A5DB31EFE7BDE0065F741 /* HasManyAnnotationHavingRequest.swift in Sources */,
 				56A238851B9C75030082EB20 /* DatabaseValue.swift in Sources */,
@@ -6065,7 +6065,7 @@
 				563A5E341EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5531EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B9649D1DA51B4C0002DA19 /* FTS5.swift in Sources */,
-				563A5D5D1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
+				563A5D5D1EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6105,9 +6105,9 @@
 				F3BA80341CFB28A4003DC1BA /* Record.swift in Sources */,
 				F3BA80161CFB2876003DC1BA /* Row.swift in Sources */,
 				563A5DB11EFE7BDE0065F741 /* HasManyAnnotatedRequest.swift in Sources */,
-				563A5EEE1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */,
+				563A5EEE1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */,
 				F3BA80101CFB2876003DC1BA /* DatabaseReader.swift in Sources */,
-				563A5ED01F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */,
+				563A5ED01F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */,
 				5659F49D1EA8D989004A4992 /* Pool.swift in Sources */,
 				56CEB5511EAA359A00BFAF62 /* SQLExpressible.swift in Sources */,
 				5698AC3C1D9E5A590056AF8C /* FTS3Pattern.swift in Sources */,
@@ -6132,7 +6132,7 @@
 				F3BA80201CFB288C003DC1BA /* Date.swift in Sources */,
 				56A8C2351D1914540096E9D4 /* UUID.swift in Sources */,
 				56BF6D341DEF47DA006039A3 /* Fixits-0-84-0.swift in Sources */,
-				563A5ED71F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */,
+				563A5ED71F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */,
 				56D51D051EA789FA0074638A /* RowConvertible+TableMapping.swift in Sources */,
 				563A5DB81EFE7BDE0065F741 /* HasManyAnnotationHavingRequest.swift in Sources */,
 				F3BA80151CFB2876003DC1BA /* DatabaseWriter.swift in Sources */,
@@ -6188,7 +6188,7 @@
 				563A5E391EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5581EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B964A21DA51B4C0002DA19 /* FTS5.swift in Sources */,
-				563A5D621EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
+				563A5D621EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6381,9 +6381,9 @@
 				F3BA80901CFB2E7A003DC1BA /* Record.swift in Sources */,
 				F3BA80721CFB2E55003DC1BA /* Row.swift in Sources */,
 				563A5DAE1EFE7BDE0065F741 /* HasManyAnnotatedRequest.swift in Sources */,
-				563A5EEB1F001AD10065F741 /* HasManyThroughAnnotationHavingExpression.swift in Sources */,
+				563A5EEB1F001AD10065F741 /* HasManyThroughAnnotationPredicate.swift in Sources */,
 				F3BA806C1CFB2E55003DC1BA /* DatabaseReader.swift in Sources */,
-				563A5ECD1F001A2E0065F741 /* HasManyThroughAnnotatedRequest.swift in Sources */,
+				563A5ECD1F001A2E0065F741 /* HasManyThroughAnnotationRequest.swift in Sources */,
 				5659F49A1EA8D989004A4992 /* Pool.swift in Sources */,
 				56CEB54E1EAA359A00BFAF62 /* SQLExpressible.swift in Sources */,
 				5698AC391D9E5A590056AF8C /* FTS3Pattern.swift in Sources */,
@@ -6408,7 +6408,7 @@
 				F3BA807C1CFB2E61003DC1BA /* Date.swift in Sources */,
 				56A8C2321D1914540096E9D4 /* UUID.swift in Sources */,
 				56BF6D311DEF47DA006039A3 /* Fixits-0-84-0.swift in Sources */,
-				563A5ED41F001A2E0065F741 /* HasManyThroughAnnotationHavingRequest.swift in Sources */,
+				563A5ED41F001A2E0065F741 /* HasManyThroughAnnotationPredicateRequest.swift in Sources */,
 				56D51D021EA789FA0074638A /* RowConvertible+TableMapping.swift in Sources */,
 				563A5DB51EFE7BDE0065F741 /* HasManyAnnotationHavingRequest.swift in Sources */,
 				F3BA80711CFB2E55003DC1BA /* DatabaseWriter.swift in Sources */,
@@ -6464,7 +6464,7 @@
 				563A5E361EFFBF920065F741 /* HasManyThroughJoinedRequest.swift in Sources */,
 				56CEB5551EAA359A00BFAF62 /* SQLExpression.swift in Sources */,
 				56B9649F1DA51B4C0002DA19 /* FTS5.swift in Sources */,
-				563A5D5F1EFD8C110065F741 /* HasManyAnnotationHavingExpression.swift in Sources */,
+				563A5D5F1EFD8C110065F741 /* HasManyAnnotationPredicate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

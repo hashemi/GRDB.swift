@@ -98,23 +98,23 @@ extension TableMapping {
 }
 
 extension HasManyIncludingRequest where Left: QueryInterfaceRequestConvertible {
-    public func filter<Right2, Annotation2>(_ expression: HasManyAnnotationHavingExpression<Left.RowDecoder, Right2, Annotation2>)
-        -> HasManyIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation2>, Right>
+    public func filter<Right2, Annotation2>(_ annotationPredicate: HasManyAnnotationPredicate<Left.RowDecoder, Right2, Annotation2>)
+        -> HasManyIncludingRequest<HasManyAnnotationPredicateRequest<Left.RowDecoder, Right2, Annotation2>, Right>
         where Right2: TableMapping
     {
         // TODO: Use type inference when Swift is able to do it
-        return HasManyIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation2>, Right>(
-            leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
+        return HasManyIncludingRequest<HasManyAnnotationPredicateRequest<Left.RowDecoder, Right2, Annotation2>, Right>(
+            leftRequest: leftRequest.queryInterfaceRequest.filter(annotationPredicate),
             association: association)
     }
     
-    public func filter<MiddleAssociation2, RightAssociation2, Annotation2>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation2, RightAssociation2, Annotation2>)
-        -> HasManyIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation2>, Right>
+    public func filter<MiddleAssociation2, RightAssociation2, Annotation2>(_ annotationPredicate: HasManyThroughAnnotationPredicate<MiddleAssociation2, RightAssociation2, Annotation2>)
+        -> HasManyIncludingRequest<HasManyThroughAnnotationPredicateRequest<MiddleAssociation2, RightAssociation2, Annotation2>, Right>
         where MiddleAssociation2.LeftAssociated == Left.RowDecoder
     {
         // TODO: Use type inference when Swift is able to do it
-        return HasManyIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation2>, Right>(
-            leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
+        return HasManyIncludingRequest<HasManyThroughAnnotationPredicateRequest<MiddleAssociation2, RightAssociation2, Annotation2>, Right>(
+            leftRequest: leftRequest.queryInterfaceRequest.filter(annotationPredicate),
             association: association)
     }
 }

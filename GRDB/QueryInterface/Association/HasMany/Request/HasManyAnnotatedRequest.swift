@@ -1,4 +1,4 @@
-public struct HasManyAnnotatedRequest<Left, Right, Annotation> where
+public struct HasManyAnnotationRequest<Left, Right, Annotation> where
     Left: TableMapping,
     Right: TableMapping
 {
@@ -8,15 +8,15 @@ public struct HasManyAnnotatedRequest<Left, Right, Annotation> where
     let annotation: HasManyAnnotation<Left, Right, Annotation>
 }
 
-extension HasManyAnnotatedRequest : LeftRequestDerivable {
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyAnnotatedRequest<Left, Right, Annotation> {
-        return HasManyAnnotatedRequest(
+extension HasManyAnnotationRequest : LeftRequestDerivable {
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyAnnotationRequest<Left, Right, Annotation> {
+        return HasManyAnnotationRequest(
             leftRequest: transform(leftRequest),
             annotation: annotation)
     }
 }
 
-extension HasManyAnnotatedRequest : TypedRequest {
+extension HasManyAnnotationRequest : TypedRequest {
     public typealias RowDecoder = JoinedPair<Left, Annotation>
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
@@ -79,16 +79,16 @@ extension HasManyAnnotatedRequest : TypedRequest {
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
     public func annotated<Right, Annotation>(with annotation: HasManyAnnotation<RowDecoder, Right, Annotation>)
-        -> HasManyAnnotatedRequest<RowDecoder, Right, Annotation>
+        -> HasManyAnnotationRequest<RowDecoder, Right, Annotation>
         where Right: TableMapping
     {
-        return HasManyAnnotatedRequest(leftRequest: self, annotation: annotation)
+        return HasManyAnnotationRequest(leftRequest: self, annotation: annotation)
     }
 }
 
 extension TableMapping {
     public static func annotated<Right, Annotation>(with annotation: HasManyAnnotation<Self, Right, Annotation>)
-        -> HasManyAnnotatedRequest<Self, Right, Annotation>
+        -> HasManyAnnotationRequest<Self, Right, Annotation>
         where Right: TableMapping
     {
         return all().annotated(with: annotation)

@@ -26,7 +26,7 @@ extension HasManyAssociation {
         })
     }
     
-    public var isEmpty: HasManyAnnotationHavingExpression<Left, Right, Int> {
+    public var isEmpty: HasManyAnnotationPredicate<Left, Right, Int> {
         return count == 0
     }
 }
