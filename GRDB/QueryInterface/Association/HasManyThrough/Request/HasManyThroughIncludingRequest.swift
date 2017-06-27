@@ -39,10 +39,15 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
         
         // SELECT * FROM left...
         do {
-            let cursor = try Row.fetchCursor(db, leftRequest)
-            guard let leftKeyIndex = cursor.statementIndex(ofColumn: leftKeyColumn) else {
+            // Where is the left key?
+            // TODO: simplify the code below. Because of adapters, it is complex to get the index of a column in a row:
+            let (statement, adapter) = try leftRequest.prepare(db)
+            let cursor = try Row.fetchCursor(statement, adapter: adapter)
+            let layout: RowLayout = try adapter?.layoutedAdapter(from: statement).mapping ?? statement
+            guard let leftKeyIndex = layout.layoutIndex(ofColumn: leftKeyColumn) else {
                 fatalError("Column \(MiddleAssociation.LeftAssociated.databaseTableName).\(leftKeyColumn) is not selected")
             }
+            
             let enumeratedCursor = cursor.enumerated()
             while let (recordIndex, row) = try enumeratedCursor.next() {
                 let left = MiddleAssociation.LeftAssociated(row: row)
@@ -96,16 +101,14 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
             having: nil,
             limit: nil)
             .adapted(ScopeAdapter([
-                // Left columns start at index 0
-                "left": SuffixRowAdapter(fromIndex: 0),
-                // Right columns start after left columns
+                // Right columns start after left key: SELECT middle.leftId, right.* FROM right...
                 "right": SuffixRowAdapter(fromIndex: 1)]))
 
         let cursor = try Row.fetchCursor(db, joinedRequest)
 
         while let row = try cursor.next() {
             let right = RightAssociation.RightAssociated(row: row.scoped(on: "right")!)
-            let leftKey: DatabaseValue = row.scoped(on: "left")!.value(atIndex: 0)
+            let leftKey: DatabaseValue = row.value(atIndex: 0)
             let index = resultIndexes[leftKey]! // index has been recorded during leftRequest iteration
             result[index].right.append(right)
         }

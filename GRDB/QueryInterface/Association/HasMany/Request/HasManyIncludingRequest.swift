@@ -23,24 +23,31 @@ extension HasManyIncludingRequest : LeftRequestDerivable {
 extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: RowConvertible {
     public func fetchAll(_ db: Database) throws -> [(left: Left.RowDecoder, right: [Right])] {
         let mapping = try association.mapping(db)
+        guard mapping.count == 1 else {
+            fatalError("not implemented: support for compound foreign keys")
+        }
+        let leftKeyColumn = mapping[0].left
+        let rightKeyColumn = mapping[0].right
+        
         var result: [(left: Left.RowDecoder, right: [Right])] = []
-        var leftKeys: [RowValue] = []
-        var resultIndexes : [RowValue: Int] = [:]
+        var leftKeys: [DatabaseValue] = []
+        var resultIndexes : [DatabaseValue: Int] = [:]
         
         // SELECT * FROM left...
         do {
-            let cursor = try Row.fetchCursor(db, leftRequest)
-            let foreignKeyIndexes = mapping.map { arrow -> Int in
-                if let index = cursor.statementIndex(ofColumn: arrow.left) {
-                    return index
-                } else {
-                    fatalError("Column \(Left.RowDecoder.databaseTableName).\(arrow.left) is not selected")
-                }
+            // Where is the left key?
+            // TODO: simplify the code below. Because of adapters, it is complex to get the index of a column in a row:
+            let (statement, adapter) = try leftRequest.prepare(db)
+            let cursor = try Row.fetchCursor(statement, adapter: adapter)
+            let layout: RowLayout = try adapter?.layoutedAdapter(from: statement).mapping ?? statement
+            guard let leftKeyIndex = layout.layoutIndex(ofColumn: leftKeyColumn) else {
+                fatalError("Column \(Left.RowDecoder.databaseTableName).\(leftKeyColumn) is not selected")
             }
+            
             let enumeratedCursor = cursor.enumerated()
             while let (recordIndex, row) = try enumeratedCursor.next() {
                 let left = Left.RowDecoder(row: row)
-                let key = RowValue(foreignKeyIndexes.map { row.value(atIndex: $0) })
+                let key: DatabaseValue = row.value(atIndex: leftKeyIndex)
                 leftKeys.append(key)
                 resultIndexes[key] = recordIndex
                 result.append((left: left, right: []))
@@ -56,21 +63,21 @@ extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: 
             guard mapping.count == 1 else {
                 fatalError("not implemented: support for compound foreign keys")
             }
-            let leftKeyValues = leftKeys.lazy.map { $0.dbValues[0] }
-            let rightColumn = mapping[0].right
-            let rightRequest = association.rightRequest.filter(leftKeyValues.contains(Column(rightColumn)))
-            let cursor = try Row.fetchCursor(db, rightRequest)
-            let foreignKeyIndexes = mapping.map { arrow -> Int in
-                if let index = cursor.statementIndex(ofColumn: arrow.right) {
-                    return index
-                } else {
-                    fatalError("Column \(Right.databaseTableName).\(arrow.right) is not selected")
-                }
+            let rightQuery = association.rightRequest.filter(leftKeys.contains(Column(rightKeyColumn))).query
+            
+            // Where is the left key?
+            // TODO: simplify the code below. Because of adapters, it is complex to get the index of a column in a row:
+            let (statement, adapter) = try rightQuery.prepare(db)
+            let cursor = try Row.fetchCursor(statement, adapter: adapter)
+            let layout: RowLayout = try adapter?.layoutedAdapter(from: statement).mapping ?? statement
+            guard let leftKeyIndex = layout.layoutIndex(ofColumn: rightKeyColumn) else {
+                fatalError("not implemented: support for non-selected \(Right.databaseTableName).\(rightKeyColumn) column")
             }
+            
             while let row = try cursor.next() {
                 let right = Right(row: row)
-                let foreignKey = RowValue(foreignKeyIndexes.map { row.value(atIndex: $0) })
-                let index = resultIndexes[foreignKey]! // index has been recorded during leftRequest iteration
+                let leftKey: DatabaseValue = row.value(atIndex: leftKeyIndex)
+                let index = resultIndexes[leftKey]! // index has been recorded during leftRequest iteration
                 result[index].right.append(right)
             }
         }
