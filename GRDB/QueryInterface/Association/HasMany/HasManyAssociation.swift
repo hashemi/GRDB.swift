@@ -1,9 +1,15 @@
-public struct HasManyAssociation<Left: TableMapping, Right: TableMapping> : Association {
+public struct HasManyAssociation<Left, Right>
+    : Association
+    where
+    Left: TableMapping,
+    Right: TableMapping
+{
+    // Association
     public typealias LeftAssociated = Left
     public typealias RightAssociated = Right
     
     let joinMappingRequest: JoinMappingRequest
-    public let rightRequest: QueryInterfaceRequest<Right>
+    public let rightRequest: RightRequest
     
     public func mapping(_ db: Database) throws -> [(left: String, right: String)] {
         return try joinMappingRequest
@@ -13,10 +19,12 @@ public struct HasManyAssociation<Left: TableMapping, Right: TableMapping> : Asso
 }
 
 extension HasManyAssociation : RightRequestDerivable {
-    public typealias RightRowDecoder = Right
+    public typealias RightRequest = QueryInterfaceRequest<Right>
     
-    public func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> HasManyAssociation<Left, Right> {
-        return HasManyAssociation(joinMappingRequest: joinMappingRequest, rightRequest: transform(self.rightRequest))
+    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> HasManyAssociation<Left, Right> {
+        return HasManyAssociation(
+            joinMappingRequest: joinMappingRequest,
+            rightRequest: transform(self.rightRequest))
     }
 }
 

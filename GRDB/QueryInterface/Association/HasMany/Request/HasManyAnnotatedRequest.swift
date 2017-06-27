@@ -1,13 +1,19 @@
-public struct HasManyAnnotatedRequest<Left: TableMapping, Right: TableMapping, Annotation> {
-    var leftRequest: QueryInterfaceRequest<Left>
+public struct HasManyAnnotatedRequest<Left, Right, Annotation>
+    where
+    Left: TableMapping,
+    Right: TableMapping
+{
+    typealias LeftRequest = QueryInterfaceRequest<Left>
+    
+    var leftRequest: LeftRequest
     let annotation: HasManyAnnotation<Left, Right, Annotation>
 }
 
 extension HasManyAnnotatedRequest : LeftRequestDerivable {
-    typealias LeftRowDecoder = Left
-    
-    func mapLeftRequest(_ transform: (QueryInterfaceRequest<Left>) -> (QueryInterfaceRequest<Left>)) -> HasManyAnnotatedRequest<Left, Right, Annotation> {
-        return HasManyAnnotatedRequest(leftRequest: transform(leftRequest), annotation: annotation)
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyAnnotatedRequest<Left, Right, Annotation> {
+        return HasManyAnnotatedRequest(
+            leftRequest: transform(leftRequest),
+            annotation: annotation)
     }
 }
 

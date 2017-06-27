@@ -1,9 +1,15 @@
-public struct BelongsToAssociation<Left: TableMapping, Right: TableMapping> : AssociationToOne {
+public struct BelongsToAssociation<Left, Right>
+    : Association, AssociationToOne
+    where
+    Left: TableMapping,
+    Right: TableMapping
+{
+    // Association
     public typealias LeftAssociated = Left
     public typealias RightAssociated = Right
     
     let joinMappingRequest: JoinMappingRequest
-    public let rightRequest: QueryInterfaceRequest<Right>
+    public let rightRequest: RightRequest
     
     public func mapping(_ db: Database) throws -> [(left: String, right: String)] {
         return try joinMappingRequest
@@ -13,9 +19,12 @@ public struct BelongsToAssociation<Left: TableMapping, Right: TableMapping> : As
 }
 
 extension BelongsToAssociation : RightRequestDerivable {
-    public typealias RightRowDecoder = Right
-    public func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> BelongsToAssociation<Left, Right> {
-        return BelongsToAssociation(joinMappingRequest: joinMappingRequest, rightRequest: transform(self.rightRequest))
+    public typealias RightRequest = QueryInterfaceRequest<Right>
+    
+    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> BelongsToAssociation<Left, Right> {
+        return BelongsToAssociation(
+            joinMappingRequest: joinMappingRequest,
+            rightRequest: transform(self.rightRequest))
     }
 }
 

@@ -1,7 +1,21 @@
 // Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
-public struct HasOneThroughRightRequest<MiddleAssociation: AssociationToOne, RightAssociation: AssociationToOne> where MiddleAssociation.LeftAssociated: MutablePersistable, MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated, RightAssociation: RightRequestDerivable, RightAssociation.RightRowDecoder == RightAssociation.RightAssociated {
+public struct HasOneThroughRightRequest<MiddleAssociation, RightAssociation>
+    where
+    MiddleAssociation: AssociationToOne,
+    RightAssociation: AssociationToOne & RightRequestDerivable,
+    MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated,
+    MiddleAssociation.LeftAssociated: MutablePersistable
+{
     let record: MiddleAssociation.LeftAssociated
     let association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>
+}
+
+extension HasOneThroughRightRequest : RightRequestDerivable {
+    public typealias RightRequest = RightAssociation.RightRequest
+    
+    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> HasOneThroughRightRequest<MiddleAssociation, RightAssociation> {
+        return HasOneThroughRightRequest(record: record, association: association.mapRightRequest(transform))
+    }
 }
 
 extension HasOneThroughRightRequest : TypedRequest {
@@ -45,13 +59,6 @@ extension HasOneThroughRightRequest : TypedRequest {
             having: rightQuery.havingExpression,
             limit: rightQuery.limit)
             .prepare(db)
-    }
-}
-
-extension HasOneThroughRightRequest : RightRequestDerivable {
-    public typealias RightRowDecoder = RightAssociation.RightAssociated
-    public func mapRightRequest(_ transform: (QueryInterfaceRequest<RightAssociation.RightAssociated>) -> QueryInterfaceRequest<RightAssociation.RightAssociated>) -> HasOneThroughRightRequest<MiddleAssociation, RightAssociation> {
-        return HasOneThroughRightRequest(record: record, association: association.mapRightRequest(transform))
     }
 }
 

@@ -1,4 +1,8 @@
-public struct HasManyAnnotation<Left: TableMapping, Right: TableMapping, Annotation> {
+public struct HasManyAnnotation<Left, Right, Annotation>
+    where
+    Left: TableMapping,
+    Right: TableMapping
+{
     let association: HasManyAssociation<Left, Right>
     let expression: (Database) throws -> SQLExpression
 }

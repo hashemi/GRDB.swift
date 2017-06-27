@@ -1,6 +1,20 @@
-public struct BelongsToRightRequest<Left: MutablePersistable, Right: TableMapping> {
+public struct BelongsToRightRequest<Left, Right>
+    where
+    Left: MutablePersistable,
+    Right: TableMapping
+{
     let record: Left
     let association: BelongsToAssociation<Left, Right>
+}
+
+extension BelongsToRightRequest : RightRequestDerivable {
+    public typealias RightRequest = BelongsToAssociation<Left, Right>.RightRequest
+    
+    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> BelongsToRightRequest<Left, Right> {
+        return BelongsToRightRequest(
+            record: record,
+            association: association.mapRightRequest(transform))
+    }
 }
 
 extension BelongsToRightRequest : TypedRequest {
@@ -13,13 +27,6 @@ extension BelongsToRightRequest : TypedRequest {
         return try association.rightRequest
             .filter(mapping.map { Column($0.right) } == rowValue)
             .prepare(db)
-    }
-}
-
-extension BelongsToRightRequest : RightRequestDerivable {
-    public typealias RightRowDecoder = Right
-    public func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> BelongsToRightRequest<Left, Right> {
-        return BelongsToRightRequest(record: record, association: association.mapRightRequest(transform))
     }
 }
 

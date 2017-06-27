@@ -1,13 +1,19 @@
-public struct BelongsToLeftJoinedRequest<Left: TableMapping, Right: TableMapping> {
-    var leftRequest: QueryInterfaceRequest<Left>
+public struct BelongsToLeftJoinedRequest<Left, Right>
+    where
+    Left: TableMapping,
+    Right: TableMapping
+{
+    typealias LeftRequest = QueryInterfaceRequest<Left>
+    
+    var leftRequest: LeftRequest
     let association: BelongsToAssociation<Left, Right>
 }
 
 extension BelongsToLeftJoinedRequest : LeftRequestDerivable {
-    typealias LeftRowDecoder = Left
-    
-    func mapLeftRequest(_ transform: (QueryInterfaceRequest<Left>) -> (QueryInterfaceRequest<Left>)) -> BelongsToLeftJoinedRequest<Left, Right> {
-        return BelongsToLeftJoinedRequest(leftRequest: transform(leftRequest), association: association)
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> BelongsToLeftJoinedRequest<Left, Right> {
+        return BelongsToLeftJoinedRequest(
+            leftRequest: transform(leftRequest),
+            association: association)
     }
 }
 

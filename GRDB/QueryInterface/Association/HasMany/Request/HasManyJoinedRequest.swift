@@ -1,13 +1,19 @@
-public struct HasManyJoinedRequest<Left: TableMapping, Right: TableMapping> {
-    var leftRequest: QueryInterfaceRequest<Left>
+public struct HasManyJoinedRequest<Left, Right>
+    where
+    Left: TableMapping,
+    Right: TableMapping
+{
+    typealias LeftRequest = QueryInterfaceRequest<Left>
+    
+    var leftRequest: LeftRequest
     let association: HasManyAssociation<Left, Right>
 }
 
 extension HasManyJoinedRequest : LeftRequestDerivable {
-    typealias LeftRowDecoder = Left
-    
-    func mapLeftRequest(_ transform: (QueryInterfaceRequest<Left>) -> (QueryInterfaceRequest<Left>)) -> HasManyJoinedRequest<Left, Right> {
-        return HasManyJoinedRequest(leftRequest: transform(leftRequest), association: association)
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyJoinedRequest<Left, Right> {
+        return HasManyJoinedRequest(
+            leftRequest: transform(leftRequest),
+            association: association)
     }
 }
 

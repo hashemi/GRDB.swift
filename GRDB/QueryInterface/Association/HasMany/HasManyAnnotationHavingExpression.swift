@@ -1,4 +1,8 @@
-public struct HasManyAnnotationHavingExpression<Left: TableMapping, Right: TableMapping, Annotation> {
+public struct HasManyAnnotationHavingExpression<Left, Right, Annotation>
+    where
+    Left: TableMapping,
+    Right: TableMapping
+{
     let annotation: HasManyAnnotation<Left, Right, Annotation>
     let havingExpression: (SQLExpression) -> SQLExpression
     
@@ -10,7 +14,7 @@ public struct HasManyAnnotationHavingExpression<Left: TableMapping, Right: Table
 }
 
 extension HasManyAnnotation {
-    func havingExpression(_ havingExpression: @escaping (SQLExpression) -> SQLExpression) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> {
+    func having(_ havingExpression: @escaping (SQLExpression) -> SQLExpression) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> {
         return HasManyAnnotationHavingExpression(
             annotation: self,
             havingExpression: havingExpression)
@@ -22,33 +26,33 @@ public prefix func ! <Left, Right, Annotation>(value: HasManyAnnotationHavingExp
 }
 
 public func == <Left, Right, Annotation>(lhs: HasManyAnnotation<Left, Right, Annotation>, rhs: Annotation?) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> where Left: TableMapping, Right: TableMapping, Annotation: SQLExpressible {
-    return lhs.havingExpression { $0 == rhs }
+    return lhs.having { $0 == rhs }
 }
 
 public func != <Left, Right, Annotation>(lhs: HasManyAnnotation<Left, Right, Annotation>, rhs: Annotation?) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> where Left: TableMapping, Right: TableMapping, Annotation: SQLExpressible {
-    return lhs.havingExpression { $0 != rhs }
+    return lhs.having { $0 != rhs }
 }
 
 public func === <Left, Right, Annotation>(lhs: HasManyAnnotation<Left, Right, Annotation>, rhs: Annotation?) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> where Left: TableMapping, Right: TableMapping, Annotation: SQLExpressible {
-    return lhs.havingExpression { $0 === rhs }
+    return lhs.having { $0 === rhs }
 }
 
 public func !== <Left, Right, Annotation>(lhs: HasManyAnnotation<Left, Right, Annotation>, rhs: Annotation?) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> where Left: TableMapping, Right: TableMapping, Annotation: SQLExpressible {
-    return lhs.havingExpression { $0 !== rhs }
+    return lhs.having { $0 !== rhs }
 }
 
 public func < <Left, Right, Annotation>(lhs: HasManyAnnotation<Left, Right, Annotation>, rhs: Annotation) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> where Left: TableMapping, Right: TableMapping, Annotation: SQLExpressible {
-    return lhs.havingExpression { $0 < rhs }
+    return lhs.having { $0 < rhs }
 }
 
 public func <= <Left, Right, Annotation>(lhs: HasManyAnnotation<Left, Right, Annotation>, rhs: Annotation) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> where Left: TableMapping, Right: TableMapping, Annotation: SQLExpressible {
-    return lhs.havingExpression { $0 <= rhs }
+    return lhs.having { $0 <= rhs }
 }
 
 public func > <Left, Right, Annotation>(lhs: HasManyAnnotation<Left, Right, Annotation>, rhs: Annotation) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> where Left: TableMapping, Right: TableMapping, Annotation: SQLExpressible {
-    return lhs.havingExpression { $0 > rhs }
+    return lhs.having { $0 > rhs }
 }
 
 public func >= <Left, Right, Annotation>(lhs: HasManyAnnotation<Left, Right, Annotation>, rhs: Annotation) -> HasManyAnnotationHavingExpression<Left, Right, Annotation> where Left: TableMapping, Right: TableMapping, Annotation: SQLExpressible {
-    return lhs.havingExpression { $0 >= rhs }
+    return lhs.having { $0 >= rhs }
 }

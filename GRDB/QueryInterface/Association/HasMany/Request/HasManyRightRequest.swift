@@ -1,6 +1,20 @@
-public struct HasManyRightRequest<Left: MutablePersistable, Right: TableMapping> {
+public struct HasManyRightRequest<Left, Right>
+    where
+    Left: MutablePersistable,
+    Right: TableMapping
+{
     let record: Left
     let association: HasManyAssociation<Left, Right>
+}
+
+extension HasManyRightRequest : RightRequestDerivable {
+    public typealias RightRequest = HasManyAssociation<Left, Right>.RightRequest
+    
+    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> HasManyRightRequest<Left, Right> {
+        return HasManyRightRequest(
+            record: record,
+            association: association.mapRightRequest(transform))
+    }
 }
 
 extension HasManyRightRequest : TypedRequest {
@@ -13,13 +27,6 @@ extension HasManyRightRequest : TypedRequest {
         return try association.rightRequest
             .filter(mapping.map { Column($0.right) } == rowValue)
             .prepare(db)
-    }
-}
-
-extension HasManyRightRequest : RightRequestDerivable {
-    public typealias RightRowDecoder = Right
-    public func mapRightRequest(_ transform: (QueryInterfaceRequest<Right>) -> QueryInterfaceRequest<Right>) -> HasManyRightRequest<Left, Right> {
-        return HasManyRightRequest(record: record, association: association.mapRightRequest(transform))
     }
 }
 

@@ -1,10 +1,8 @@
 public struct HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation>
     where
     MiddleAssociation: Association,
-    RightAssociation: Association,
-    RightAssociation: RightRequestDerivable,
-    RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated,
-    RightAssociation.RightAssociated == RightAssociation.RightRowDecoder
+    RightAssociation: Association & RightRequestDerivable,
+    MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
 {
     let annotation: HasManyThroughAnnotation<MiddleAssociation, RightAssociation, Annotation>
     let havingExpression: (SQLExpression) -> SQLExpression

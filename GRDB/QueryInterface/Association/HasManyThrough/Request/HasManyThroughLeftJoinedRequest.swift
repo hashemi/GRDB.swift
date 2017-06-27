@@ -4,18 +4,19 @@ public struct HasManyThroughLeftJoinedRequest<MiddleAssociation, RightAssociatio
     MiddleAssociation: Association,
     RightAssociation: Association,
     RightAssociation: RightRequestDerivable,
-    RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated,
-    RightAssociation.RightAssociated == RightAssociation.RightRowDecoder
+    RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated
 {
-    var leftRequest: QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
+    typealias LeftRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
+    
+    var leftRequest: LeftRequest
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
 extension HasManyThroughLeftJoinedRequest : LeftRequestDerivable {
-    typealias LeftRowDecoder = MiddleAssociation.LeftAssociated
-    
-    func mapLeftRequest(_ transform: (QueryInterfaceRequest<LeftRowDecoder>) -> (QueryInterfaceRequest<LeftRowDecoder>)) -> HasManyThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> {
-        return HasManyThroughLeftJoinedRequest(leftRequest: transform(leftRequest), association: association)
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> {
+        return HasManyThroughLeftJoinedRequest(
+            leftRequest: transform(leftRequest),
+            association: association)
     }
 }
 

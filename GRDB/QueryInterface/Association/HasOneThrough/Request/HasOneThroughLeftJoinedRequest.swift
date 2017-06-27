@@ -1,13 +1,17 @@
-// Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
-public struct HasOneThroughLeftJoinedRequest<MiddleAssociation: AssociationToOne, RightAssociation: AssociationToOne> where MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated, RightAssociation: RightRequestDerivable, RightAssociation.RightRowDecoder == RightAssociation.RightAssociated {
-    var leftRequest: QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
+public struct HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation>
+    where
+    MiddleAssociation: AssociationToOne,
+    RightAssociation: AssociationToOne & RightRequestDerivable,
+    MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
+{
+    typealias LeftRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
+    
+    var leftRequest: LeftRequest
     let association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
 extension HasOneThroughLeftJoinedRequest : LeftRequestDerivable {
-    typealias LeftRowDecoder = MiddleAssociation.LeftAssociated
-    
-    func mapLeftRequest(_ transform: (QueryInterfaceRequest<LeftRowDecoder>) -> (QueryInterfaceRequest<LeftRowDecoder>)) -> HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> {
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> {
         return HasOneThroughLeftJoinedRequest(leftRequest: transform(leftRequest), association: association)
     }
 }

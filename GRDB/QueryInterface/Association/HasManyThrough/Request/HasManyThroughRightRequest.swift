@@ -1,7 +1,22 @@
-// Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
-public struct HasManyThroughRightRequest<MiddleAssociation: Association, RightAssociation: Association> where MiddleAssociation.LeftAssociated: MutablePersistable, MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated, RightAssociation: RightRequestDerivable, RightAssociation.RightRowDecoder == RightAssociation.RightAssociated {
+public struct HasManyThroughRightRequest<MiddleAssociation, RightAssociation>
+    where
+    MiddleAssociation: Association,
+    RightAssociation: Association & RightRequestDerivable,
+    MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated,
+    MiddleAssociation.LeftAssociated: MutablePersistable
+{
     let record: MiddleAssociation.LeftAssociated
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
+}
+
+extension HasManyThroughRightRequest : RightRequestDerivable {
+    public typealias RightRequest = RightAssociation.RightRequest
+    
+    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> HasManyThroughRightRequest<MiddleAssociation, RightAssociation> {
+        return HasManyThroughRightRequest(
+            record: record,
+            association: association.mapRightRequest(transform))
+    }
 }
 
 extension HasManyThroughRightRequest : TypedRequest {
@@ -46,13 +61,6 @@ extension HasManyThroughRightRequest : TypedRequest {
             having: rightQuery.havingExpression,
             limit: rightQuery.limit)
             .prepare(db)
-    }
-}
-
-extension HasManyThroughRightRequest : RightRequestDerivable {
-    public typealias RightRowDecoder = RightAssociation.RightAssociated
-    public func mapRightRequest(_ transform: (QueryInterfaceRequest<RightAssociation.RightAssociated>) -> QueryInterfaceRequest<RightAssociation.RightAssociated>) -> HasManyThroughRightRequest<MiddleAssociation, RightAssociation> {
-        return HasManyThroughRightRequest(record: record, association: association.mapRightRequest(transform))
     }
 }
 

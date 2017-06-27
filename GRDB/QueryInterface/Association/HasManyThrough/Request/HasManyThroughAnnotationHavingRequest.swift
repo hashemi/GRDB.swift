@@ -4,18 +4,19 @@ public struct HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAsso
     MiddleAssociation: Association,
     RightAssociation: Association,
     RightAssociation: RightRequestDerivable,
-    RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated,
-    RightAssociation.RightAssociated == RightAssociation.RightRowDecoder
+    RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated
 {
-    var leftRequest: QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
+    typealias LeftRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
+    
+    var leftRequest: LeftRequest
     let annotationHavingExpression: HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation>
 }
 
 extension HasManyThroughAnnotationHavingRequest : LeftRequestDerivable {
-    typealias LeftRowDecoder = MiddleAssociation.LeftAssociated
-    
-    func mapLeftRequest(_ transform: (QueryInterfaceRequest<MiddleAssociation.LeftAssociated>) -> (QueryInterfaceRequest<MiddleAssociation.LeftAssociated>)) -> HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAssociation, Annotation> {
-        return HasManyThroughAnnotationHavingRequest(leftRequest: transform(leftRequest), annotationHavingExpression: annotationHavingExpression)
+    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAssociation, Annotation> {
+        return HasManyThroughAnnotationHavingRequest(
+            leftRequest: transform(leftRequest),
+            annotationHavingExpression: annotationHavingExpression)
     }
 }
 
