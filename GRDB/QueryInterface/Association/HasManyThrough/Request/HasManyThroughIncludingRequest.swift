@@ -1,19 +1,19 @@
-// Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
 public struct HasManyThroughIncludingRequest<Left, MiddleAssociation, RightAssociation>
     where
-    Left: RequestDerivable,
+    Left: RequestDerivable, // TODO: Remove once SE-0143 is implemented
     Left: TypedRequest,
     Left.RowDecoder: TableMapping,
     MiddleAssociation: Association,
     MiddleAssociation.LeftAssociated == Left.RowDecoder,
     RightAssociation: Association,
-    RightAssociation: RightRequestDerivable,
+    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
     RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated
 {
     var leftRequest: Left
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
+// Derive conditional conformance to LeftRequestDerivable once SE-0143 is implemented
 extension HasManyThroughIncludingRequest : LeftRequestDerivable {
     typealias LeftRequest = Left
     

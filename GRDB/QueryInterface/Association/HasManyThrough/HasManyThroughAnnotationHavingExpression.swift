@@ -1,7 +1,8 @@
 public struct HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation>
     where
     MiddleAssociation: Association,
-    RightAssociation: Association & RightRequestDerivable,
+    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
+    RightAssociation: Association,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
 {
     let annotation: HasManyThroughAnnotation<MiddleAssociation, RightAssociation, Annotation>

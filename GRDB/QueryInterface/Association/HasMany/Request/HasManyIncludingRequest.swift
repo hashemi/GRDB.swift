@@ -1,6 +1,6 @@
 public struct HasManyIncludingRequest<Left, Right>
     where
-    Left: RequestDerivable,
+    Left: RequestDerivable, // TODO: Remove once SE-0143 is implemented
     Left: TypedRequest,
     Left.RowDecoder: TableMapping,
     Right: TableMapping
@@ -9,6 +9,7 @@ public struct HasManyIncludingRequest<Left, Right>
     let association: HasManyAssociation<Left.RowDecoder, Right>
 }
 
+// Derive conditional conformance to LeftRequestDerivable once SE-0143 is implemented
 extension HasManyIncludingRequest : LeftRequestDerivable {
     typealias LeftRequest = Left
     

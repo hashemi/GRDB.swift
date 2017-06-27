@@ -1,7 +1,8 @@
 public struct HasManyThroughRightRequest<MiddleAssociation, RightAssociation>
     where
     MiddleAssociation: Association,
-    RightAssociation: Association & RightRequestDerivable,
+    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
+    RightAssociation: Association,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated,
     MiddleAssociation.LeftAssociated: MutablePersistable
 {
@@ -9,6 +10,7 @@ public struct HasManyThroughRightRequest<MiddleAssociation, RightAssociation>
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
+// Derive conditional conformance to RightRequestDerivableonce once SE-0143 is implemented
 extension HasManyThroughRightRequest : RightRequestDerivable {
     public typealias RightRequest = RightAssociation.RightRequest
     

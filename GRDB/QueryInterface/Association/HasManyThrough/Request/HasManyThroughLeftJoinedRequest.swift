@@ -1,9 +1,8 @@
-// Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
 public struct HasManyThroughLeftJoinedRequest<MiddleAssociation, RightAssociation>
     where
     MiddleAssociation: Association,
     RightAssociation: Association,
-    RightAssociation: RightRequestDerivable,
+    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
     RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated
 {
     typealias LeftRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>

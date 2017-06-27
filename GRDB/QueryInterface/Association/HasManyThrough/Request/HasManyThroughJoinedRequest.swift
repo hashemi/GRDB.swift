@@ -2,7 +2,7 @@ public struct HasManyThroughJoinedRequest<MiddleAssociation, RightAssociation>
     where
     MiddleAssociation: Association,
     RightAssociation: Association,
-    RightAssociation: RightRequestDerivable,
+    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
     RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated
 {
     typealias LeftRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
