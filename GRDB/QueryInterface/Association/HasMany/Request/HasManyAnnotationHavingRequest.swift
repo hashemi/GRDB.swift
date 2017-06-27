@@ -1,5 +1,4 @@
-public struct HasManyAnnotationHavingRequest<Left, Right, Annotation>
-    where
+public struct HasManyAnnotationHavingRequest<Left, Right, Annotation> where
     Left: TableMapping,
     Right: TableMapping
 {
@@ -70,13 +69,19 @@ extension HasManyAnnotationHavingRequest : TypedRequest {
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func filter<Right, Annotation>(_ expression: HasManyAnnotationHavingExpression<RowDecoder, Right, Annotation>) -> HasManyAnnotationHavingRequest<RowDecoder, Right, Annotation> where Right: TableMapping {
+    public func filter<Right, Annotation>(_ expression: HasManyAnnotationHavingExpression<RowDecoder, Right, Annotation>)
+        -> HasManyAnnotationHavingRequest<RowDecoder, Right, Annotation>
+        where Right: TableMapping
+    {
         return HasManyAnnotationHavingRequest(leftRequest: self, annotationHavingExpression: expression)
     }
 }
 
 extension TableMapping {
-    public static func filter<Right, Annotation>(_ expression: HasManyAnnotationHavingExpression<Self, Right, Annotation>) -> HasManyAnnotationHavingRequest<Self, Right, Annotation> where Right: TableMapping {
+    public static func filter<Right, Annotation>(_ expression: HasManyAnnotationHavingExpression<Self, Right, Annotation>)
+        -> HasManyAnnotationHavingRequest<Self, Right, Annotation>
+        where Right: TableMapping
+    {
         return all().filter(expression)
     }
 }

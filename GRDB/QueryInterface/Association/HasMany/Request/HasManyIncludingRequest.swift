@@ -1,5 +1,4 @@
-public struct HasManyIncludingRequest<Left, Right>
-    where
+public struct HasManyIncludingRequest<Left, Right> where
     Left: RequestDerivable, // TODO: Remove once SE-0143 is implemented
     Left: TypedRequest,
     Left.RowDecoder: TableMapping,
@@ -36,18 +35,15 @@ extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: 
         // SELECT * FROM left...
         do {
             // Where is the left key?
-            // TODO: simplify the code below. Because of adapters, it is complex to get the index of a column in a row:
-            let (statement, adapter) = try leftRequest.prepare(db)
-            let cursor = try Row.fetchCursor(statement, adapter: adapter)
-            let layout: RowLayout = try adapter?.layoutedAdapter(from: statement).mapping ?? statement
-            guard let leftKeyIndex = layout.layoutIndex(ofColumn: leftKeyColumn) else {
+            let (cursor, layout) = try Row.fetchCursorWithLayout(db, leftRequest)
+            guard let keyIndex = layout.layoutIndex(ofColumn: leftKeyColumn) else {
                 fatalError("Column \(Left.RowDecoder.databaseTableName).\(leftKeyColumn) is not selected")
             }
             
             let enumeratedCursor = cursor.enumerated()
             while let (recordIndex, row) = try enumeratedCursor.next() {
                 let left = Left.RowDecoder(row: row)
-                let key: DatabaseValue = row.value(atIndex: leftKeyIndex)
+                let key: DatabaseValue = row.value(atIndex: keyIndex)
                 leftKeys.append(key)
                 resultIndexes[key] = recordIndex
                 result.append((left: left, right: []))
@@ -65,19 +61,16 @@ extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: 
             }
             let rightQuery = association.rightRequest.filter(leftKeys.contains(Column(rightKeyColumn))).query
             
-            // Where is the left key?
-            // TODO: simplify the code below. Because of adapters, it is complex to get the index of a column in a row:
-            let (statement, adapter) = try rightQuery.prepare(db)
-            let cursor = try Row.fetchCursor(statement, adapter: adapter)
-            let layout: RowLayout = try adapter?.layoutedAdapter(from: statement).mapping ?? statement
-            guard let leftKeyIndex = layout.layoutIndex(ofColumn: rightKeyColumn) else {
+            // Where is the right key?
+            let (cursor, layout) = try Row.fetchCursorWithLayout(db, rightQuery)
+            guard let keyIndex = layout.layoutIndex(ofColumn: rightKeyColumn) else {
                 fatalError("not implemented: support for non-selected \(Right.databaseTableName).\(rightKeyColumn) column")
             }
             
             while let row = try cursor.next() {
                 let right = Right(row: row)
-                let leftKey: DatabaseValue = row.value(atIndex: leftKeyIndex)
-                let index = resultIndexes[leftKey]! // index has been recorded during leftRequest iteration
+                let key: DatabaseValue = row.value(atIndex: keyIndex)
+                let index = resultIndexes[key]! // index has been recorded during leftRequest iteration
                 result[index].right.append(right)
             }
         }
@@ -87,28 +80,40 @@ extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: 
 }
 
 extension TypedRequest where Self: RequestDerivable, RowDecoder: TableMapping {
-    public func including<Right>(_ association: HasManyAssociation<RowDecoder, Right>) -> HasManyIncludingRequest<Self, Right> where Right: TableMapping {
+    public func including<Right>(_ association: HasManyAssociation<RowDecoder, Right>)
+        -> HasManyIncludingRequest<Self, Right>
+        where Right: TableMapping
+    {
         return HasManyIncludingRequest(leftRequest: self, association: association)
     }
 }
 
 extension TableMapping {
-    public static func including<Right>(_ association: HasManyAssociation<Self, Right>) -> HasManyIncludingRequest<QueryInterfaceRequest<Self>, Right> where Right: TableMapping {
+    public static func including<Right>(_ association: HasManyAssociation<Self, Right>)
+        -> HasManyIncludingRequest<QueryInterfaceRequest<Self>, Right>
+        where Right: TableMapping
+    {
         return all().including(association)
     }
 }
 
 extension HasManyIncludingRequest where Left: QueryInterfaceRequestConvertible {
-    public func filter<Right2, Annotation>(_ expression: HasManyAnnotationHavingExpression<Left.RowDecoder, Right2, Annotation>) -> HasManyIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation>, Right> where Right2: TableMapping {
-        // Use type inference when Swift is able to do it
-        return HasManyIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation>, Right>(
+    public func filter<Right2, Annotation2>(_ expression: HasManyAnnotationHavingExpression<Left.RowDecoder, Right2, Annotation2>)
+        -> HasManyIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation2>, Right>
+        where Right2: TableMapping
+    {
+        // TODO: Use type inference when Swift is able to do it
+        return HasManyIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation2>, Right>(
             leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
             association: association)
     }
     
-    public func filter<MiddleAssociation2, RightAssociation2, Annotation>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation2, RightAssociation2, Annotation>) -> HasManyIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation>, Right> where MiddleAssociation2.LeftAssociated == Left.RowDecoder {
-        // Use type inference when Swift is able to do it
-        return HasManyIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation>, Right>(
+    public func filter<MiddleAssociation2, RightAssociation2, Annotation2>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation2, RightAssociation2, Annotation2>)
+        -> HasManyIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation2>, Right>
+        where MiddleAssociation2.LeftAssociated == Left.RowDecoder
+    {
+        // TODO: Use type inference when Swift is able to do it
+        return HasManyIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation2>, Right>(
             leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
             association: association)
     }

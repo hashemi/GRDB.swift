@@ -1,6 +1,4 @@
-public struct BelongsToAssociation<Left, Right>
-    : Association, AssociationToOne
-    where
+public struct BelongsToAssociation<Left, Right> : Association, AssociationToOne where
     Left: TableMapping,
     Right: TableMapping
 {

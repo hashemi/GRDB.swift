@@ -504,6 +504,12 @@ extension Row {
     
     // MARK: - Fetching From SelectStatement
     
+    static func fetchCursorWithLayout(_ statement: SelectStatement, arguments: StatementArguments? = nil, adapter: RowAdapter? = nil) throws -> (cursor: DatabaseCursor<Row>, layout: RowLayout) {
+        let cursor = try fetchCursor(statement, arguments: arguments, adapter: adapter)
+        let layout: RowLayout = try adapter?.layoutedAdapter(from: statement).mapping ?? statement
+        return (cursor: cursor, layout: layout)
+    }
+    
     /// Returns a cursor over rows fetched from a prepared statement.
     ///
     ///     let statement = try db.makeSelectStatement("SELECT ...")
@@ -575,6 +581,11 @@ extension Row {
 extension Row {
     
     // MARK: - Fetching From Request
+    
+    static func fetchCursorWithLayout(_ db: Database, _ request: Request) throws -> (cursor: DatabaseCursor<Row>, layout: RowLayout) {
+        let (statement, adapter) = try request.prepare(db)
+        return try fetchCursorWithLayout(statement, adapter: adapter)
+    }
     
     /// Returns a cursor over rows fetched from a fetch request.
     ///

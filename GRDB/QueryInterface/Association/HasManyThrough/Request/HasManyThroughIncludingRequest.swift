@@ -1,5 +1,4 @@
-public struct HasManyThroughIncludingRequest<Left, MiddleAssociation, RightAssociation>
-    where
+public struct HasManyThroughIncludingRequest<Left, MiddleAssociation, RightAssociation> where
     Left: RequestDerivable, // TODO: Remove once SE-0143 is implemented
     Left: TypedRequest,
     Left.RowDecoder: TableMapping,
@@ -25,7 +24,7 @@ extension HasManyThroughIncludingRequest : LeftRequestDerivable {
 }
 
 extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, RightAssociation.RightAssociated : RowConvertible {
-    public func fetchAll(_ db: Database) throws -> [(left: MiddleAssociation.LeftAssociated, right: [RightAssociation.RightAssociated])] {
+    public func fetchAll(_ db: Database) throws -> [(left: Left.RowDecoder, right: [RightAssociation.RightAssociated])] {
         let middleMapping = try association.middleAssociation.mapping(db)
         guard middleMapping.count == 1 else {
             fatalError("not implemented: support for compound foreign keys")
@@ -33,25 +32,22 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
         let leftKeyColumn = middleMapping[0].left
         let middleKeyColumn = middleMapping[0].right
         
-        var result: [(left: MiddleAssociation.LeftAssociated, right: [RightAssociation.RightAssociated])] = []
+        var result: [(left: Left.RowDecoder, right: [RightAssociation.RightAssociated])] = []
         var leftKeys: [DatabaseValue] = []
         var resultIndexes : [DatabaseValue: Int] = [:]
         
         // SELECT * FROM left...
         do {
             // Where is the left key?
-            // TODO: simplify the code below. Because of adapters, it is complex to get the index of a column in a row:
-            let (statement, adapter) = try leftRequest.prepare(db)
-            let cursor = try Row.fetchCursor(statement, adapter: adapter)
-            let layout: RowLayout = try adapter?.layoutedAdapter(from: statement).mapping ?? statement
-            guard let leftKeyIndex = layout.layoutIndex(ofColumn: leftKeyColumn) else {
-                fatalError("Column \(MiddleAssociation.LeftAssociated.databaseTableName).\(leftKeyColumn) is not selected")
+            let (cursor, layout) = try Row.fetchCursorWithLayout(db, leftRequest)
+            guard let keyIndex = layout.layoutIndex(ofColumn: leftKeyColumn) else {
+                fatalError("Column \(Left.RowDecoder.databaseTableName).\(leftKeyColumn) is not selected")
             }
             
             let enumeratedCursor = cursor.enumerated()
             while let (recordIndex, row) = try enumeratedCursor.next() {
-                let left = MiddleAssociation.LeftAssociated(row: row)
-                let key: DatabaseValue = row.value(atIndex: leftKeyIndex)
+                let left = Left.RowDecoder(row: row)
+                let key: DatabaseValue = row.value(atIndex: keyIndex)
                 leftKeys.append(key)
                 resultIndexes[key] = recordIndex
                 result.append((left: left, right: []))
@@ -108,8 +104,8 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
 
         while let row = try cursor.next() {
             let right = RightAssociation.RightAssociated(row: row.scoped(on: "right")!)
-            let leftKey: DatabaseValue = row.value(atIndex: 0)
-            let index = resultIndexes[leftKey]! // index has been recorded during leftRequest iteration
+            let key: DatabaseValue = row.value(atIndex: 0)
+            let index = resultIndexes[key]! // index has been recorded during leftRequest iteration
             result[index].right.append(right)
         }
         
@@ -118,28 +114,40 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
 }
 
 extension TypedRequest where Self: RequestDerivable, RowDecoder: TableMapping {
-    public func including<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughIncludingRequest<Self, MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == RowDecoder {
+    public func including<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>)
+        -> HasManyThroughIncludingRequest<Self, MiddleAssociation, RightAssociation>
+        where MiddleAssociation.LeftAssociated == RowDecoder
+    {
         return HasManyThroughIncludingRequest(leftRequest: self, association: association)
     }
 }
 
 extension TableMapping {
-    public static func including<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughIncludingRequest<QueryInterfaceRequest<Self>, MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == Self {
+    public static func including<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>)
+        -> HasManyThroughIncludingRequest<QueryInterfaceRequest<Self>, MiddleAssociation, RightAssociation>
+        where MiddleAssociation.LeftAssociated == Self
+    {
         return all().including(association)
     }
 }
 
 extension HasManyThroughIncludingRequest where Left: QueryInterfaceRequestConvertible {
-    public func filter<Right2, Annotation>(_ expression: HasManyAnnotationHavingExpression<Left.RowDecoder, Right2, Annotation>) -> HasManyThroughIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation>, MiddleAssociation, RightAssociation> where Right2: TableMapping {
+    public func filter<Right2, Annotation2>(_ expression: HasManyAnnotationHavingExpression<Left.RowDecoder, Right2, Annotation2>)
+        -> HasManyThroughIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation2>, MiddleAssociation, RightAssociation>
+        where Right2: TableMapping
+    {
         // Use type inference when Swift is able to do it
-        return HasManyThroughIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation>, MiddleAssociation, RightAssociation>(
+        return HasManyThroughIncludingRequest<HasManyAnnotationHavingRequest<Left.RowDecoder, Right2, Annotation2>, MiddleAssociation, RightAssociation>(
             leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
             association: association)
     }
     
-    public func filter<MiddleAssociation2, RightAssociation2, Annotation>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation2, RightAssociation2, Annotation>) -> HasManyThroughIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation>, MiddleAssociation, RightAssociation> where Left.RowDecoder == MiddleAssociation2.LeftAssociated {
+    public func filter<MiddleAssociation2, RightAssociation2, Annotation2>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation2, RightAssociation2, Annotation2>)
+        -> HasManyThroughIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation2>, MiddleAssociation, RightAssociation>
+        where Left.RowDecoder == MiddleAssociation2.LeftAssociated
+    {
         // Use type inference when Swift is able to do it
-        return HasManyThroughIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation>, MiddleAssociation, RightAssociation>(
+        return HasManyThroughIncludingRequest<HasManyThroughAnnotationHavingRequest<MiddleAssociation2, RightAssociation2, Annotation2>, MiddleAssociation, RightAssociation>(
             leftRequest: leftRequest.queryInterfaceRequest.filter(expression),
             association: association)
     }

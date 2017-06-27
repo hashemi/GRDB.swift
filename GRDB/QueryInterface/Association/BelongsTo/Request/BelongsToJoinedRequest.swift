@@ -1,5 +1,4 @@
-public struct BelongsToJoinedRequest<Left, Right>
-    where
+public struct BelongsToJoinedRequest<Left, Right> where
     Left: TableMapping,
     Right: TableMapping
 {
@@ -33,13 +32,19 @@ extension BelongsToJoinedRequest : TypedRequest {
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func joined<Right>(with association: BelongsToAssociation<RowDecoder, Right>) -> BelongsToJoinedRequest<RowDecoder, Right> where Right: TableMapping {
+    public func joined<Right>(with association: BelongsToAssociation<RowDecoder, Right>)
+        -> BelongsToJoinedRequest<RowDecoder, Right>
+        where Right: TableMapping
+    {
         return BelongsToJoinedRequest(leftRequest: self, association: association)
     }
 }
 
 extension TableMapping {
-    public static func joined<Right>(with association: BelongsToAssociation<Self, Right>) -> BelongsToJoinedRequest<Self, Right> where Right: TableMapping {
+    public static func joined<Right>(with association: BelongsToAssociation<Self, Right>)
+        -> BelongsToJoinedRequest<Self, Right>
+        where Right: TableMapping
+    {
         return all().joined(with: association)
     }
 }

@@ -1,5 +1,4 @@
-public struct HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation>
-    where
+public struct HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> where
     MiddleAssociation: AssociationToOne,
     RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
     RightAssociation: AssociationToOne,
@@ -21,7 +20,6 @@ extension HasOneThroughLeftJoinedRequest : TypedRequest {
     public typealias RowDecoder = JoinedPair<MiddleAssociation.LeftAssociated, RightAssociation.RightAssociated?>
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
-        // TODO: don't alias unless necessary
         var leftQualifier = SQLSourceQualifier()
         var middleQualifier = SQLSourceQualifier()
         var rightQualifier = SQLSourceQualifier()
@@ -83,13 +81,19 @@ extension HasOneThroughLeftJoinedRequest : TypedRequest {
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func leftJoined<MiddleAssociation, RightAssociation>(with association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>) -> HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == RowDecoder {
+    public func leftJoined<MiddleAssociation, RightAssociation>(with association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>)
+        -> HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation>
+        where MiddleAssociation.LeftAssociated == RowDecoder
+    {
         return HasOneThroughLeftJoinedRequest(leftRequest: self, association: association)
     }
 }
 
 extension TableMapping {
-    public static func leftJoined<MiddleAssociation, RightAssociation>(with association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>) -> HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == Self {
+    public static func leftJoined<MiddleAssociation, RightAssociation>(with association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>)
+        -> HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation>
+        where MiddleAssociation.LeftAssociated == Self
+    {
         return all().leftJoined(with: association)
     }
 }

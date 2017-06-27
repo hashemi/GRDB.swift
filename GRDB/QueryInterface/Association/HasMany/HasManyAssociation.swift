@@ -1,6 +1,4 @@
-public struct HasManyAssociation<Left, Right>
-    : Association
-    where
+public struct HasManyAssociation<Left, Right> : Association where
     Left: TableMapping,
     Right: TableMapping
 {

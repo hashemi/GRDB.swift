@@ -1,5 +1,4 @@
-public struct HasOneLeftJoinedRequest<Left, Right>
-    where
+public struct HasOneLeftJoinedRequest<Left, Right> where
     Left: TableMapping,
     Right: TableMapping
 {
@@ -31,13 +30,19 @@ extension HasOneLeftJoinedRequest : TypedRequest {
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func leftJoined<Right>(with association: HasOneAssociation<RowDecoder, Right>) -> HasOneLeftJoinedRequest<RowDecoder, Right> where Right: TableMapping {
+    public func leftJoined<Right>(with association: HasOneAssociation<RowDecoder, Right>)
+        -> HasOneLeftJoinedRequest<RowDecoder, Right>
+        where Right: TableMapping
+    {
         return HasOneLeftJoinedRequest(leftRequest: self, association: association)
     }
 }
 
 extension TableMapping {
-    public static func leftJoined<Right>(with association: HasOneAssociation<Self, Right>) -> HasOneLeftJoinedRequest<Self, Right> where Right: TableMapping {
+    public static func leftJoined<Right>(with association: HasOneAssociation<Self, Right>)
+        -> HasOneLeftJoinedRequest<Self, Right>
+        where Right: TableMapping
+    {
         return all().leftJoined(with: association)
     }
 }

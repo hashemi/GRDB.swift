@@ -1,5 +1,4 @@
-public struct HasManyThroughRightRequest<MiddleAssociation, RightAssociation>
-    where
+public struct HasManyThroughRightRequest<MiddleAssociation, RightAssociation> where
     MiddleAssociation: Association,
     RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
     RightAssociation: Association,
@@ -73,19 +72,37 @@ extension HasManyThroughAssociation where MiddleAssociation.LeftAssociated: Muta
 }
 
 extension MutablePersistable {
-    public func makeRequest<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) -> HasManyThroughRightRequest<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == Self {
+    public func makeRequest<MiddleAssociation, RightAssociation>(_ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>)
+        -> HasManyThroughRightRequest<MiddleAssociation, RightAssociation>
+        where MiddleAssociation.LeftAssociated == Self
+    {
         return association.makeRequest(from: self)
     }
     
-    public func fetchCursor<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) throws -> DatabaseCursor<RightAssociation.RightAssociated> where MiddleAssociation.LeftAssociated == Self, RightAssociation.RightAssociated: RowConvertible {
+    public func fetchCursor<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) throws
+        -> DatabaseCursor<RightAssociation.RightAssociated>
+        where
+        MiddleAssociation.LeftAssociated == Self,
+        RightAssociation.RightAssociated: RowConvertible
+    {
         return try association.makeRequest(from: self).fetchCursor(db)
     }
     
-    public func fetchAll<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) throws -> [RightAssociation.RightAssociated] where MiddleAssociation.LeftAssociated == Self, RightAssociation.RightAssociated: RowConvertible {
+    public func fetchAll<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) throws
+        -> [RightAssociation.RightAssociated]
+        where
+        MiddleAssociation.LeftAssociated == Self,
+        RightAssociation.RightAssociated: RowConvertible
+    {
         return try association.makeRequest(from: self).fetchAll(db)
     }
     
-    public func fetchOne<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) throws -> RightAssociation.RightAssociated? where MiddleAssociation.LeftAssociated == Self, RightAssociation.RightAssociated: RowConvertible {
+    public func fetchOne<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>) throws
+        -> RightAssociation.RightAssociated?
+        where
+        MiddleAssociation.LeftAssociated == Self,
+        RightAssociation.RightAssociated: RowConvertible
+    {
         return try association.makeRequest(from: self).fetchOne(db)
     }
 }

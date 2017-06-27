@@ -1,5 +1,4 @@
-public struct HasManyThroughAssociation<MiddleAssociation, RightAssociation>
-    where
+public struct HasManyThroughAssociation<MiddleAssociation, RightAssociation> where
     MiddleAssociation: Association,
     RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
     RightAssociation: Association,
@@ -21,7 +20,12 @@ extension HasManyThroughAssociation : RightRequestDerivable {
 }
 
 extension TableMapping {
-    public static func hasMany<MiddleAssociation, RightAssociation>(_ rightAssociation: RightAssociation, through middleAssociation: MiddleAssociation) -> HasManyThroughAssociation<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == Self, MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated {
+    public static func hasMany<MiddleAssociation, RightAssociation>(_ rightAssociation: RightAssociation, through middleAssociation: MiddleAssociation)
+        -> HasManyThroughAssociation<MiddleAssociation, RightAssociation>
+        where
+        MiddleAssociation.LeftAssociated == Self,
+        MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
+    {
         return HasManyThroughAssociation(
             middleAssociation: middleAssociation,
             rightAssociation: rightAssociation)

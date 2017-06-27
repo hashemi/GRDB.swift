@@ -1,5 +1,4 @@
-public struct HasManyAnnotationHavingExpression<Left, Right, Annotation>
-    where
+public struct HasManyAnnotationHavingExpression<Left, Right, Annotation> where
     Left: TableMapping,
     Right: TableMapping
 {

@@ -1,5 +1,4 @@
-public struct HasOneRightRequest<Left, Right>
-    where
+public struct HasOneRightRequest<Left, Right> where
     Left: MutablePersistable,
     Right: TableMapping
 {
@@ -35,11 +34,17 @@ extension HasOneAssociation where Left: MutablePersistable {
 }
 
 extension MutablePersistable {
-    public func makeRequest<Right>(_ association: HasOneAssociation<Self, Right>) -> HasOneRightRequest<Self, Right> where Right: TableMapping {
+    public func makeRequest<Right>(_ association: HasOneAssociation<Self, Right>)
+        -> HasOneRightRequest<Self, Right>
+        where Right: TableMapping
+    {
         return association.makeRequest(from: self)
     }
     
-    public func fetchOne<Right>(_ db: Database, _ association: HasOneAssociation<Self, Right>) throws -> Right? where Right: TableMapping & RowConvertible {
+    public func fetchOne<Right>(_ db: Database, _ association: HasOneAssociation<Self, Right>) throws
+        -> Right?
+        where Right: TableMapping & RowConvertible
+    {
         return try association.makeRequest(from: self).fetchOne(db)
     }
 }

@@ -1,5 +1,4 @@
-public struct HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation>
-    where
+public struct HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation> where
     MiddleAssociation: Association,
     RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
     RightAssociation: Association,

@@ -1,6 +1,5 @@
 // Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
-public struct HasOneThroughRightRequest<MiddleAssociation, RightAssociation>
-    where
+public struct HasOneThroughRightRequest<MiddleAssociation, RightAssociation> where
     MiddleAssociation: AssociationToOne,
     RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
     RightAssociation: AssociationToOne,
@@ -65,17 +64,27 @@ extension HasOneThroughRightRequest : TypedRequest {
 }
 
 extension HasOneThroughAssociation where MiddleAssociation.LeftAssociated: MutablePersistable {
-    func makeRequest(from record: MiddleAssociation.LeftAssociated) -> HasOneThroughRightRequest<MiddleAssociation, RightAssociation> {
+    func makeRequest(from record: MiddleAssociation.LeftAssociated)
+        -> HasOneThroughRightRequest<MiddleAssociation, RightAssociation>
+    {
         return HasOneThroughRightRequest(record: record, association: self)
     }
 }
 
 extension MutablePersistable {
-    public func makeRequest<MiddleAssociation, RightAssociation>(_ association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>) -> HasOneThroughRightRequest<MiddleAssociation, RightAssociation> where MiddleAssociation.LeftAssociated == Self {
+    public func makeRequest<MiddleAssociation, RightAssociation>(_ association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>)
+        -> HasOneThroughRightRequest<MiddleAssociation, RightAssociation>
+        where MiddleAssociation.LeftAssociated == Self
+    {
         return association.makeRequest(from: self)
     }
     
-    public func fetchOne<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>) throws -> RightAssociation.RightAssociated? where MiddleAssociation.LeftAssociated == Self, RightAssociation.RightAssociated: RowConvertible {
+    public func fetchOne<MiddleAssociation, RightAssociation>(_ db: Database, _ association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>) throws
+        -> RightAssociation.RightAssociated?
+        where
+        MiddleAssociation.LeftAssociated == Self,
+        RightAssociation.RightAssociated: RowConvertible
+    {
         return try association.makeRequest(from: self).fetchOne(db)
     }
 }

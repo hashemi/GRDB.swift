@@ -1,5 +1,4 @@
-public struct HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAssociation, Annotation>
-    where
+public struct HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAssociation, Annotation> where
     MiddleAssociation: Association,
     RightAssociation: Association,
     RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
@@ -83,13 +82,19 @@ extension HasManyThroughAnnotationHavingRequest : TypedRequest {
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func filter<MiddleAssociation, RightAssociation, Annotation>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation>) -> HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAssociation, Annotation> where MiddleAssociation.LeftAssociated == RowDecoder {
+    public func filter<MiddleAssociation, RightAssociation, Annotation>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation>)
+        -> HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAssociation, Annotation>
+        where MiddleAssociation.LeftAssociated == RowDecoder
+    {
         return HasManyThroughAnnotationHavingRequest(leftRequest: self, annotationHavingExpression: expression)
     }
 }
 
 extension TableMapping {
-    public static func filter<MiddleAssociation, RightAssociation, Annotation>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation>) -> HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAssociation, Annotation> where MiddleAssociation.LeftAssociated == Self {
+    public static func filter<MiddleAssociation, RightAssociation, Annotation>(_ expression: HasManyThroughAnnotationHavingExpression<MiddleAssociation, RightAssociation, Annotation>)
+        -> HasManyThroughAnnotationHavingRequest<MiddleAssociation, RightAssociation, Annotation>
+        where MiddleAssociation.LeftAssociated == Self
+    {
         return all().filter(expression)
     }
 }

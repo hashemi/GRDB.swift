@@ -1,5 +1,4 @@
-public struct HasManyRightRequest<Left, Right>
-    where
+public struct HasManyRightRequest<Left, Right> where
     Left: MutablePersistable,
     Right: TableMapping
 {
@@ -37,19 +36,31 @@ extension HasManyAssociation where Left: MutablePersistable {
 }
 
 extension MutablePersistable {
-    public func makeRequest<Right>(_ association: HasManyAssociation<Self, Right>) -> HasManyRightRequest<Self, Right> where Right: TableMapping {
+    public func makeRequest<Right>(_ association: HasManyAssociation<Self, Right>)
+        -> HasManyRightRequest<Self, Right>
+        where Right: TableMapping
+    {
         return association.makeRequest(from: self)
     }
     
-    public func fetchCursor<Right>(_ db: Database, _ association: HasManyAssociation<Self, Right>) throws -> DatabaseCursor<Right> where Right: TableMapping & RowConvertible {
+    public func fetchCursor<Right>(_ db: Database, _ association: HasManyAssociation<Self, Right>) throws
+        -> DatabaseCursor<Right>
+        where Right: TableMapping & RowConvertible
+    {
         return try association.makeRequest(from: self).fetchCursor(db)
     }
     
-    public func fetchAll<Right>(_ db: Database, _ association: HasManyAssociation<Self, Right>) throws -> [Right] where Right: TableMapping & RowConvertible {
+    public func fetchAll<Right>(_ db: Database, _ association: HasManyAssociation<Self, Right>) throws
+        -> [Right]
+        where Right: TableMapping & RowConvertible
+    {
         return try association.makeRequest(from: self).fetchAll(db)
     }
     
-    public func fetchOne<Right>(_ db: Database, _ association: HasManyAssociation<Self, Right>) throws -> Right? where Right: TableMapping & RowConvertible {
+    public func fetchOne<Right>(_ db: Database, _ association: HasManyAssociation<Self, Right>) throws
+        -> Right?
+        where Right: TableMapping & RowConvertible
+    {
         return try association.makeRequest(from: self).fetchOne(db)
     }
 }
