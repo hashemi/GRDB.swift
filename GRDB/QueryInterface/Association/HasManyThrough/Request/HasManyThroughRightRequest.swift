@@ -31,6 +31,7 @@ extension HasManyThroughRightRequest : TypedRequest {
         let middleMapping = try association.middleAssociation.mapping(db)
         let container = PersistenceContainer(record)
         let rowValue = RowValue(middleMapping.map { container[caseInsensitive: $0.left]?.databaseValue ?? .null })
+        // TODO: when rowValue contains NULL, there is no point building any statement 
         let middleQuery = association.middleAssociation.rightRequest
             .filter(middleMapping.map { Column($0.right) } == rowValue)
             .query.qualified(by: &middleQualifier)

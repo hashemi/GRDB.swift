@@ -24,7 +24,7 @@ class HasManyThroughRightRequest_BelongsTo_HasMany_Tests: GRDBTestCase {
                 let reader = try Reader.fetchOne(db, key: "arthur@example.com")!
                 let request = reader.makeRequest(Reader.books)
                 let books = try request.fetchAll(db)
-                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".* FROM \"books\" JOIN \"libraries\" ON ((\"libraries\".\"id\" = \"books\".\"libraryId\") AND (\"libraries\".\"id\" IS NULL))") // TODO: there should not be any request
+                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".* FROM \"books\" JOIN \"libraries\" ON ((\"libraries\".\"id\" = \"books\".\"libraryId\") AND (\"libraries\".\"id\" IS NULL))")
                 XCTAssertTrue(books.isEmpty)
             }
             
@@ -93,7 +93,7 @@ class HasManyThroughRightRequest_BelongsTo_HasMany_Tests: GRDBTestCase {
             do {
                 let reader = try Reader.fetchOne(db, key: "arthur@example.com")!
                 let books = try reader.fetchAll(db, Reader.books)
-                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".* FROM \"books\" JOIN \"libraries\" ON ((\"libraries\".\"id\" = \"books\".\"libraryId\") AND (\"libraries\".\"id\" IS NULL))") // TODO: there should not be any request
+                XCTAssertEqual(lastSQLQuery, "SELECT \"books\".* FROM \"books\" JOIN \"libraries\" ON ((\"libraries\".\"id\" = \"books\".\"libraryId\") AND (\"libraries\".\"id\" IS NULL))")
                 XCTAssertTrue(books.isEmpty)
             }
             
