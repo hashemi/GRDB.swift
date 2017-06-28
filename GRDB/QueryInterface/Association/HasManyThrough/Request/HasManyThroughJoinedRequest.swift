@@ -44,7 +44,7 @@ extension HasManyThroughJoinedRequest : TypedRequest {
                 leftQuery.source,
                 .innerJoin,
                 middleQuery.source,
-                on: association.rightAssociation.mapping(db),
+                on: association.middleAssociation.mapping(db),
                 and: middleQuery.whereExpression),
             .innerJoin,
             rightQuery.source,
