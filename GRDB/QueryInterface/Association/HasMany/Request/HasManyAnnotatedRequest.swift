@@ -33,17 +33,15 @@ extension HasManyAnnotationRequest : TypedRequest {
         let joinedSelection = try leftQuery.selection + [annotation.expression(db).qualified(by: rightQualifier)]
         
         // ... FROM left LEFT JOIN right
-        guard let leftSource = leftQuery.source else { fatalError("Support for sourceless joins is not implemented") }
-        guard let rightSource = rightQuery.source else { fatalError("Support for sourceless joins is not implemented") }
         let joinedSource = try SQLSource.joined(SQLSource.JoinDefinition(
             joinOp: .leftJoin,
-            leftSource: leftSource,
-            rightSource: rightSource,
+            leftSource: leftQuery.source,
+            rightSource: rightQuery.source,
             onExpression: rightQuery.whereExpression,
             mapping: annotation.association.mapping(db)))
         
         // ... GROUP BY left.id
-        guard let leftTableName = leftQuery.source?.tableName else {
+        guard let leftTableName = leftQuery.source.tableName else {
             fatalError("Can't annotate tableless query")
         }
         let pkColumns = (try db.primaryKey(leftTableName)?.columns ?? (Left.selectsRowID ? [Column.rowID.name] : []))

@@ -11,7 +11,7 @@ public struct HasManyThroughAnnotation<MiddleAssociation, RightAssociation, Anno
 extension HasManyThroughAssociation {
     public var count: HasManyThroughAnnotation<MiddleAssociation, RightAssociation, Int> {
         // SELECT left.*, COUNT(right.*) FROM left LEFT JOIN middle LEFT JOIN right ...
-        guard let rightTable = rightAssociation.rightRequest.query.source?.tableName else {
+        guard let rightTable = rightAssociation.rightRequest.query.source.tableName else {
             fatalError("Can't count tableless query")
         }
         return HasManyThroughAnnotation(

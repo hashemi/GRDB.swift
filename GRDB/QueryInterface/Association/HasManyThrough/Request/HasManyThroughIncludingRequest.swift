@@ -74,12 +74,10 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
         let joinedSelection = [Column(middleKeyColumn).qualified(by: middleQualifier)] + rightQuery.selection
         
         // ... FROM right JOIN middle
-        guard let middleSource = middleQuery.source else { fatalError("Support for sourceless joins is not implemented") }
-        guard let rightSource = rightQuery.source else { fatalError("Support for sourceless joins is not implemented") }
         let joinedSource = try SQLSource.joined(SQLSource.JoinDefinition(
             joinOp: .join,
-            leftSource: rightSource,
-            rightSource: middleSource,
+            leftSource: rightQuery.source,
+            rightSource: middleQuery.source,
             onExpression: middleQuery.whereExpression,
             mapping: association.rightAssociation.mapping(db).map { (left: $0.right, right: $0.left ) }))
         

@@ -71,12 +71,10 @@ func prepareJoinedPairRequest(
     let joinedSelection = leftQuery.selection + rightQuery.selection
     
     // ... FROM left JOIN right
-    guard let leftSource = leftQuery.source else { fatalError("Support for sourceless joins is not implemented") }
-    guard let rightSource = rightQuery.source else { fatalError("Support for sourceless joins is not implemented") }
     let joinedSource = SQLSource.joined(SQLSource.JoinDefinition(
         joinOp: joinOperator,
-        leftSource: leftSource,
-        rightSource: rightSource,
+        leftSource: leftQuery.source,
+        rightSource: rightQuery.source,
         onExpression: rightQuery.whereExpression,
         mapping: mapping))
     

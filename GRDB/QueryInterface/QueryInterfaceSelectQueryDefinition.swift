@@ -3,7 +3,7 @@
 struct QueryInterfaceSelectQueryDefinition {
     var selection: [SQLSelectable]
     var isDistinct: Bool
-    var source: SQLSource?
+    var source: SQLSource
     var whereExpression: SQLExpression?
     var groupByExpressions: [SQLExpression]
     var orderings: [SQLOrderingTerm]
@@ -14,7 +14,7 @@ struct QueryInterfaceSelectQueryDefinition {
     init(
         select selection: [SQLSelectable],
         isDistinct: Bool = false,
-        from source: SQLSource? = nil,
+        from source: SQLSource,
         filter whereExpression: SQLExpression? = nil,
         groupBy groupByExpressions: [SQLExpression] = [],
         orderBy orderings: [SQLOrderingTerm] = [],
@@ -43,9 +43,7 @@ struct QueryInterfaceSelectQueryDefinition {
         assert(!selection.isEmpty)
         sql += " " + selection.map { $0.resultColumnSQL(&arguments) }.joined(separator: ", ")
         
-        if let source = source {
-            sql += " FROM " + source.sourceSQL(&arguments)
-        }
+        sql += " FROM " + source.sourceSQL(&arguments)
         
         if let whereExpression = whereExpression {
             sql += " WHERE " + whereExpression.expressionSQL(&arguments)
@@ -90,9 +88,7 @@ struct QueryInterfaceSelectQueryDefinition {
         var sql = "DELETE"
         var arguments: StatementArguments? = StatementArguments()
         
-        if let source = source {
-            sql += " FROM " + source.sourceSQL(&arguments)
-        }
+        sql += " FROM " + source.sourceSQL(&arguments)
         
         if let whereExpression = whereExpression {
             sql += " WHERE " + whereExpression.expressionSQL(&arguments)
@@ -140,7 +136,7 @@ struct QueryInterfaceSelectQueryDefinition {
     }
     
     func qualified(by qualifier: inout SQLSourceQualifier) -> QueryInterfaceSelectQueryDefinition {
-        let qualifiedSource = source.map { $0.qualified(by: &qualifier) }
+        let qualifiedSource = source.qualified(by: &qualifier)
         let selection = self.selection
         let qualifiedSelection = selection.map { $0.qualified(by: qualifier) }
         let qualifiedFilter = whereExpression.map { $0.qualified(by: qualifier) }
@@ -182,7 +178,7 @@ extension QueryInterfaceSelectQueryDefinition : Request {
             return trivialCountQuery
         }
         
-        guard let source = source, case .table = source else {
+        guard case .table = source else {
             // SELECT ... FROM (something which is not a table)
             return trivialCountQuery
         }
@@ -312,7 +308,7 @@ indirect enum SQLSource {
         case .table(let tableName, _):
             return tableName
         case .query(let query, _):
-            return query.source?.tableName
+            return query.source.tableName
         case .joined(let joinDefinition):
             return joinDefinition.leftSource.tableName
         }

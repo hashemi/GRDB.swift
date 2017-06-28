@@ -9,7 +9,7 @@ public struct HasManyAnnotation<Left, Right, Annotation> where
 extension HasManyAssociation {
     public var count: HasManyAnnotation<Left, Right, Int> {
         // SELECT left.*, COUNT(right.*) FROM left LEFT JOIN right ...
-        guard let rightTable = rightRequest.query.source?.tableName else {
+        guard let rightTable = rightRequest.query.source.tableName else {
             fatalError("Can't count tableless query")
         }
         return HasManyAnnotation(

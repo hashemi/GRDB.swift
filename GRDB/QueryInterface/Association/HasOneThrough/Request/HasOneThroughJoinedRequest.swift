@@ -36,20 +36,16 @@ extension HasOneThroughJoinedRequest : TypedRequest {
         // SELECT left.*, right.*
         let joinedSelection = leftQuery.selection + rightQuery.selection
         
-        // ... FROM left JOIN middle
-        guard let leftSource = leftQuery.source else { fatalError("Support for sourceless joins is not implemented") }
-        guard let middleSource = middleQuery.source else { fatalError("Support for sourceless joins is not implemented") }
-        guard let rightSource = rightQuery.source else { fatalError("Support for sourceless joins is not implemented") }
-        
+        // ... FROM left JOIN middle JOIN right
         let joinedSource = try SQLSource.joined(SQLSource.JoinDefinition(
             joinOp: .join,
             leftSource: SQLSource.joined(SQLSource.JoinDefinition(
                 joinOp: .join,
-                leftSource: leftSource,
-                rightSource: middleSource,
+                leftSource: leftQuery.source,
+                rightSource: middleQuery.source,
                 onExpression: middleQuery.whereExpression,
                 mapping: association.middleAssociation.mapping(db))),
-            rightSource: rightSource,
+            rightSource: rightQuery.source,
             onExpression: rightQuery.whereExpression,
             mapping: association.rightAssociation.mapping(db)))
         

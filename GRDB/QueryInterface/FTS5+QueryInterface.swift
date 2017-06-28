@@ -13,7 +13,7 @@
         /// If the search pattern is nil, the request does not match any
         /// database row.
         public func matching(_ pattern: FTS5Pattern?) -> QueryInterfaceRequest<T> {
-            guard let qualifiedName = query.source?.qualifiedName else {
+            guard let qualifiedName = query.source.qualifiedName else {
                 fatalError("fts5 match requires a table")
             }
             if let pattern = pattern {
