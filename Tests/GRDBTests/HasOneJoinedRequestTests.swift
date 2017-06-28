@@ -67,7 +67,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
             }
             
             do {
-                // order before joined
+                // order before
                 let graph = try Country
                     .order(Column("code"))
                     .joined(with: Country.profile)
@@ -83,7 +83,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
             }
             
             do {
-                // order after joined
+                // order after
                 let graph = try Country
                     .joined(with: Country.profile)
                     .order(Column("code"))

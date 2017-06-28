@@ -87,7 +87,7 @@ class HasManyJoinedRequestTests: GRDBTestCase {
             }
             
             do {
-                // order before joined
+                // order before
                 let graph = try Author
                     .order(Column("name").desc)
                     .joined(with: Author.books)
@@ -108,7 +108,7 @@ class HasManyJoinedRequestTests: GRDBTestCase {
             }
             
             do {
-                // order after joined
+                // order after
                 let graph = try Author
                     .joined(with: Author.books)
                     .order(Column("name").desc)

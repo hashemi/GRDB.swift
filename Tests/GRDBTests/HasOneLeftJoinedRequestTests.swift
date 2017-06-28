@@ -70,7 +70,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
             }
             
             do {
-                // order before leftJoined
+                // order before
                 let graph = try Country
                     .order(Column("code"))
                     .leftJoined(with: Country.profile)
@@ -87,7 +87,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
             }
             
             do {
-                // order after leftJoined
+                // order after
                 let graph = try Country
                     .leftJoined(with: Country.profile)
                     .order(Column("code"))

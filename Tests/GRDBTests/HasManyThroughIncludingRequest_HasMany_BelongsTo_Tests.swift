@@ -24,7 +24,9 @@ class HasManyThroughIncludingRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
                 .fetchAll(db)
             
             XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\"")
-            XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US', 'DE')))")
+            XCTAssertTrue(["DE", "FR", "US"].sqlPermutations.contains {
+                sqlQueries[sqlQueries.count - 1] == String(format: "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN (%@)))", $0)
+            })
             
             assertMatch(graph, [
                 (["code": "FR", "name": "France"], [
@@ -53,7 +55,9 @@ class HasManyThroughIncludingRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" WHERE (\"code\" <> 'FR')")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('US', 'DE')))")
+                XCTAssertTrue(["DE", "US"].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN (%@)))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["code": "US", "name": "United States"], [
@@ -72,7 +76,9 @@ class HasManyThroughIncludingRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" WHERE (\"code\" <> 'FR')")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('US', 'DE')))")
+                XCTAssertTrue(["DE", "US"].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN (%@)))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["code": "US", "name": "United States"], [
@@ -91,7 +97,9 @@ class HasManyThroughIncludingRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" ORDER BY \"name\" DESC")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('US', 'DE', 'FR')))")
+                XCTAssertTrue(["DE", "FR", "US"].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN (%@)))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["code": "US", "name": "United States"], [
@@ -114,7 +122,9 @@ class HasManyThroughIncludingRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\" ORDER BY \"name\" DESC")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('US', 'DE', 'FR')))")
+                XCTAssertTrue(["DE", "FR", "US"].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN (%@)))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["code": "US", "name": "United States"], [
@@ -143,7 +153,9 @@ class HasManyThroughIncludingRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\"")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US', 'DE'))) WHERE (\"persons\".\"name\" <> 'Craig')")
+                XCTAssertTrue(["DE", "FR", "US"].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN (%@))) WHERE (\"persons\".\"name\" <> 'Craig')", $0)
+                })
                 
                 assertMatch(graph, [
                     (["code": "FR", "name": "France"], [
@@ -164,7 +176,9 @@ class HasManyThroughIncludingRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"countries\"")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US', 'DE'))) ORDER BY \"persons\".\"name\" DESC")
+                XCTAssertTrue(["DE", "FR", "US"].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN (%@))) ORDER BY \"persons\".\"name\" DESC", $0)
+                })
                 
                 assertMatch(graph, [
                     (["code": "FR", "name": "France"], [
@@ -194,7 +208,9 @@ class HasManyThroughIncludingRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT \"countries\".* FROM \"countries\" LEFT JOIN \"citizenships\" ON (\"citizenships\".\"countryCode\" = \"countries\".\"code\") LEFT JOIN \"persons\" ON (\"persons\".\"id\" = \"citizenships\".\"personId\") GROUP BY \"countries\".\"code\" HAVING (COUNT(\"persons\".\"id\") = 2)")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US')))")
+                XCTAssertTrue(["FR", "US"].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN (%@)))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["code": "FR", "name": "France"], [
@@ -215,7 +231,9 @@ class HasManyThroughIncludingRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT \"countries\".* FROM \"countries\" LEFT JOIN \"citizenships\" ON (\"citizenships\".\"countryCode\" = \"countries\".\"code\") LEFT JOIN \"persons\" ON (\"persons\".\"id\" = \"citizenships\".\"personId\") GROUP BY \"countries\".\"code\" HAVING (COUNT(\"persons\".\"id\") = 2)")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN ('FR', 'US')))")
+                XCTAssertTrue(["FR", "US"].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT \"citizenships\".\"countryCode\", \"persons\".* FROM \"persons\" JOIN \"citizenships\" ON ((\"citizenships\".\"personId\" = \"persons\".\"id\") AND (\"citizenships\".\"countryCode\" IN (%@)))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["code": "FR", "name": "France"], [

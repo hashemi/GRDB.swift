@@ -73,7 +73,7 @@ class HasManyThroughLeftJoinedRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
             }
             
             do {
-                // order before joined
+                // order before
                 let graph = try Country
                     .order(Column("name").desc)
                     .leftJoined(with: Country.citizens)
@@ -91,7 +91,7 @@ class HasManyThroughLeftJoinedRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
             }
             
             do {
-                // order after joined
+                // order after
                 let graph = try Country
                     .leftJoined(with: Country.citizens)
                     .order(Column("name").desc)

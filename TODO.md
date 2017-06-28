@@ -22,6 +22,7 @@ Associations
 - [ ] has_one :through
 - [ ] has_and_belongs_to_many
 - [ ] Recursive associations
+- [ ] .order(annotation.count)
 
 Not sure
 

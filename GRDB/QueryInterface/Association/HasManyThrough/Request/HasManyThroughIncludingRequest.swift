@@ -33,8 +33,7 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
         let middleKeyColumn = middleMapping[0].right
         
         var result: [(left: Left.RowDecoder, right: [RightAssociation.RightAssociated])] = []
-        var leftKeys: [DatabaseValue] = []
-        var resultIndexes : [DatabaseValue: Int] = [:]
+        var resultIndexes : [DatabaseValue: [Int]] = [:]
         
         // SELECT * FROM left...
         do {
@@ -48,8 +47,10 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
             while let (recordIndex, row) = try enumeratedCursor.next() {
                 let left = Left.RowDecoder(row: row)
                 let key: DatabaseValue = row.value(atIndex: keyIndex)
-                leftKeys.append(key)
-                resultIndexes[key] = recordIndex
+                if !key.isNull {
+                    if resultIndexes[key] == nil { resultIndexes[key] = [] }
+                    resultIndexes[key]!.append(recordIndex)
+                }
                 result.append((left: left, right: []))
             }
         }
@@ -63,7 +64,7 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
         
         // SELECT * FROM middle ... -> SELECT middle.* FROM middle WHERE middle.leftId IN (...)
         let middleQuery = association.middleAssociation.rightRequest
-            .filter(leftKeys.contains(Column(middleKeyColumn)))
+            .filter(resultIndexes.keys.contains(Column(middleKeyColumn)))
             .query
             .qualified(by: &middleQualifier)
 
@@ -103,10 +104,15 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
         let cursor = try Row.fetchCursor(db, joinedRequest)
 
         while let row = try cursor.next() {
-            let right = RightAssociation.RightAssociated(row: row.scoped(on: "right")!)
+            let rightRow = row.scoped(on: "right")!
             let key: DatabaseValue = row.value(atIndex: 0)
-            let index = resultIndexes[key]! // index has been recorded during leftRequest iteration
-            result[index].right.append(right)
+            assert(!key.isNull)
+            let indexes = resultIndexes[key]! // indexes have been recorded during leftRequest iteration
+            for index in indexes {
+                // instanciate for each index, in order to never reuse references
+                let right = RightAssociation.RightAssociated(row: rightRow)
+                result[index].right.append(right)
+            }
         }
         
         return result

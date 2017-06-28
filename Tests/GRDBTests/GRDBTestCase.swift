@@ -159,3 +159,29 @@ class GRDBTestCase: XCTestCase {
         }
     }
 }
+
+extension Array {
+    func decompose() -> (Iterator.Element, [Iterator.Element])? {
+        guard let x = first else { return nil }
+        return (x, Array(suffix(from: index(after: startIndex))))
+    }
+    
+    // https://gist.github.com/proxpero/9fd3c4726d19242365d6
+    var permutations: [[Iterator.Element]] {
+        func between(_ x: Iterator.Element, _ ys: [Iterator.Element]) -> [[Iterator.Element]] {
+            guard let (head, tail) = ys.decompose() else { return [[x]] }
+            return [[x] + ys] + between(x, tail).map { [head] + $0 }
+        }
+        guard let (head, tail) = decompose() else { return [[]] }
+        return tail.permutations.flatMap { between(head, $0) }
+    }
+}
+
+extension Array where Iterator.Element: DatabaseValueConvertible {
+    // [1, 2, 3].sqlPermutations => ["1, 2, 3", "1, 3, 2", "2, 1, 3", "2, 3, 1", "3, 1, 2", "3, 2, 1"]
+    var sqlPermutations: [String] {
+        return map { $0.databaseValue.sql }
+            .permutations
+            .map { $0.joined(separator: ", ") }
+    }
+}

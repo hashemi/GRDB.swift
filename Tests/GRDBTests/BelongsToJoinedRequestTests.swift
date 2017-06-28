@@ -78,7 +78,7 @@ class BelongsToJoinedRequestTests: GRDBTestCase {
             }
             
             do {
-                // order before joined
+                // order before
                 let graph = try Book
                     .order(Column("title"))
                     .joined(with: Book.author)
@@ -99,7 +99,7 @@ class BelongsToJoinedRequestTests: GRDBTestCase {
             }
             
             do {
-                // order after joined
+                // order after
                 let graph = try Book
                     .joined(with: Book.author)
                     .order(Column("title"))

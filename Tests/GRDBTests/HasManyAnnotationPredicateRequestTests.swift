@@ -68,7 +68,7 @@ class HasManyAnnotationPredicateRequestTests: GRDBTestCase {
             }
             
             do {
-                // order before leftJoined
+                // order before
                 let graph = try Author
                     .order(Column("name").desc)
                     .filter(Author.books.count > 0)
@@ -84,7 +84,7 @@ class HasManyAnnotationPredicateRequestTests: GRDBTestCase {
             }
             
             do {
-                // order after leftJoined
+                // order after
                 let graph = try Author
                     .filter(Author.books.count > 0)
                     .order(Column("name").desc)

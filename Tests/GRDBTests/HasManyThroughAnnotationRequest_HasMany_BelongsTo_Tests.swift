@@ -70,7 +70,7 @@ class HasManyThroughAnnotationRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
             }
             
             do {
-                // order before leftJoined
+                // order before
                 let graph = try Country
                     .order(Column("name").desc)
                     .annotated(with: Country.citizens.count)
@@ -86,7 +86,7 @@ class HasManyThroughAnnotationRequest_HasMany_BelongsTo_Tests: GRDBTestCase {
             }
             
             do {
-                // order after leftJoined
+                // order after
                 let graph = try Country
                     .annotated(with: Country.citizens.count)
                     .order(Column("name").desc)

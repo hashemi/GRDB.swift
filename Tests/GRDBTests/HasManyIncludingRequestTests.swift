@@ -59,7 +59,9 @@ class HasManyIncludingRequestTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"authors\" WHERE (\"birthYear\" >= 1900)")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (1, 2, 4))")
+                XCTAssertTrue([1, 2, 4].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT * FROM \"books\" WHERE (\"authorId\" IN (%@))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
@@ -85,7 +87,9 @@ class HasManyIncludingRequestTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"authors\" WHERE (\"birthYear\" >= 1900)")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (1, 2, 4))")
+                XCTAssertTrue([1, 2, 4].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT * FROM \"books\" WHERE (\"authorId\" IN (%@))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
@@ -111,7 +115,9 @@ class HasManyIncludingRequestTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"authors\" ORDER BY \"name\" DESC")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (4, 2, 3, 1))")
+                XCTAssertTrue([1, 2, 3, 4].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT * FROM \"books\" WHERE (\"authorId\" IN (%@))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
@@ -140,7 +146,9 @@ class HasManyIncludingRequestTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"authors\" ORDER BY \"name\" DESC")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (4, 2, 3, 1))")
+                XCTAssertTrue([1, 2, 3, 4].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT * FROM \"books\" WHERE (\"authorId\" IN (%@))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["id": 4, "name": "Kim Stanley Robinson", "birthYear": 1952], [
@@ -175,7 +183,9 @@ class HasManyIncludingRequestTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"authors\"")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE ((\"year\" < 2000) AND (\"authorId\" IN (1, 2, 3, 4)))")
+                XCTAssertTrue([1, 2, 3, 4].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT * FROM \"books\" WHERE ((\"year\" < 2000) AND (\"authorId\" IN (%@)))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
@@ -200,7 +210,9 @@ class HasManyIncludingRequestTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"authors\"")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (1, 2, 3, 4)) ORDER BY \"title\"")
+                XCTAssertTrue([1, 2, 3, 4].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT * FROM \"books\" WHERE (\"authorId\" IN (%@)) ORDER BY \"title\"", $0)
+                })
                 
                 assertMatch(graph, [
                     (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),
@@ -236,7 +248,9 @@ class HasManyIncludingRequestTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT \"authors\".* FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") GROUP BY \"authors\".\"id\" HAVING (COUNT(\"books\".\"id\") > 1)")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (2, 4))")
+                XCTAssertTrue([2, 4].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT * FROM \"books\" WHERE (\"authorId\" IN (2, 4))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [
@@ -260,7 +274,9 @@ class HasManyIncludingRequestTests: GRDBTestCase {
                     .fetchAll(db)
                 
                 XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT \"authors\".* FROM \"authors\" LEFT JOIN \"books\" ON (\"books\".\"authorId\" = \"authors\".\"id\") GROUP BY \"authors\".\"id\" HAVING (COUNT(\"books\".\"id\") > 1)")
-                XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (2, 4))")
+                XCTAssertTrue([2, 4].sqlPermutations.contains {
+                    sqlQueries[sqlQueries.count - 1] == String(format: "SELECT * FROM \"books\" WHERE (\"authorId\" IN (2, 4))", $0)
+                })
                 
                 assertMatch(graph, [
                     (["id": 2, "name": "J. M. Coetzee", "birthYear": 1940], [

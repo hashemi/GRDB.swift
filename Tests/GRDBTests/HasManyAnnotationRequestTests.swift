@@ -76,7 +76,7 @@ class HasManyAnnotationRequestTests: GRDBTestCase {
             }
             
             do {
-                // order before leftJoined
+                // order before
                 let graph = try Author
                     .order(Column("name").desc)
                     .annotated(with: Author.books.count)
@@ -93,7 +93,7 @@ class HasManyAnnotationRequestTests: GRDBTestCase {
             }
             
             do {
-                // order after leftJoined
+                // order after
                 let graph = try Author
                     .annotated(with: Author.books.count)
                     .order(Column("name").desc)

@@ -67,7 +67,7 @@ class HasManyThroughAnnotationPredicateRequest_HasMany_BelongsTo_Tests: GRDBTest
             }
             
             do {
-                // order before leftJoined
+                // order before
                 let graph = try Country
                     .order(Column("name").desc)
                     .filter(Country.citizens.count > 0)
@@ -82,7 +82,7 @@ class HasManyThroughAnnotationPredicateRequest_HasMany_BelongsTo_Tests: GRDBTest
             }
             
             do {
-                // order after leftJoined
+                // order after
                 let graph = try Country
                     .filter(Country.citizens.count > 0)
                     .order(Column("name").desc)
