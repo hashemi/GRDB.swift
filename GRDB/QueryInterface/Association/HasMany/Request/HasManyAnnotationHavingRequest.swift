@@ -30,12 +30,12 @@ extension HasManyAnnotationPredicateRequest : TypedRequest {
         let rightQuery = annotationPredicate.annotation.association.rightRequest.query.qualified(by: &rightQualifier)
         
         // Join sources: SELECT ... FROM left LEFT JOIN right
-        let joinedSource = try SQLSource.joined(SQLSource.JoinDefinition(
-            joinOp: .leftJoin,
-            leftSource: leftQuery.source,
-            rightSource: rightQuery.source,
-            onExpression: rightQuery.whereExpression,
-            mapping: annotationPredicate.annotation.association.mapping(db)))
+        let joinedSource = try SQLSource(
+            leftQuery.source,
+            .leftJoin,
+            rightQuery.source,
+            on: annotationPredicate.annotation.association.mapping(db),
+            and: rightQuery.whereExpression)
         
         // ... GROUP BY left.id
         guard let leftTableName = leftQuery.source.tableName else {

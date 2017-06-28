@@ -36,17 +36,17 @@ extension HasManyThroughAnnotationPredicateRequest : TypedRequest {
         let rightQuery = annotationPredicate.annotation.association.rightAssociation.rightRequest.query.qualified(by: &rightQualifier)
         
         // ... FROM left LEFT JOIN middle LEFT JOIN right
-        let joinedSource = try SQLSource.joined(SQLSource.JoinDefinition(
-            joinOp: .leftJoin,
-            leftSource: SQLSource.joined(SQLSource.JoinDefinition(
-                joinOp: .leftJoin,
-                leftSource: leftQuery.source,
-                rightSource: middleQuery.source,
-                onExpression: middleQuery.whereExpression,
-                mapping: annotationPredicate.annotation.association.middleAssociation.mapping(db))),
-            rightSource: rightQuery.source,
-            onExpression: rightQuery.whereExpression,
-            mapping: annotationPredicate.annotation.association.rightAssociation.mapping(db)))
+        let joinedSource = try SQLSource(
+            SQLSource(
+                leftQuery.source,
+                .leftJoin,
+                middleQuery.source,
+                on: annotationPredicate.annotation.association.middleAssociation.mapping(db),
+                and: middleQuery.whereExpression),
+            .leftJoin,
+            rightQuery.source,
+            on: annotationPredicate.annotation.association.rightAssociation.mapping(db),
+            and: rightQuery.whereExpression)
         
         // ... GROUP BY left.id
         guard let leftTableName = leftQuery.source.tableName else {

@@ -40,12 +40,12 @@ extension HasManyThroughRightRequest : TypedRequest {
         let rightQuery = association.rightAssociation.rightRequest.query.qualified(by: &rightQualifier)
         
         // ... FROM right JOIN middle
-        let joinedSource = try SQLSource.joined(SQLSource.JoinDefinition(
-            joinOp: .join,
-            leftSource: rightQuery.source,
-            rightSource: middleQuery.source,
-            onExpression: middleQuery.whereExpression,
-            mapping: association.rightAssociation.mapping(db).map { (left: $0.right, right: $0.left ) }))
+        let joinedSource = try SQLSource(
+            rightQuery.source,
+            .innerJoin,
+            middleQuery.source,
+            on: association.rightAssociation.reversedMapping(db),
+            and: middleQuery.whereExpression)
         
         // ORDER BY right.***, middle.***
         let joinedOrderings = rightQuery.eventuallyReversedOrderings + middleQuery.eventuallyReversedOrderings

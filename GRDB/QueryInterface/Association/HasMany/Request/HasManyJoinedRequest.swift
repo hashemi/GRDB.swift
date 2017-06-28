@@ -24,7 +24,7 @@ extension HasManyJoinedRequest : TypedRequest {
             db,
             leftQuery: leftRequest.query,
             rightQuery: association.rightRequest.query,
-            joinOperator: .join,
+            joinOperator: .innerJoin,
             mapping: association.mapping(db),
             leftScope: RowDecoder.leftScope,
             rightScope: RowDecoder.rightScope)

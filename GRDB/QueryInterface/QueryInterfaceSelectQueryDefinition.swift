@@ -217,7 +217,7 @@ extension QueryInterfaceSelectQueryDefinition : Request {
 }
 
 enum SQLJoinOperator : String {
-    case join = "JOIN"
+    case innerJoin = "JOIN"
     case leftJoin = "LEFT JOIN"
 }
 
@@ -272,6 +272,10 @@ indirect enum SQLSource {
             
             return sql
         }
+    }
+    
+    init(_ left: SQLSource, _ joinOp: SQLJoinOperator, _ right: SQLSource, on mapping: [(left: String, right: String)], and expression: SQLExpression?) {
+        self = .joined(JoinDefinition(joinOp: joinOp, leftSource: left, rightSource: right, onExpression: expression, mapping: mapping))
     }
     
     var leftQualifier: SQLSourceQualifier? {

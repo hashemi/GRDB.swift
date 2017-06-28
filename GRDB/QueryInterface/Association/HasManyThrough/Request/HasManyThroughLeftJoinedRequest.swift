@@ -39,17 +39,17 @@ extension HasManyThroughLeftJoinedRequest : TypedRequest {
         let joinedSelection = leftQuery.selection + rightQuery.selection
         
         // ... FROM left JOIN middle JOIN right
-        let joinedSource = try SQLSource.joined(SQLSource.JoinDefinition(
-            joinOp: .leftJoin,
-            leftSource: SQLSource.joined(SQLSource.JoinDefinition(
-                joinOp: .leftJoin,
-                leftSource: leftQuery.source,
-                rightSource: middleQuery.source,
-                onExpression: middleQuery.whereExpression,
-                mapping: association.middleAssociation.mapping(db))),
-            rightSource: rightQuery.source,
-            onExpression: rightQuery.whereExpression,
-            mapping: association.rightAssociation.mapping(db)))
+        let joinedSource = try SQLSource(
+            SQLSource(
+                leftQuery.source,
+                .leftJoin,
+                middleQuery.source,
+                on: association.middleAssociation.mapping(db),
+                and: middleQuery.whereExpression),
+            .leftJoin,
+            rightQuery.source,
+            on: association.rightAssociation.mapping(db),
+            and: rightQuery.whereExpression)
         
         // ORDER BY left.***, right.***
         let joinedOrderings = leftQuery.eventuallyReversedOrderings + rightQuery.eventuallyReversedOrderings

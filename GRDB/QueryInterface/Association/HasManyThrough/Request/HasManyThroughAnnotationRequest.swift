@@ -39,17 +39,17 @@ extension HasManyThroughAnnotationRequest : TypedRequest {
         let joinedSelection = try leftQuery.selection + [annotation.expression(db).qualified(by: rightQualifier)]
         
         // ... FROM left LEFT JOIN middle LEFT JOIN right
-        let joinedSource = try SQLSource.joined(SQLSource.JoinDefinition(
-            joinOp: .leftJoin,
-            leftSource: SQLSource.joined(SQLSource.JoinDefinition(
-                joinOp: .leftJoin,
-                leftSource: leftQuery.source,
-                rightSource: middleQuery.source,
-                onExpression: middleQuery.whereExpression,
-                mapping: annotation.association.middleAssociation.mapping(db))),
-            rightSource: rightQuery.source,
-            onExpression: rightQuery.whereExpression,
-            mapping: annotation.association.rightAssociation.mapping(db)))
+        let joinedSource = try SQLSource(
+            SQLSource(
+                leftQuery.source,
+                .leftJoin,
+                middleQuery.source,
+                on: annotation.association.middleAssociation.mapping(db),
+                and: middleQuery.whereExpression),
+            .leftJoin,
+            rightQuery.source,
+            on: annotation.association.rightAssociation.mapping(db),
+            and: rightQuery.whereExpression)
         
         // ... GROUP BY left.id
         guard let leftTableName = leftQuery.source.tableName else {
