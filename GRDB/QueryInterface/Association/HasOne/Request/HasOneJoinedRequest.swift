@@ -22,10 +22,10 @@ extension HasOneJoinedRequest : TypedRequest {
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
         return try prepareJoinedPairRequest(
             db,
-            leftQuery: leftRequest.query,
-            rightQuery: association.rightRequest.query,
-            joinOperator: .innerJoin,
-            mapping: association.mapping(db),
+            left: leftRequest.query,
+            join: .inner,
+            right: association.rightRequest.query,
+            on: association.mapping(db),
             leftScope: RowDecoder.leftScope,
             rightScope: RowDecoder.rightScope)
     }

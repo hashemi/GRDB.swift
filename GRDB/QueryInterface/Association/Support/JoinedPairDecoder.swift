@@ -50,10 +50,10 @@ extension RowConvertible {
 // Support for XXXJoinedRequest and XXXLeftJoinedRequest
 func prepareJoinedPairRequest(
     _ db: Database,
-    leftQuery: QueryInterfaceSelectQueryDefinition,
-    rightQuery: QueryInterfaceSelectQueryDefinition,
-    joinOperator: SQLJoinOperator,
-    mapping: [(left: String, right: String)],
+    left leftQuery: QueryInterfaceSelectQueryDefinition,
+    join joinOp: SQLJoinOperator,
+    right rightQuery: QueryInterfaceSelectQueryDefinition,
+    on mapping: [(left: String, right: String)],
     leftScope: String,
     rightScope: String) throws
     -> (SelectStatement, RowAdapter?)
@@ -71,12 +71,11 @@ func prepareJoinedPairRequest(
     let joinedSelection = leftQuery.selection + rightQuery.selection
     
     // ... FROM left JOIN right
-    let joinedSource = SQLSource.joined(SQLSource.JoinDefinition(
-        joinOp: joinOperator,
-        leftSource: leftQuery.source,
-        rightSource: rightQuery.source,
-        onExpression: rightQuery.whereExpression,
-        mapping: mapping))
+    let joinedSource = SQLSource(
+        left: leftQuery,
+        join: joinOp,
+        right: rightQuery,
+        on: mapping)
     
     // ORDER BY left.***, right.***
     let joinedOrderings = leftQuery.eventuallyReversedOrderings + rightQuery.eventuallyReversedOrderings

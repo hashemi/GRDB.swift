@@ -38,16 +38,14 @@ extension HasOneThroughJoinedRequest : TypedRequest {
         
         // ... FROM left JOIN middle JOIN right
         let joinedSource = try SQLSource(
-            SQLSource(
-                leftQuery.source,
-                .innerJoin,
-                middleQuery.source,
-                on: association.middleAssociation.mapping(db),
-                and: middleQuery.whereExpression),
-            .innerJoin,
-            rightQuery.source,
-            on: association.rightAssociation.mapping(db),
-            and: rightQuery.whereExpression)
+            left: SQLSource(
+                left: leftQuery,
+                join: .inner,
+                right: middleQuery,
+                on: association.middleAssociation.mapping(db)),
+            join: .inner,
+            right: rightQuery,
+            on: association.rightAssociation.mapping(db))
         
         // ORDER BY left.***, right.***
         let joinedOrderings = leftQuery.eventuallyReversedOrderings + rightQuery.eventuallyReversedOrderings

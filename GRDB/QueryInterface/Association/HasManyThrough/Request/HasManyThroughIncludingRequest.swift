@@ -75,11 +75,10 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
         
         // ... FROM right JOIN middle
         let joinedSource = try SQLSource(
-            rightQuery.source,
-            .innerJoin,
-            middleQuery.source,
-            on: association.rightAssociation.reversedMapping(db),
-            and: middleQuery.whereExpression)
+            left: rightQuery,
+            join: .inner,
+            right: middleQuery,
+            on: association.rightAssociation.reversedMapping(db))
         
         // ORDER BY right.***, middle.***
         let joinedOrderings = rightQuery.eventuallyReversedOrderings + middleQuery.eventuallyReversedOrderings
