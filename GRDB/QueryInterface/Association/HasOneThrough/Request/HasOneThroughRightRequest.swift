@@ -37,11 +37,11 @@ extension HasOneThroughRightRequest : TypedRequest {
         let rightQuery = association.rightAssociation.rightRequest.query.qualified(by: &rightQualifier)
         
         // ... FROM right JOIN middle
-        let joinedSource = try SQLSource(
-            left: rightQuery,
-            join: .inner,
-            right: middleQuery,
-            on: association.rightAssociation.reversedMapping(db))
+        let joinedSource = try rightQuery.source.join(
+            .inner,
+            on: association.rightAssociation.reversedMapping(db),
+            and: middleQuery.whereExpression,
+            to: middleQuery.source)
         
         // ORDER BY right.***, middle.***
         let joinedOrderings = rightQuery.eventuallyReversedOrderings + middleQuery.eventuallyReversedOrderings

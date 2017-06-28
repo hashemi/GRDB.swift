@@ -178,7 +178,7 @@ extension QueryInterfaceSelectQueryDefinition : Request {
             return trivialCountQuery
         }
         
-        guard case .table = source else {
+        guard source.isTable else {
             // SELECT ... FROM (something which is not a table)
             return trivialCountQuery
         }
@@ -212,7 +212,7 @@ extension QueryInterfaceSelectQueryDefinition : Request {
     private var trivialCountQuery: QueryInterfaceSelectQueryDefinition {
         return QueryInterfaceSelectQueryDefinition(
             select: [SQLExpressionCount(SQLStar())],
-            from: .query(query: unordered, qualifier: nil))
+            from: .query(unordered))
     }
 }
 
@@ -221,44 +221,71 @@ enum SQLJoinOperator : String {
     case left = "LEFT JOIN"
 }
 
-indirect enum SQLSource {
-    case table(name: String, qualifier: SQLSourceQualifier?)
-    case query(query: QueryInterfaceSelectQueryDefinition, qualifier: SQLSourceQualifier?)
-    case joined(JoinDefinition)
-    
-    struct JoinDefinition {
-        let joinOp: SQLJoinOperator
-        let leftSource: SQLSource
-        let rightSource: SQLSource
-        let onExpression: SQLExpression?
-        let mapping: [(left: String, right: String)]
+struct SQLSource {
+    private enum Origin {
+        case table(tableName: String, qualifier: SQLSourceQualifier?)
+        indirect case query(QueryInterfaceSelectQueryDefinition)
         
-        func qualified(by qualifier: inout SQLSourceQualifier) -> JoinDefinition {
-            return JoinDefinition(
-                joinOp: joinOp,
-                leftSource: leftSource.qualified(by: &qualifier),
-                rightSource: rightSource,
-                onExpression: onExpression,
-                mapping: mapping)
+        func sql(_ arguments: inout StatementArguments?) -> String {
+            switch self {
+            case .table(let tableName, let qualifier):
+                if let alias = qualifier?.alias {
+                    return "\(tableName.quotedDatabaseIdentifier) AS \(alias.quotedDatabaseIdentifier)"
+                } else {
+                    return "\(tableName.quotedDatabaseIdentifier)"
+                }
+            case .query(let query):
+                return "(\(query.sql(&arguments)))"
+            }
         }
         
-        func sourceSQL(_ arguments: inout StatementArguments?) -> String {
-            // left JOIN right ON ...
-            var sql = ""
-            sql += leftSource.sourceSQL(&arguments)
-            sql += " \(joinOp.rawValue) "
-            sql += rightSource.sourceSQL(&arguments)
+        func qualified(by qualifier: inout SQLSourceQualifier) -> Origin {
+            switch self {
+            case .table(let tableName, let oldQualifier):
+                if let oldQualifier = oldQualifier {
+                    qualifier = oldQualifier
+                    return self
+                } else {
+                    qualifier.tableName = tableName
+                    return .table(
+                        tableName: tableName,
+                        qualifier: qualifier)
+                }
+            case .query(let query):
+                return .query(query.qualified(by: &qualifier))
+            }
+        }
+    }
+    
+    private struct Join {
+        let joinOp: SQLJoinOperator
+        let tableName: String
+        let qualifier: SQLSourceQualifier?
+        let mapping: [(left: Column, right: String)]
+        let onExpression: SQLExpression?
+        let joins: [Join]
+        
+        func sql(_ arguments: inout StatementArguments?) -> String {
+            var sql = joinOp.rawValue
             
-            // We're generating sql: sources must have been qualified by now
-            let leftQualifier = leftSource.rightQualifier!
-            let rightQualifier = rightSource.leftQualifier!
+            if let alias = qualifier?.alias {
+                sql += " \(tableName.quotedDatabaseIdentifier) AS \(alias.quotedDatabaseIdentifier)"
+            } else {
+                sql += " \(tableName.quotedDatabaseIdentifier)"
+            }
             
-            var onClauses = mapping
-                .map { arrow -> SQLExpression in
-                    // right.leftId == left.id
-                    let leftColumn = Column(arrow.left).qualified(by: leftQualifier)
-                    let rightColumn = Column(arrow.right).qualified(by: rightQualifier)
-                    return (rightColumn == leftColumn) }
+            var onClauses: [SQLExpression]
+            if let qualifier = qualifier {
+                // right.leftId == left.id
+                onClauses = mapping.map { arrow in
+                    Column(arrow.right).qualified(by: qualifier) == arrow.left
+                }
+            } else {
+                // leftId == left.id
+                onClauses = mapping.map { arrow in
+                    Column(arrow.right) == arrow.left
+                }
+            }
             
             if let onExpression = onExpression {
                 // right.name = 'foo'
@@ -269,104 +296,95 @@ indirect enum SQLSource {
                 let onClause = onClauses.suffix(from: 1).reduce(first, &&)
                 sql += " ON " + onClause.expressionSQL(&arguments)
             }
-            
-            return sql
+
+            return ([sql] + joins.map { $0.sql(&arguments) }).joined(separator: " ")
         }
     }
     
-    init(left: QueryInterfaceSelectQueryDefinition, join: SQLJoinOperator, right: QueryInterfaceSelectQueryDefinition, on mapping: [(left: String, right: String)]) {
-        self.init(left: left.source, join: join, right: right, on: mapping)
-    }
+    private let origin: Origin
+    private let joins: [Join]
     
-    init(left: SQLSource, join: SQLJoinOperator, right: QueryInterfaceSelectQueryDefinition, on mapping: [(left: String, right: String)]) {
-        self.init(left: left, join: join, right: right.source, on: mapping, and: right.whereExpression)
-    }
-    
-    init(left: SQLSource, join: SQLJoinOperator, right: SQLSource, on mapping: [(left: String, right: String)], and expression: SQLExpression?) {
-        self = .joined(JoinDefinition(joinOp: join, leftSource: left, rightSource: right, onExpression: expression, mapping: mapping))
-    }
-    
-    var leftQualifier: SQLSourceQualifier? {
-        switch self {
-        case .table(_, let qualifier): return qualifier
-        case .query(_, let qualifier): return qualifier
-        case .joined(let joinDef): return joinDef.leftSource.leftQualifier
-        }
-    }
-    
-    var rightQualifier: SQLSourceQualifier? {
-        switch self {
-        case .table(_, let qualifier): return qualifier
-        case .query(_, let qualifier): return qualifier
-        case .joined(let joinDef): return joinDef.rightSource.rightQualifier
+    /// True if source is a simple table
+    var isTable: Bool {
+        switch origin {
+        case .table:
+            return joins.isEmpty
+        default:
+            return false
         }
     }
     
     /// An alias or an actual table name
     var qualifiedName: String? {
-        switch self {
+        switch origin {
         case .table(let tableName, let qualifier):
             return qualifier?.qualifiedName ?? tableName
-        case .query(_, let qualifier):
-            return qualifier?.qualifiedName
-        case .joined(let joinDefinition):
-            return joinDefinition.leftSource.qualifiedName
+        case .query(let query):
+            return query.source.qualifiedName
         }
     }
     
     /// An actual table name, not an alias
     var tableName: String? {
-        switch self {
+        switch origin {
         case .table(let tableName, _):
             return tableName
-        case .query(let query, _):
+        case .query(let query):
             return query.source.tableName
-        case .joined(let joinDefinition):
-            return joinDefinition.leftSource.tableName
-        }
-    }
-
-    func sourceSQL(_ arguments: inout StatementArguments?) -> String {
-        switch self {
-        case .table(let table, let qualifier):
-            if let alias = qualifier?.alias {
-                return table.quotedDatabaseIdentifier + " AS " + alias.quotedDatabaseIdentifier
-            } else {
-                return table.quotedDatabaseIdentifier
-            }
-        case .query(let query, let qualifier):
-            if let alias = qualifier?.alias {
-                return "(" + query.sql(&arguments) + ") AS " + alias.quotedDatabaseIdentifier
-            } else {
-                return "(" + query.sql(&arguments) + ")"
-            }
-        case .joined(let joinDef):
-            return joinDef.sourceSQL(&arguments)
         }
     }
     
-    func qualified(by qualifier: inout SQLSourceQualifier) -> SQLSource {
-        switch self {
-        case .table(let tableName, let oldQualifier):
-            if let oldQualifier = oldQualifier {
-                qualifier = oldQualifier
-                return self
-            } else {
-                qualifier.tableName = tableName
-                return .table(
-                    name: tableName,
-                    qualifier: qualifier)
+    static func table(_ tableName: String) -> SQLSource {
+        return SQLSource(
+            origin: .table(tableName: tableName, qualifier: nil),
+            joins: [])
+    }
+    
+    static func query(_ query: QueryInterfaceSelectQueryDefinition) -> SQLSource {
+        return SQLSource(
+            origin: .query(query),
+            joins: [])
+    }
+    
+    func join(
+        _ joinOp: SQLJoinOperator,
+        on mapping: [(left: String, right: String)],
+        and onExpression: SQLExpression?,
+        to right: SQLSource) -> SQLSource
+    {
+        guard case .table(_, let leftQualifier) = origin else { fatalError() }
+        guard case .table(let rightTableName, let rightQualifier) = right.origin else { fatalError() }
+        
+        var joinMapping: [(left: Column, right: String)]
+        if let leftQualifier = leftQualifier {
+            joinMapping = mapping.map { arrow in
+                (left: Column(arrow.left).qualified(by: leftQualifier), right: arrow.right)
             }
-        case .query(let query, let oldQualifier):
-            if let oldQualifier = oldQualifier {
-                qualifier = oldQualifier
-                return self
-            } else {
-                return .query(query: query, qualifier: qualifier)
+        } else {
+            joinMapping = mapping.map { arrow in
+                (left: Column(arrow.left), right: arrow.right)
             }
-        case .joined(let joinDef):
-            return .joined(joinDef.qualified(by: &qualifier))
         }
+        
+        let newJoin = Join(
+            joinOp: joinOp,
+            tableName: rightTableName,
+            qualifier: rightQualifier,
+            mapping: joinMapping,
+            onExpression: onExpression,
+            joins: right.joins)
+        
+        return SQLSource(
+            origin: origin,
+            joins: joins + [newJoin])
+    }
+
+    func sourceSQL(_ arguments: inout StatementArguments?) -> String {
+        return ([origin.sql(&arguments)] + joins.map { $0.sql(&arguments) }).joined(separator: " ")
+    }
+    
+    func qualified(by qualifier: inout SQLSourceQualifier) -> SQLSource {
+        return SQLSource(origin: origin.qualified(by: &qualifier), joins: joins)
     }
 }
 

@@ -71,11 +71,11 @@ func prepareJoinedPairRequest(
     let joinedSelection = leftQuery.selection + rightQuery.selection
     
     // ... FROM left JOIN right
-    let joinedSource = SQLSource(
-        left: leftQuery,
-        join: joinOp,
-        right: rightQuery,
-        on: mapping)
+    let joinedSource = leftQuery.source.join(
+        joinOp,
+        on: mapping,
+        and: rightQuery.whereExpression,
+        to: rightQuery.source)
     
     // ORDER BY left.***, right.***
     let joinedOrderings = leftQuery.eventuallyReversedOrderings + rightQuery.eventuallyReversedOrderings
