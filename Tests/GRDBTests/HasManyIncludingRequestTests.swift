@@ -24,7 +24,9 @@ class HasManyIncludingRequestTests: GRDBTestCase {
                 .fetchAll(db)
             
             XCTAssertEqual(sqlQueries[sqlQueries.count - 2], "SELECT * FROM \"authors\"")
-            XCTAssertEqual(sqlQueries[sqlQueries.count - 1], "SELECT * FROM \"books\" WHERE (\"authorId\" IN (1, 2, 3, 4))")
+            XCTAssertTrue([1, 2, 3, 4].sqlPermutations.contains {
+                sqlQueries[sqlQueries.count - 1] == String(format: "SELECT * FROM \"books\" WHERE (\"authorId\" IN (%@))", $0)
+            })
             
             assertMatch(graph, [
                 (["id": 1, "name": "Gwendal Roué", "birthYear": 1973], []),

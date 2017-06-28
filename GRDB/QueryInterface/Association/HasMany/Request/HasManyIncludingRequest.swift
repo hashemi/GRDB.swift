@@ -29,7 +29,6 @@ extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: 
         let rightKeyColumn = mapping[0].right
         
         var result: [(left: Left.RowDecoder, right: [Right])] = []
-        var leftKeys: [DatabaseValue] = []
         var resultIndexes : [DatabaseValue: Int] = [:]
         
         // SELECT * FROM left...
@@ -40,11 +39,9 @@ extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: 
                 fatalError("Column \(Left.RowDecoder.databaseTableName).\(leftKeyColumn) is not selected")
             }
             
-            let enumeratedCursor = cursor.enumerated()
-            while let (recordIndex, row) = try enumeratedCursor.next() {
+            try cursor.enumerated().forEach { (recordIndex, row) in
                 let left = Left.RowDecoder(row: row)
                 let key: DatabaseValue = row.value(atIndex: keyIndex)
-                leftKeys.append(key)
                 resultIndexes[key] = recordIndex
                 result.append((left: left, right: []))
             }
@@ -59,7 +56,7 @@ extension HasManyIncludingRequest where Left.RowDecoder: RowConvertible, Right: 
             guard mapping.count == 1 else {
                 fatalError("not implemented: support for compound foreign keys")
             }
-            let rightQuery = association.rightRequest.filter(leftKeys.contains(Column(rightKeyColumn))).query
+            let rightQuery = association.rightRequest.filter(resultIndexes.keys.contains(Column(rightKeyColumn))).query
             
             // Where is the right key?
             let (cursor, layout) = try Row.fetchCursorWithLayout(db, rightQuery)

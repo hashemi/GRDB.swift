@@ -43,8 +43,7 @@ extension HasManyThroughIncludingRequest where Left.RowDecoder: RowConvertible, 
                 fatalError("Column \(Left.RowDecoder.databaseTableName).\(leftKeyColumn) is not selected")
             }
             
-            let enumeratedCursor = cursor.enumerated()
-            while let (recordIndex, row) = try enumeratedCursor.next() {
+            try cursor.enumerated().forEach { (recordIndex, row) in
                 let left = Left.RowDecoder(row: row)
                 let key: DatabaseValue = row.value(atIndex: keyIndex)
                 if !key.isNull {
