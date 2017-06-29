@@ -67,6 +67,8 @@ func prepareJoinedPairRequest(
     // SELECT * FROM right ... -> SELECT right.* FROM right ...
     let rightQuery = rightQuery.qualified(by: &rightQualifier)
     
+    [leftQualifier, rightQualifier].resolveAmbiguities()
+    
     // SELECT left.*, right.*
     let joinedSelection = leftQuery.selection + rightQuery.selection
     

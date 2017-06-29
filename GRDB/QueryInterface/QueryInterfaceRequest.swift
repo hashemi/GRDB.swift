@@ -42,7 +42,7 @@ extension QueryInterfaceRequest : RequestDerivable {
     ///     request
     ///         .select([Column("id")])
     ///         .select([Column("email")])
-    public func select(_ selection: [SQLSelectable]) -> QueryInterfaceRequest<T> {
+    public func select(_ selection: [SQLSelectable]) -> QueryInterfaceRequest {
         var query = self.query
         query.selection = selection
         return QueryInterfaceRequest(query: query)
@@ -57,7 +57,7 @@ extension QueryInterfaceRequest : RequestDerivable {
     ///     // SELECT DISTINCT name FROM persons
     ///     var request = Person.select(Column("name"))
     ///     request = request.distinct()
-    public func distinct() -> QueryInterfaceRequest<T> {
+    public func distinct() -> QueryInterfaceRequest {
         var query = self.query
         query.isDistinct = true
         return QueryInterfaceRequest(query: query)
@@ -69,7 +69,7 @@ extension QueryInterfaceRequest : RequestDerivable {
     ///     // SELECT * FROM persons WHERE email = 'arthur@example.com'
     ///     var request = Person.all()
     ///     request = request.filter(Column("email") == "arthur@example.com")
-    public func filter(_ predicate: SQLExpressible) -> QueryInterfaceRequest<T> {
+    public func filter(_ predicate: SQLExpressible) -> QueryInterfaceRequest {
         var query = self.query
         if let whereExpression = query.whereExpression {
             query.whereExpression = whereExpression && predicate.sqlExpression
@@ -80,7 +80,7 @@ extension QueryInterfaceRequest : RequestDerivable {
     }
     
     /// A new QueryInterfaceRequest grouped according to *expressions*.
-    public func group(_ expressions: [SQLExpressible]) -> QueryInterfaceRequest<T> {
+    public func group(_ expressions: [SQLExpressible]) -> QueryInterfaceRequest {
         var query = self.query
         query.groupByExpressions = expressions.map { $0.sqlExpression }
         return QueryInterfaceRequest(query: query)
@@ -88,7 +88,7 @@ extension QueryInterfaceRequest : RequestDerivable {
     
     /// A new QueryInterfaceRequest with the provided *predicate* added to the
     /// eventual set of already applied predicates.
-    public func having(_ predicate: SQLExpressible) -> QueryInterfaceRequest<T> {
+    public func having(_ predicate: SQLExpressible) -> QueryInterfaceRequest {
         var query = self.query
         if let havingExpression = query.havingExpression {
             query.havingExpression = (havingExpression && predicate).sqlExpression
@@ -111,7 +111,7 @@ extension QueryInterfaceRequest : RequestDerivable {
     ///         .order([Column("email")])
     ///         .reversed()
     ///         .order([Column("name")])
-    public func order(_ orderings: [SQLOrderingTerm]) -> QueryInterfaceRequest<T> {
+    public func order(_ orderings: [SQLOrderingTerm]) -> QueryInterfaceRequest {
         var query = self.query
         query.orderings = orderings
         query.isReversed = false
@@ -123,7 +123,7 @@ extension QueryInterfaceRequest : RequestDerivable {
     ///     // SELECT * FROM persons ORDER BY name DESC
     ///     var request = Person.all().order(Column("name"))
     ///     request = request.reversed()
-    public func reversed() -> QueryInterfaceRequest<T> {
+    public func reversed() -> QueryInterfaceRequest {
         var query = self.query
         query.isReversed = !query.isReversed
         return QueryInterfaceRequest(query: query)
@@ -135,9 +135,18 @@ extension QueryInterfaceRequest : RequestDerivable {
     ///     // SELECT * FROM persons LIMIT 10 OFFSET 20
     ///     var request = Person.all()
     ///     request = request.limit(10, offset: 20)
-    public func limit(_ limit: Int, offset: Int?) -> QueryInterfaceRequest<T> {
+    public func limit(_ limit: Int, offset: Int?) -> QueryInterfaceRequest {
         var query = self.query
         query.limit = SQLLimit(limit: limit, offset: offset)
+        return QueryInterfaceRequest(query: query)
+    }
+    
+    /// TODO
+    public func aliased(_ alias: String) -> QueryInterfaceRequest {
+        var qualifier = SQLSourceQualifier()
+        let query = self.query.qualified(by: &qualifier)
+        qualifier.alias = alias
+        qualifier.userProvided = true
         return QueryInterfaceRequest(query: query)
     }
 }

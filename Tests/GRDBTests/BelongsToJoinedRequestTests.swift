@@ -166,4 +166,88 @@ class BelongsToJoinedRequestTests: GRDBTestCase {
             }
         }
     }
+    
+    func testRecursion() throws {
+        struct Person : TableMapping {
+            static let databaseTableName = "persons"
+        }
+        
+        let dbQueue = try makeDatabaseQueue()
+        try dbQueue.inDatabase { db in
+            try db.create(table: "persons") { t in
+                t.column("id", .integer).primaryKey()
+                t.column("parentId", .integer).references("persons")
+            }
+        }
+        
+        try dbQueue.inDatabase { db in
+            do {
+                let association = Person.belongsTo(Person.self)
+                let request = Person.all().joined(with: association)
+                try assertSQL(db, request, "SELECT \"persons1\".*, \"persons2\".* FROM \"persons\" \"persons1\" JOIN \"persons\" \"persons2\" ON (\"persons2\".\"id\" = \"persons1\".\"parentId\")")
+            }
+        }
+    }
+    
+    func testLeftAlias() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                // alias first
+                let request = Book.all()
+                    .aliased("b")
+                    .filter(Column("year") < 2000)
+                    .joined(with: Book.author)
+                try assertSQL(db, request, "SELECT \"b\".*, \"authors\".* FROM \"books\" \"b\" JOIN \"authors\" ON (\"authors\".\"id\" = \"b\".\"authorId\") WHERE (\"b\".\"year\" < 2000)")
+            }
+            
+            do {
+                // alias last
+                let request = Book
+                    .joined(with: Book.author)
+                    .filter(Column("year") < 2000)
+                    .aliased("b")
+                try assertSQL(db, request, "SELECT \"b\".*, \"authors\".* FROM \"books\" \"b\" JOIN \"authors\" ON (\"authors\".\"id\" = \"b\".\"authorId\") WHERE (\"b\".\"year\" < 2000)")
+            }
+        }
+    }
+    
+    func testRightAlias() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                // alias first
+                let request = Book.joined(with: Book.author.aliased("a").order(Column("name")))
+                try assertSQL(db, request, "SELECT \"books\".*, \"a\".* FROM \"books\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"books\".\"authorId\") ORDER BY \"a\".\"name\"")
+            }
+            
+            do {
+                // alias last
+                let request = Book.joined(with: Book.author.order(Column("name")).aliased("a"))
+                try assertSQL(db, request, "SELECT \"books\".*, \"a\".* FROM \"books\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"books\".\"authorId\") ORDER BY \"a\".\"name\"")
+            }
+        }
+    }
+    
+    func testConflictingAlias() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                let request = Book.joined(with: Book.author.aliased("a")).aliased("a")
+                _ = try request.fetchAll(db)
+                XCTFail("Expected error")
+            } catch let error as DatabaseError {
+                XCTAssertEqual(error.resultCode, .SQLITE_ERROR)
+                XCTAssertEqual(error.message!, "ambiguous column name: main.a.id")
+                XCTAssertEqual(error.sql, "SELECT \"a\".*, \"a\".* FROM \"books\" \"a\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"a\".\"authorId\")")
+                XCTAssertEqual(error.description, "SQLite error 1 with statement `SELECT \"a\".*, \"a\".* FROM \"books\" \"a\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"a\".\"authorId\")`: ambiguous column name: main.a.id")
+            }
+        }
+    }
 }

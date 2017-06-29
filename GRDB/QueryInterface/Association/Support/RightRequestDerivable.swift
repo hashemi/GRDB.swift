@@ -35,4 +35,8 @@ extension RightRequestDerivable {
     public func limit(_ limit: Int, offset: Int?) -> Self {
         return mapRightRequest { $0.limit(limit, offset: offset) }
     }
+    
+    public func aliased(_ alias: String) -> Self {
+        return mapRightRequest { $0.aliased(alias) }
+    }
 }

@@ -230,7 +230,7 @@ struct SQLSource {
             switch self {
             case .table(let tableName, let qualifier):
                 if let alias = qualifier?.alias {
-                    return "\(tableName.quotedDatabaseIdentifier) AS \(alias.quotedDatabaseIdentifier)"
+                    return "\(tableName.quotedDatabaseIdentifier) \(alias.quotedDatabaseIdentifier)"
                 } else {
                     return "\(tableName.quotedDatabaseIdentifier)"
                 }
@@ -269,7 +269,7 @@ struct SQLSource {
             var sql = joinOp.rawValue
             
             if let alias = qualifier?.alias {
-                sql += " \(tableName.quotedDatabaseIdentifier) AS \(alias.quotedDatabaseIdentifier)"
+                sql += " \(tableName.quotedDatabaseIdentifier) \(alias.quotedDatabaseIdentifier)"
             } else {
                 sql += " \(tableName.quotedDatabaseIdentifier)"
             }
@@ -391,6 +391,7 @@ struct SQLSource {
 public class SQLSourceQualifier {
     var tableName: String?
     var alias: String?
+    var userProvided = false
     
     init() {
         self.tableName = nil
@@ -399,6 +400,58 @@ public class SQLSourceQualifier {
     
     var qualifiedName: String? {
         return alias ?? tableName
+    }
+}
+
+extension Array where Iterator.Element == SQLSourceQualifier {
+    func resolveAmbiguities() {
+        var nameGroups: [String: [SQLSourceQualifier]] = [:]
+        for qualifier in self {
+            let name = qualifier.qualifiedName! // qualifier must have been given a table name by now
+            if nameGroups[name] != nil {
+                nameGroups[name]!.append(qualifier)
+            } else {
+                nameGroups[name] = [qualifier]
+            }
+        }
+        
+        var uniqueNames: Set<String> = []
+        var ambiguousGroups: [(String, [SQLSourceQualifier])] = []
+        for (name, group) in nameGroups {
+            if group.count > 1 {
+                ambiguousGroups.append((name, group))
+            } else {
+                uniqueNames.insert(name)
+            }
+        }
+        
+        for (name, group) in ambiguousGroups {
+            let radical = name.databaseQualifierRadical
+            var index = 1
+            for qualifier in group {
+                if qualifier.userProvided { continue }
+                var name: String
+                repeat {
+                    name = "\(radical)\(index)"
+                    index += 1
+                } while uniqueNames.contains(name)
+                uniqueNames.insert(name)
+                qualifier.alias = name
+            }
+        }
+    }
+}
+
+extension String {
+    /// "foo12" => "foo"
+    var databaseQualifierRadical: String {
+        let digits: ClosedRange<Character> = "0"..."9"
+        let radicalEndIndex = characters            // "foo12"
+            .reversed()                             // "21oof"
+            .prefix(while: { digits.contains($0) }) // "21"
+            .endIndex                               // reversed(3)
+            .base                                   // 3
+        return String(characters.prefix(upTo: radicalEndIndex))
     }
 }
 

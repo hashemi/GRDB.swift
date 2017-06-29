@@ -68,6 +68,9 @@ public protocol RequestDerivable {
     ///     var request = Person.all()
     ///     request = request.limit(1, offset: 20)
     func limit(_ limit: Int, offset: Int?) -> Self
+    
+    /// TODO
+    func aliased(_ alias: String) -> Self
 }
 
 extension RequestDerivable {
