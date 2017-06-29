@@ -430,39 +430,45 @@ public class SQLSourceQualifier {
 }
 
 extension Array where Iterator.Element == SQLSourceQualifier {
-    func resolveAmbiguities() {
-        var nameGroups: [String: [SQLSourceQualifier]] = [:]
+    func resolveAmbiguities() throws {
+        var groups: [String: [SQLSourceQualifier]] = [:]
         for qualifier in self {
-            let name = qualifier.qualifiedName! // qualifier must have been given a table name by now
-            if nameGroups[name] != nil {
-                nameGroups[name]!.append(qualifier)
+            let qualifiedName = qualifier.qualifiedName! // qualifier must have been given a table name by now
+            let lowercaseName = qualifiedName.lowercased()
+            // TODO: enhance once SE-0165 has shipped
+            if groups[lowercaseName] != nil {
+                groups[lowercaseName]!.append(qualifier)
             } else {
-                nameGroups[name] = [qualifier]
+                groups[lowercaseName] = [qualifier]
             }
         }
         
         var uniqueNames: Set<String> = []
-        var ambiguousGroups: [(String, [SQLSourceQualifier])] = []
-        for (name, group) in nameGroups {
+        var ambiguousGroups: [[SQLSourceQualifier]] = []
+        
+        for (lowercaseName, group) in groups {
             if group.count > 1 {
-                ambiguousGroups.append((name, group))
+                if group.filter({ $0.userProvided }).count >= 2 {
+                    throw DatabaseError(message: "ambiguous alias: \(group[0].qualifiedName!)")
+                }
+                ambiguousGroups.append(group)
             } else {
-                uniqueNames.insert(name)
+                uniqueNames.insert(lowercaseName)
             }
         }
         
-        for (name, group) in ambiguousGroups {
-            let radical = name.databaseQualifierRadical
+        for group in ambiguousGroups {
             var index = 1
             for qualifier in group {
                 if qualifier.userProvided { continue }
-                var name: String
+                let radical = qualifier.qualifiedName!.databaseQualifierRadical
+                var alias: String
                 repeat {
-                    name = "\(radical)\(index)"
+                    alias = "\(radical)\(index)"
                     index += 1
-                } while uniqueNames.contains(name)
-                uniqueNames.insert(name)
-                qualifier.alias = name
+                } while uniqueNames.contains(alias.lowercased())
+                uniqueNames.insert(alias.lowercased())
+                qualifier.alias = alias
             }
         }
     }

@@ -12,7 +12,6 @@
     - [ ] REGEXP https://www.sqlite.org/lang_expr.html
     - [ ] CASE x WHEN w1 THEN r1 WHEN w2 THEN r2 ELSE r3 END https://www.sqlite.org/lang_expr.html
 - [ ] See how we can use [sqlite3_get_autocommit](https://www.sqlite.org/capi3ref.html#sqlite3_get_autocommit)
-- [ ] ColumnDefinition.indexed()
 - [ ] Write regression tests for #156 and #157
 
 Associations
@@ -23,6 +22,21 @@ Associations
 - [ ] has_and_belongs_to_many
 - [ ] Recursive associations
 - [ ] .order(annotation.count)
+- [ ] ColumnDefinition.indexed()
+- [ ] Refactor requests so that:
+    - [ ] `including` always means that values are co-fetched, regardless of the association:
+    
+        - Country.all().including(Country.citizens) // (Country, [Citizen])
+        - Child.all().including(Child.parent)       // (Child, Parent)
+        
+        The goal is that the method does not reflect the SQL, but the effect: here, all associated models are fetched along
+    
+    - [ ] to-pne associations declare the optionality of the associated model
+    
+        - Child.all().including(Child.parent)         // (Child, Parent)
+        - Child.all().including(Child.optionalParent) // (Child, Parent?)
+        
+        The goal is to have optionality declared right away, as a reminder of the database schema.
 
 Not sure
 

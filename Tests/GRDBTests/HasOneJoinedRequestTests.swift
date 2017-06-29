@@ -207,14 +207,14 @@ class HasOneJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 // alias left
-                let request = Country.joined(with: Country.profile).aliased("countryProfiles")
-                try assertSQL(db, request, "SELECT \"countryProfiles\".*, \"countryProfiles1\".* FROM \"countries\" \"countryProfiles\" JOIN \"countryProfiles\" \"countryProfiles1\" ON (\"countryProfiles1\".\"countryCode\" = \"countryProfiles\".\"code\")")
+                let request = Country.joined(with: Country.profile).aliased("COUNTRYPROFILES")
+                try assertSQL(db, request, "SELECT \"COUNTRYPROFILES\".*, \"countryProfiles1\".* FROM \"countries\" \"COUNTRYPROFILES\" JOIN \"countryProfiles\" \"countryProfiles1\" ON (\"countryProfiles1\".\"countryCode\" = \"COUNTRYPROFILES\".\"code\")")
             }
             
             do {
                 // alias right
-                let request = Country.joined(with: Country.profile.aliased("countries"))
-                try assertSQL(db, request, "SELECT \"countries1\".*, \"countries\".* FROM \"countries\" \"countries1\" JOIN \"countryProfiles\" \"countries\" ON (\"countries\".\"countryCode\" = \"countries1\".\"code\")")
+                let request = Country.joined(with: Country.profile.aliased("COUNTRIES"))
+                try assertSQL(db, request, "SELECT \"countries1\".*, \"COUNTRIES\".* FROM \"countries\" \"countries1\" JOIN \"countryProfiles\" \"COUNTRIES\" ON (\"COUNTRIES\".\"countryCode\" = \"countries1\".\"code\")")
             }
         }
     }
@@ -225,14 +225,14 @@ class HasOneJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let request = Country.joined(with: Country.profile.aliased("a")).aliased("a")
+                let request = Country.joined(with: Country.profile.aliased("a")).aliased("A")
                 _ = try request.fetchAll(db)
                 XCTFail("Expected error")
             } catch let error as DatabaseError {
                 XCTAssertEqual(error.resultCode, .SQLITE_ERROR)
-                XCTAssertEqual(error.message!, "ambiguous column name: main.a.id")
-                XCTAssertEqual(error.sql, "SELECT \"a\".*, \"a\".* FROM \"books\" \"a\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"a\".\"authorId\")")
-                XCTAssertEqual(error.description, "SQLite error 1 with statement `SELECT \"a\".*, \"a\".* FROM \"books\" \"a\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"a\".\"authorId\")`: ambiguous column name: main.a.id")
+                XCTAssertEqual(error.message!, "ambiguous alias: A")
+                XCTAssertNil(error.sql)
+                XCTAssertEqual(error.description, "SQLite error 1: ambiguous alias: A")
             }
         }
     }

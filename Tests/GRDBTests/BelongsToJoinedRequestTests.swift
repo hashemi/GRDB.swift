@@ -240,14 +240,14 @@ class BelongsToJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 // alias left
-                let request = Book.joined(with: Book.author).aliased("authors")
-                try assertSQL(db, request, "SELECT \"authors\".*, \"authors1\".* FROM \"books\" \"authors\" JOIN \"authors\" \"authors1\" ON (\"authors1\".\"id\" = \"authors\".\"authorId\")")
+                let request = Book.joined(with: Book.author).aliased("AUTHORS")
+                try assertSQL(db, request, "SELECT \"AUTHORS\".*, \"authors1\".* FROM \"books\" \"AUTHORS\" JOIN \"authors\" \"authors1\" ON (\"authors1\".\"id\" = \"AUTHORS\".\"authorId\")")
             }
             
             do {
                 // alias right
-                let request = Book.joined(with: Book.author.aliased("books"))
-                try assertSQL(db, request, "SELECT \"books1\".*, \"books\".* FROM \"books\" \"books1\" JOIN \"authors\" \"books\" ON (\"books\".\"id\" = \"books1\".\"authorId\")")
+                let request = Book.joined(with: Book.author.aliased("BOOKS"))
+                try assertSQL(db, request, "SELECT \"books1\".*, \"BOOKS\".* FROM \"books\" \"books1\" JOIN \"authors\" \"BOOKS\" ON (\"BOOKS\".\"id\" = \"books1\".\"authorId\")")
             }
         }
     }
@@ -258,14 +258,14 @@ class BelongsToJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let request = Book.joined(with: Book.author.aliased("a")).aliased("a")
+                let request = Book.joined(with: Book.author.aliased("a")).aliased("A")
                 _ = try request.fetchAll(db)
                 XCTFail("Expected error")
             } catch let error as DatabaseError {
                 XCTAssertEqual(error.resultCode, .SQLITE_ERROR)
-                XCTAssertEqual(error.message!, "ambiguous column name: main.a.id")
-                XCTAssertEqual(error.sql, "SELECT \"a\".*, \"a\".* FROM \"books\" \"a\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"a\".\"authorId\")")
-                XCTAssertEqual(error.description, "SQLite error 1 with statement `SELECT \"a\".*, \"a\".* FROM \"books\" \"a\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"a\".\"authorId\")`: ambiguous column name: main.a.id")
+                XCTAssertEqual(error.message!, "ambiguous alias: A")
+                XCTAssertNil(error.sql)
+                XCTAssertEqual(error.description, "SQLite error 1: ambiguous alias: A")
             }
         }
     }
