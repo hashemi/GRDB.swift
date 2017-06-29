@@ -10,7 +10,7 @@ import XCTest
 private typealias Country = AssociationFixture.Country
 private typealias CountryProfile = AssociationFixture.CountryProfile
 
-class HasOneJoinedRequestTests: GRDBTestCase {
+class HasOneIncludingRequestTests: GRDBTestCase {
     
     func testSimplestRequest() throws {
         let dbQueue = try makeDatabaseQueue()
@@ -18,7 +18,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             let graph = try Country
-                .joined(with: Country.profile)
+                .including(Country.profile)
                 .fetchAll(db)
             
             XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\")")
@@ -40,7 +40,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
                 // filter before
                 let graph = try Country
                     .filter(Column("code") != "FR")
-                    .joined(with: Country.profile)
+                    .including(Country.profile)
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") WHERE (\"countries\".\"code\" <> 'FR')")
@@ -54,7 +54,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
             do {
                 // filter after
                 let graph = try Country
-                    .joined(with: Country.profile)
+                    .including(Country.profile)
                     .filter(Column("code") != "FR")
                     .fetchAll(db)
                 
@@ -70,7 +70,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
                 // order before
                 let graph = try Country
                     .order(Column("code"))
-                    .joined(with: Country.profile)
+                    .including(Country.profile)
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"countries\".\"code\"")
@@ -85,7 +85,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
             do {
                 // order after
                 let graph = try Country
-                    .joined(with: Country.profile)
+                    .including(Country.profile)
                     .order(Column("code"))
                     .fetchAll(db)
                 
@@ -107,7 +107,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 let graph = try Country
-                    .joined(with: Country.profile.filter(Column("currency") == "EUR"))
+                    .including(Country.profile.filter(Column("currency") == "EUR"))
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" JOIN \"countryProfiles\" ON ((\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") AND (\"countryProfiles\".\"currency\" = \'EUR\'))")
@@ -120,7 +120,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
             
             do {
                 let graph = try Country
-                    .joined(with: Country.profile.order(Column("area")))
+                    .including(Country.profile.order(Column("area")))
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"countryProfiles\".\"area\"")
@@ -150,7 +150,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 let association = Person.hasOne(Person.self)
-                let request = Person.all().joined(with: association)
+                let request = Person.all().including(association)
                 try assertSQL(db, request, "SELECT \"persons1\".*, \"persons2\".* FROM \"persons\" \"persons1\" JOIN \"persons\" \"persons2\" ON (\"persons2\".\"parentId\" = \"persons1\".\"id\")")
             }
         }
@@ -166,7 +166,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
                 let request = Country.all()
                     .aliased("c")
                     .filter(Column("code") != "FR")
-                    .joined(with: Country.profile)
+                    .including(Country.profile)
                 try assertSQL(db, request, "SELECT \"c\".*, \"countryProfiles\".* FROM \"countries\" \"c\" JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"c\".\"code\") WHERE (\"c\".\"code\" <> \'FR\')")
             }
             
@@ -174,7 +174,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
                 // alias last
                 let request = Country
                     .filter(Column("code") != "FR")
-                    .joined(with: Country.profile)
+                    .including(Country.profile)
                     .aliased("c")
                 try assertSQL(db, request, "SELECT \"c\".*, \"countryProfiles\".* FROM \"countries\" \"c\" JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"c\".\"code\") WHERE (\"c\".\"code\" <> \'FR\')")
             }
@@ -188,13 +188,13 @@ class HasOneJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 // alias first
-                let request = Country.joined(with: Country.profile.aliased("p").filter(Column("currency") == "EUR"))
+                let request = Country.including(Country.profile.aliased("p").filter(Column("currency") == "EUR"))
                 try assertSQL(db, request, "SELECT \"countries\".*, \"p\".* FROM \"countries\" JOIN \"countryProfiles\" \"p\" ON ((\"p\".\"countryCode\" = \"countries\".\"code\") AND (\"p\".\"currency\" = \'EUR\'))")
             }
             
             do {
                 // alias last
-                let request = Country.joined(with: Country.profile.order(Column("area")).aliased("p"))
+                let request = Country.including(Country.profile.order(Column("area")).aliased("p"))
                 try assertSQL(db, request, "SELECT \"countries\".*, \"p\".* FROM \"countries\" JOIN \"countryProfiles\" \"p\" ON (\"p\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"p\".\"area\"")
             }
         }
@@ -207,13 +207,13 @@ class HasOneJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 // alias left
-                let request = Country.joined(with: Country.profile).aliased("COUNTRYPROFILES")
+                let request = Country.including(Country.profile).aliased("COUNTRYPROFILES")
                 try assertSQL(db, request, "SELECT \"COUNTRYPROFILES\".*, \"countryProfiles1\".* FROM \"countries\" \"COUNTRYPROFILES\" JOIN \"countryProfiles\" \"countryProfiles1\" ON (\"countryProfiles1\".\"countryCode\" = \"COUNTRYPROFILES\".\"code\")")
             }
             
             do {
                 // alias right
-                let request = Country.joined(with: Country.profile.aliased("COUNTRIES"))
+                let request = Country.including(Country.profile.aliased("COUNTRIES"))
                 try assertSQL(db, request, "SELECT \"countries1\".*, \"COUNTRIES\".* FROM \"countries\" \"countries1\" JOIN \"countryProfiles\" \"COUNTRIES\" ON (\"COUNTRIES\".\"countryCode\" = \"countries1\".\"code\")")
             }
         }
@@ -225,7 +225,7 @@ class HasOneJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let request = Country.joined(with: Country.profile.aliased("a")).aliased("A")
+                let request = Country.including(Country.profile.aliased("a")).aliased("A")
                 _ = try request.fetchAll(db)
                 XCTFail("Expected error")
             } catch let error as DatabaseError {

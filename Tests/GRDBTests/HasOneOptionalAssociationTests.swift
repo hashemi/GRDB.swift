@@ -7,7 +7,7 @@ import XCTest
     import GRDB
 #endif
 
-class HasOneAssociationTests: GRDBTestCase {
+class HasOneOptionalAssociationTests: GRDBTestCase {
     
     func testSingleColumnNoForeignKeyNoPrimaryKey() throws {
         struct Child : TableMapping {
@@ -34,13 +34,13 @@ class HasOneAssociationTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Parent.hasOne(Child.self, from: "parentId")
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"rowid\")")
+                let association = Parent.hasOne(optional: Child.self, from: "parentId")
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"rowid\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 2)")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: ["parentId"], to: ["id"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self, from: ["parentId"], to: ["id"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 1)")
             }
         }
@@ -70,13 +70,13 @@ class HasOneAssociationTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Parent.hasOne(Child.self, from: "parentId")
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self, from: "parentId")
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 1)")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: ["parentId"], to: ["id"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self, from: ["parentId"], to: ["id"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 1)")
             }
         }
@@ -106,18 +106,18 @@ class HasOneAssociationTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Parent.hasOne(Child.self)
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self)
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 1)")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: "parentId")
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self, from: "parentId")
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 1)")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: ["parentId"], to: ["id"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self, from: ["parentId"], to: ["id"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parentId\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parentId\" = 1)")
             }
         }
@@ -148,23 +148,23 @@ class HasOneAssociationTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Parent.hasOne(Child.self, from: "parent1Id")
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parent1Id\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self, from: "parent1Id")
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parent1Id\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parent1Id\" = 1)")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: ["parent1Id"], to: ["id"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parent1Id\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self, from: ["parent1Id"], to: ["id"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parent1Id\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parent1Id\" = 1)")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: "parent2Id")
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parent2Id\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self, from: "parent2Id")
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parent2Id\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parent2Id\" = 1)")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: ["parent2Id"], to: ["id"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON (\"children\".\"parent2Id\" = \"parents\".\"id\")")
+                let association = Parent.hasOne(optional: Child.self, from: ["parent2Id"], to: ["id"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON (\"children\".\"parent2Id\" = \"parents\".\"id\")")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE (\"parent2Id\" = 1)")
             }
         }
@@ -197,8 +197,8 @@ class HasOneAssociationTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Parent.hasOne(Child.self, from: ["parentA", "parentB"], to: ["a", "b"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self, from: ["parentA", "parentB"], to: ["a", "b"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parentA\" = 1) AND (\"parentB\" = 2))")
             }
         }
@@ -232,13 +232,13 @@ class HasOneAssociationTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Parent.hasOne(Child.self, from: "parentA", "parentB")
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self, from: "parentA", "parentB")
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parentA\" = 1) AND (\"parentB\" = 2))")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: ["parentA", "parentB"], to: ["a", "b"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self, from: ["parentA", "parentB"], to: ["a", "b"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parentA\" = 1) AND (\"parentB\" = 2))")
             }
         }
@@ -273,18 +273,18 @@ class HasOneAssociationTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Parent.hasOne(Child.self)
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self)
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parentA\" = 1) AND (\"parentB\" = 2))")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: "parentA", "parentB")
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self, from: "parentA", "parentB")
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parentA\" = 1) AND (\"parentB\" = 2))")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: ["parentA", "parentB"], to: ["a", "b"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self, from: ["parentA", "parentB"], to: ["a", "b"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parentA\" = \"parents\".\"a\") AND (\"children\".\"parentB\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parentA\" = 1) AND (\"parentB\" = 2))")
             }
         }
@@ -322,23 +322,23 @@ class HasOneAssociationTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Parent.hasOne(Child.self, from: "parent1A", "parent1B")
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parent1A\" = \"parents\".\"a\") AND (\"children\".\"parent1B\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self, from: "parent1A", "parent1B")
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parent1A\" = \"parents\".\"a\") AND (\"children\".\"parent1B\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parent1A\" = 1) AND (\"parent1B\" = 2))")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: ["parent1A", "parent1B"], to: ["a", "b"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parent1A\" = \"parents\".\"a\") AND (\"children\".\"parent1B\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self, from: ["parent1A", "parent1B"], to: ["a", "b"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parent1A\" = \"parents\".\"a\") AND (\"children\".\"parent1B\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parent1A\" = 1) AND (\"parent1B\" = 2))")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: "parent2A", "parent2B")
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parent2A\" = \"parents\".\"a\") AND (\"children\".\"parent2B\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self, from: "parent2A", "parent2B")
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parent2A\" = \"parents\".\"a\") AND (\"children\".\"parent2B\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parent2A\" = 1) AND (\"parent2B\" = 2))")
             }
             do {
-                let association = Parent.hasOne(Child.self, from: ["parent2A", "parent2B"], to: ["a", "b"])
-                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" JOIN \"children\" ON ((\"children\".\"parent2A\" = \"parents\".\"a\") AND (\"children\".\"parent2B\" = \"parents\".\"b\"))")
+                let association = Parent.hasOne(optional: Child.self, from: ["parent2A", "parent2B"], to: ["a", "b"])
+                try assertSQL(db, Parent.all().including(association), "SELECT \"parents\".*, \"children\".* FROM \"parents\" LEFT JOIN \"children\" ON ((\"children\".\"parent2A\" = \"parents\".\"a\") AND (\"children\".\"parent2B\" = \"parents\".\"b\"))")
                 try assertSQL(db, Parent().makeRequest(association), "SELECT * FROM \"children\" WHERE ((\"parent2A\" = 1) AND (\"parent2B\" = 2))")
             }
         }

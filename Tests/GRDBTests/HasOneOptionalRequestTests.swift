@@ -10,7 +10,7 @@ import XCTest
 private typealias Country = AssociationFixture.Country
 private typealias CountryProfile = AssociationFixture.CountryProfile
 
-class HasOneRightRequestTests: GRDBTestCase {
+class HasOneOptionalRequestTests: GRDBTestCase {
     
     func testRequest() throws {
         let dbQueue = try makeDatabaseQueue()
@@ -20,7 +20,7 @@ class HasOneRightRequestTests: GRDBTestCase {
             
             do {
                 let country = try Country.fetchOne(db, key: "FR")!
-                let request = country.makeRequest(Country.profile)
+                let request = country.makeRequest(Country.optionalProfile)
                 let profile = try request.fetchOne(db)
                 XCTAssertEqual(lastSQLQuery, "SELECT * FROM \"countryProfiles\" WHERE (\"countryCode\" = 'FR')")
                 assertMatch(profile, ["countryCode": "FR", "area": 643801, "currency": "EUR"])
@@ -28,7 +28,7 @@ class HasOneRightRequestTests: GRDBTestCase {
             
             do {
                 let country = try Country.fetchOne(db, key: "AA")!
-                let request = country.makeRequest(Country.profile)
+                let request = country.makeRequest(Country.optionalProfile)
                 let profile = try request.fetchOne(db)
                 XCTAssertEqual(lastSQLQuery, "SELECT * FROM \"countryProfiles\" WHERE (\"countryCode\" = 'AA')")
                 XCTAssertNil(profile)
@@ -45,14 +45,14 @@ class HasOneRightRequestTests: GRDBTestCase {
             do {
                 // TODO: way to make the author non-optional?
                 let country = try Country.fetchOne(db, key: "FR")!
-                let profile = try country.fetchOne(db, Country.profile)
+                let profile = try country.fetchOne(db, Country.optionalProfile)
                 XCTAssertEqual(lastSQLQuery, "SELECT * FROM \"countryProfiles\" WHERE (\"countryCode\" = 'FR')")
                 assertMatch(profile, ["countryCode": "FR", "area": 643801, "currency": "EUR"])
             }
             
             do {
                 let country = try Country.fetchOne(db, key: "AA")!
-                let profile = try country.fetchOne(db, Country.profile)
+                let profile = try country.fetchOne(db, Country.optionalProfile)
                 XCTAssertEqual(lastSQLQuery, "SELECT * FROM \"countryProfiles\" WHERE (\"countryCode\" = 'AA')")
                 XCTAssertNil(profile)
             }
@@ -77,7 +77,7 @@ class HasOneRightRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Person.hasOne(Person.self)
+                let association = Person.hasOne(optional: Person.self)
                 let request = Person().makeRequest(association)
                 try assertSQL(db, request, "SELECT * FROM \"persons\" WHERE (\"parentId\" = 1)")
             }
@@ -92,14 +92,14 @@ class HasOneRightRequestTests: GRDBTestCase {
             do {
                 // alias first
                 let country = try Country.fetchOne(db, key: "FR")!
-                let request = country.makeRequest(Country.profile.aliased("a"))
+                let request = country.makeRequest(Country.optionalProfile.aliased("a"))
                 try assertSQL(db, request, "SELECT \"a\".* FROM \"countryProfiles\" \"a\" WHERE (\"a\".\"countryCode\" = 'FR')")
             }
             
             do {
                 // alias last
                 let country = try Country.fetchOne(db, key: "FR")!
-                let request = country.makeRequest(Country.profile).aliased("a")
+                let request = country.makeRequest(Country.optionalProfile).aliased("a")
                 try assertSQL(db, request, "SELECT \"a\".* FROM \"countryProfiles\" \"a\" WHERE (\"a\".\"countryCode\" = 'FR')")
             }
         }

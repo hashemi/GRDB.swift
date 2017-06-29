@@ -10,7 +10,7 @@ import XCTest
 private typealias Country = AssociationFixture.Country
 private typealias CountryProfile = AssociationFixture.CountryProfile
 
-class HasOneLeftJoinedRequestTests: GRDBTestCase {
+class HasOneOptionalIncludingRequestTests: GRDBTestCase {
     
     func testSimplestRequest() throws {
         let dbQueue = try makeDatabaseQueue()
@@ -18,7 +18,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             let graph = try Country
-                .leftJoined(with: Country.profile)
+                .including(Country.optionalProfile)
                 .fetchAll(db)
             
             XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\")")
@@ -41,7 +41,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
                 // filter before
                 let graph = try Country
                     .filter(Column("code") != "FR")
-                    .leftJoined(with: Country.profile)
+                    .including(Country.optionalProfile)
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") WHERE (\"countries\".\"code\" <> 'FR')")
@@ -56,7 +56,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
             do {
                 // filter after
                 let graph = try Country
-                    .leftJoined(with: Country.profile)
+                    .including(Country.optionalProfile)
                     .filter(Column("code") != "FR")
                     .fetchAll(db)
                 
@@ -73,7 +73,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
                 // order before
                 let graph = try Country
                     .order(Column("code"))
-                    .leftJoined(with: Country.profile)
+                    .including(Country.optionalProfile)
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"countries\".\"code\"")
@@ -89,7 +89,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
             do {
                 // order after
                 let graph = try Country
-                    .leftJoined(with: Country.profile)
+                    .including(Country.optionalProfile)
                     .order(Column("code"))
                     .fetchAll(db)
                 
@@ -112,7 +112,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 let graph = try Country
-                    .leftJoined(with: Country.profile.filter(Column("currency") == "EUR"))
+                    .including(Country.optionalProfile.filter(Column("currency") == "EUR"))
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON ((\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") AND (\"countryProfiles\".\"currency\" = \'EUR\'))")
@@ -127,7 +127,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
             
             do {
                 let graph = try Country
-                    .leftJoined(with: Country.profile.order(Column("area")))
+                    .including(Country.optionalProfile.order(Column("area")))
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"countries\".*, \"countryProfiles\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"countryProfiles\".\"area\"")
@@ -157,8 +157,8 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Person.hasOne(Person.self)
-                let request = Person.all().leftJoined(with: association)
+                let association = Person.hasOne(optional: Person.self)
+                let request = Person.all().including(association)
                 try assertSQL(db, request, "SELECT \"persons1\".*, \"persons2\".* FROM \"persons\" \"persons1\" LEFT JOIN \"persons\" \"persons2\" ON (\"persons2\".\"parentId\" = \"persons1\".\"id\")")
             }
         }
@@ -174,7 +174,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
                 let request = Country.all()
                     .aliased("c")
                     .filter(Column("code") != "FR")
-                    .leftJoined(with: Country.profile)
+                    .including(Country.optionalProfile)
                 try assertSQL(db, request, "SELECT \"c\".*, \"countryProfiles\".* FROM \"countries\" \"c\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"c\".\"code\") WHERE (\"c\".\"code\" <> \'FR\')")
             }
             
@@ -182,7 +182,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
                 // alias last
                 let request = Country
                     .filter(Column("code") != "FR")
-                    .leftJoined(with: Country.profile)
+                    .including(Country.optionalProfile)
                     .aliased("c")
                 try assertSQL(db, request, "SELECT \"c\".*, \"countryProfiles\".* FROM \"countries\" \"c\" LEFT JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"c\".\"code\") WHERE (\"c\".\"code\" <> \'FR\')")
             }
@@ -196,13 +196,13 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 // alias first
-                let request = Country.leftJoined(with: Country.profile.aliased("p").filter(Column("currency") == "EUR"))
+                let request = Country.including(Country.optionalProfile.aliased("p").filter(Column("currency") == "EUR"))
                 try assertSQL(db, request, "SELECT \"countries\".*, \"p\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" \"p\" ON ((\"p\".\"countryCode\" = \"countries\".\"code\") AND (\"p\".\"currency\" = \'EUR\'))")
             }
             
             do {
                 // alias last
-                let request = Country.leftJoined(with: Country.profile.order(Column("area")).aliased("p"))
+                let request = Country.including(Country.optionalProfile.order(Column("area")).aliased("p"))
                 try assertSQL(db, request, "SELECT \"countries\".*, \"p\".* FROM \"countries\" LEFT JOIN \"countryProfiles\" \"p\" ON (\"p\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"p\".\"area\"")
             }
         }
@@ -215,13 +215,13 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 // alias left
-                let request = Country.leftJoined(with: Country.profile).aliased("COUNTRYPROFILES")
+                let request = Country.including(Country.optionalProfile).aliased("COUNTRYPROFILES")
                 try assertSQL(db, request, "SELECT \"COUNTRYPROFILES\".*, \"countryProfiles1\".* FROM \"countries\" \"COUNTRYPROFILES\" LEFT JOIN \"countryProfiles\" \"countryProfiles1\" ON (\"countryProfiles1\".\"countryCode\" = \"COUNTRYPROFILES\".\"code\")")
             }
             
             do {
                 // alias right
-                let request = Country.leftJoined(with: Country.profile.aliased("COUNTRIES"))
+                let request = Country.including(Country.optionalProfile.aliased("COUNTRIES"))
                 try assertSQL(db, request, "SELECT \"countries1\".*, \"COUNTRIES\".* FROM \"countries\" \"countries1\" LEFT JOIN \"countryProfiles\" \"COUNTRIES\" ON (\"COUNTRIES\".\"countryCode\" = \"countries1\".\"code\")")
             }
         }
@@ -233,7 +233,7 @@ class HasOneLeftJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let request = Country.leftJoined(with: Country.profile.aliased("a")).aliased("A")
+                let request = Country.including(Country.optionalProfile.aliased("a")).aliased("A")
                 _ = try request.fetchAll(db)
                 XCTFail("Expected error")
             } catch let error as DatabaseError {

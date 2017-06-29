@@ -71,6 +71,7 @@ struct AssociationFixture {
         }
         
         static let profile = hasOne(CountryProfile.self)
+        static let optionalProfile = hasOne(optional: CountryProfile.self)
     }
     
     struct CountryProfile : TableMapping, RowConvertible, MutablePersistable {
