@@ -233,6 +233,25 @@ class BelongsToJoinedRequestTests: GRDBTestCase {
         }
     }
     
+    func testLockedAlias() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                // alias first
+                let request = Book.joined(with: Book.author.aliased("books"))
+                try assertSQL(db, request, "SELECT \"books1\".*, \"books\".* FROM \"books\" \"books1\" JOIN \"authors\" \"books\" ON (\"books\".\"id\" = \"books1\".\"authorId\")")
+            }
+            
+            do {
+                // alias last
+                let request = Book.joined(with: Book.author).aliased("authors")
+                try assertSQL(db, request, "SELECT \"authors\".*, \"authors1\".* FROM \"books\" \"authors\" JOIN \"authors\" \"authors1\" ON (\"authors1\".\"id\" = \"authors\".\"authorId\")")
+            }
+        }
+    }
+    
     func testConflictingAlias() throws {
         let dbQueue = try makeDatabaseQueue()
         try AssociationFixture().migrator.migrate(dbQueue)
