@@ -1,4 +1,4 @@
-public struct BelongsToJoinedRequest<Left, Right> where
+public struct BelongsToIncludingRequest<Left, Right> where
     Left: TableMapping,
     Right: TableMapping
 {
@@ -8,15 +8,15 @@ public struct BelongsToJoinedRequest<Left, Right> where
     let association: BelongsToAssociation<Left, Right>
 }
 
-extension BelongsToJoinedRequest : RequestDerivableWrapper {
-    public func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> BelongsToJoinedRequest {
-        return BelongsToJoinedRequest(
+extension BelongsToIncludingRequest : RequestDerivableWrapper {
+    public func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> BelongsToIncludingRequest {
+        return BelongsToIncludingRequest(
             leftRequest: transform(leftRequest),
             association: association)
     }
 }
 
-extension BelongsToJoinedRequest : TypedRequest {
+extension BelongsToIncludingRequest : TypedRequest {
     public typealias RowDecoder = JoinedPair<Left, Right>
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
@@ -32,19 +32,19 @@ extension BelongsToJoinedRequest : TypedRequest {
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func joined<Right>(with association: BelongsToAssociation<RowDecoder, Right>)
-        -> BelongsToJoinedRequest<RowDecoder, Right>
+    public func including<Right>(_ association: BelongsToAssociation<RowDecoder, Right>)
+        -> BelongsToIncludingRequest<RowDecoder, Right>
         where Right: TableMapping
     {
-        return BelongsToJoinedRequest(leftRequest: self, association: association)
+        return BelongsToIncludingRequest(leftRequest: self, association: association)
     }
 }
 
 extension TableMapping {
-    public static func joined<Right>(with association: BelongsToAssociation<Self, Right>)
-        -> BelongsToJoinedRequest<Self, Right>
+    public static func including<Right>(_ association: BelongsToAssociation<Self, Right>)
+        -> BelongsToIncludingRequest<Self, Right>
         where Right: TableMapping
     {
-        return all().joined(with: association)
+        return all().including(association)
     }
 }

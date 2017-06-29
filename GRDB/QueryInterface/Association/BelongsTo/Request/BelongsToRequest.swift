@@ -1,4 +1,4 @@
-public struct BelongsToRightRequest<Left, Right> where
+public struct BelongsToRequest<Left, Right> where
     Left: MutablePersistable,
     Right: TableMapping
 {
@@ -6,17 +6,17 @@ public struct BelongsToRightRequest<Left, Right> where
     let association: BelongsToAssociation<Left, Right>
 }
 
-extension BelongsToRightRequest : RequestDerivableWrapper {
+extension BelongsToRequest : RequestDerivableWrapper {
     public typealias WrappedRequest = BelongsToAssociation<Left, Right>.WrappedRequest
     
-    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> BelongsToRightRequest {
-        return BelongsToRightRequest(
+    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> BelongsToRequest {
+        return BelongsToRequest(
             record: record,
             association: association.mapRequest(transform))
     }
 }
 
-extension BelongsToRightRequest : TypedRequest {
+extension BelongsToRequest : TypedRequest {
     public typealias RowDecoder = Right
     
     public func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
@@ -30,14 +30,14 @@ extension BelongsToRightRequest : TypedRequest {
 }
 
 extension BelongsToAssociation where Left: MutablePersistable {
-    func makeRequest(from record: Left) -> BelongsToRightRequest<Left, Right> {
-        return BelongsToRightRequest(record: record, association: self)
+    func makeRequest(from record: Left) -> BelongsToRequest<Left, Right> {
+        return BelongsToRequest(record: record, association: self)
     }
 }
 
 extension MutablePersistable {
     public func makeRequest<Right>(_ association: BelongsToAssociation<Self, Right>)
-        -> BelongsToRightRequest<Self, Right>
+        -> BelongsToRequest<Self, Right>
         where Right: TableMapping
     {
         return association.makeRequest(from: self)

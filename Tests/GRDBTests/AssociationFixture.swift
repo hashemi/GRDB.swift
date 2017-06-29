@@ -31,6 +31,7 @@ struct AssociationFixture {
         }
         
         static let author = belongsTo(Author.self)
+        static let optionalAuthor = belongsTo(optional: Author.self)
     }
     
     struct Author : TableMapping, RowConvertible, MutablePersistable {

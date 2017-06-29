@@ -10,7 +10,7 @@ import XCTest
 private typealias Author = AssociationFixture.Author
 private typealias Book = AssociationFixture.Book
 
-class BelongsToLeftJoinedRequestTests: GRDBTestCase {
+class BelongsToOptionalIncludingRequestTests: GRDBTestCase {
     
     func testSimplestRequest() throws {
         let dbQueue = try makeDatabaseQueue()
@@ -18,7 +18,7 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             let graph = try Book
-                .leftJoined(with: Book.author)
+                .including(Book.optionalAuthor)
                 .fetchAll(db)
             
             XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\")")
@@ -46,7 +46,7 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
                 // filter before
                 let graph = try Book
                     .filter(Column("year") < 2000)
-                    .leftJoined(with: Book.author)
+                    .including(Book.optionalAuthor)
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\") WHERE (\"books\".\"year\" < 2000)")
@@ -63,7 +63,7 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
             do {
                 // filter after
                 let graph = try Book
-                    .leftJoined(with: Book.author)
+                    .including(Book.optionalAuthor)
                     .filter(Column("year") < 2000)
                     .fetchAll(db)
                 
@@ -82,7 +82,7 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
                 // order before
                 let graph = try Book
                     .order(Column("title"))
-                    .leftJoined(with: Book.author)
+                    .including(Book.optionalAuthor)
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\") ORDER BY \"books\".\"title\"")
@@ -103,7 +103,7 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
             do {
                 // order after
                 let graph = try Book
-                    .leftJoined(with: Book.author)
+                    .including(Book.optionalAuthor)
                     .order(Column("title"))
                     .fetchAll(db)
                 
@@ -132,7 +132,7 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
             do {
                 // filtered authors
                 let graph = try Book
-                    .leftJoined(with: Book.author.filter(Column("birthYear") >= 1900))
+                    .including(Book.optionalAuthor.filter(Column("birthYear") >= 1900))
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON ((\"authors\".\"id\" = \"books\".\"authorId\") AND (\"authors\".\"birthYear\" >= 1900))")
@@ -153,7 +153,7 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
             do {
                 // ordered books
                 let graph = try Book
-                    .leftJoined(with: Book.author.order(Column("name")))
+                    .including(Book.optionalAuthor.order(Column("name")))
                     .fetchAll(db)
                 
                 XCTAssertEqual(lastSQLQuery, "SELECT \"books\".*, \"authors\".* FROM \"books\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"books\".\"authorId\") ORDER BY \"authors\".\"name\"")
@@ -188,8 +188,8 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let association = Person.belongsTo(Person.self)
-                let request = Person.all().leftJoined(with: association)
+                let association = Person.belongsTo(optional: Person.self)
+                let request = Person.all().including(association)
                 try assertSQL(db, request, "SELECT \"persons1\".*, \"persons2\".* FROM \"persons\" \"persons1\" LEFT JOIN \"persons\" \"persons2\" ON (\"persons2\".\"id\" = \"persons1\".\"parentId\")")
             }
         }
@@ -205,14 +205,14 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
                 let request = Book.all()
                     .aliased("b")
                     .filter(Column("year") < 2000)
-                    .leftJoined(with: Book.author)
+                    .including(Book.optionalAuthor)
                 try assertSQL(db, request, "SELECT \"b\".*, \"authors\".* FROM \"books\" \"b\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"b\".\"authorId\") WHERE (\"b\".\"year\" < 2000)")
             }
             
             do {
                 // alias last
                 let request = Book
-                    .leftJoined(with: Book.author)
+                    .including(Book.optionalAuthor)
                     .filter(Column("year") < 2000)
                     .aliased("b")
                 try assertSQL(db, request, "SELECT \"b\".*, \"authors\".* FROM \"books\" \"b\" LEFT JOIN \"authors\" ON (\"authors\".\"id\" = \"b\".\"authorId\") WHERE (\"b\".\"year\" < 2000)")
@@ -227,13 +227,13 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 // alias first
-                let request = Book.leftJoined(with: Book.author.aliased("a").order(Column("name")))
+                let request = Book.including(Book.optionalAuthor.aliased("a").order(Column("name")))
                 try assertSQL(db, request, "SELECT \"books\".*, \"a\".* FROM \"books\" LEFT JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"books\".\"authorId\") ORDER BY \"a\".\"name\"")
             }
             
             do {
                 // alias last
-                let request = Book.leftJoined(with: Book.author.order(Column("name")).aliased("a"))
+                let request = Book.including(Book.optionalAuthor.order(Column("name")).aliased("a"))
                 try assertSQL(db, request, "SELECT \"books\".*, \"a\".* FROM \"books\" LEFT JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"books\".\"authorId\") ORDER BY \"a\".\"name\"")
             }
         }
@@ -246,13 +246,13 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
         try dbQueue.inDatabase { db in
             do {
                 // alias left
-                let request = Book.leftJoined(with: Book.author).aliased("AUTHORS")
+                let request = Book.including(Book.optionalAuthor).aliased("AUTHORS")
                 try assertSQL(db, request, "SELECT \"AUTHORS\".*, \"authors1\".* FROM \"books\" \"AUTHORS\" LEFT JOIN \"authors\" \"authors1\" ON (\"authors1\".\"id\" = \"AUTHORS\".\"authorId\")")
             }
             
             do {
                 // alias right
-                let request = Book.leftJoined(with: Book.author.aliased("BOOKS"))
+                let request = Book.including(Book.optionalAuthor.aliased("BOOKS"))
                 try assertSQL(db, request, "SELECT \"books1\".*, \"BOOKS\".* FROM \"books\" \"books1\" LEFT JOIN \"authors\" \"BOOKS\" ON (\"BOOKS\".\"id\" = \"books1\".\"authorId\")")
             }
         }
@@ -264,7 +264,7 @@ class BelongsToLeftJoinedRequestTests: GRDBTestCase {
         
         try dbQueue.inDatabase { db in
             do {
-                let request = Book.leftJoined(with: Book.author.aliased("a")).aliased("A")
+                let request = Book.including(Book.optionalAuthor.aliased("a")).aliased("A")
                 _ = try request.fetchAll(db)
                 XCTFail("Expected error")
             } catch let error as DatabaseError {

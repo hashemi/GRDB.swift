@@ -31,7 +31,7 @@ Associations
         
         The goal is that the method does not reflect the SQL, but the effect: here, all associated models are fetched along
     
-    - [ ] to-pne associations declare the optionality of the associated model
+    - [ ] to-one associations declare the optionality of the associated model
     
         - Child.all().including(Child.parent)         // (Child, Parent)
         - Child.all().including(Child.optionalParent) // (Child, Parent?)
