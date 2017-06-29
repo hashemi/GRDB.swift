@@ -1,6 +1,6 @@
 public struct HasOneThroughAssociation<MiddleAssociation, RightAssociation> where
     MiddleAssociation: AssociationToOne,
-    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
+    RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
     RightAssociation: AssociationToOne,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
 {
@@ -8,14 +8,14 @@ public struct HasOneThroughAssociation<MiddleAssociation, RightAssociation> wher
     let rightAssociation: RightAssociation
 }
 
-// Derive conditional conformance to RightRequestDerivableonce once SE-0143 is implemented
-extension HasOneThroughAssociation : RightRequestDerivable {
-    public typealias RightRequest = RightAssociation.RightRequest
+// Derive conditional conformance to RequestDerivableWrapperonce once SE-0143 is implemented
+extension HasOneThroughAssociation : RequestDerivableWrapper {
+    public typealias WrappedRequest = RightAssociation.WrappedRequest
     
-    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> HasOneThroughAssociation<MiddleAssociation, RightAssociation> {
+    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> HasOneThroughAssociation {
         return HasOneThroughAssociation(
             middleAssociation: middleAssociation,
-            rightAssociation: rightAssociation.mapRightRequest(transform))
+            rightAssociation: rightAssociation.mapRequest(transform))
     }
 }
 

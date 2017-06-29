@@ -7,7 +7,7 @@ public struct BelongsToAssociation<Left, Right> : Association, AssociationToOne 
     public typealias RightAssociated = Right
     
     let joinMappingRequest: JoinMappingRequest
-    public let rightRequest: RightRequest
+    public let rightRequest: WrappedRequest
     
     public func mapping(_ db: Database) throws -> [(left: String, right: String)] {
         return try joinMappingRequest
@@ -16,10 +16,10 @@ public struct BelongsToAssociation<Left, Right> : Association, AssociationToOne 
     }
 }
 
-extension BelongsToAssociation : RightRequestDerivable {
-    public typealias RightRequest = QueryInterfaceRequest<Right>
+extension BelongsToAssociation : RequestDerivableWrapper {
+    public typealias WrappedRequest = QueryInterfaceRequest<Right>
     
-    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> BelongsToAssociation<Left, Right> {
+    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> BelongsToAssociation {
         return BelongsToAssociation(
             joinMappingRequest: joinMappingRequest,
             rightRequest: transform(self.rightRequest))

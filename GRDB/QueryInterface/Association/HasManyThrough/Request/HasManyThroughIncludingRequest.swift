@@ -5,18 +5,18 @@ public struct HasManyThroughIncludingRequest<Left, MiddleAssociation, RightAssoc
     MiddleAssociation: Association,
     MiddleAssociation.LeftAssociated == Left.RowDecoder,
     RightAssociation: Association,
-    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
+    RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
     RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated
 {
     var leftRequest: Left
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
-// Derive conditional conformance to LeftRequestDerivable once SE-0143 is implemented
-extension HasManyThroughIncludingRequest : LeftRequestDerivable {
-    typealias LeftRequest = Left
+// Derive conditional conformance to RequestDerivableWrapper once SE-0143 is implemented
+extension HasManyThroughIncludingRequest : RequestDerivableWrapper {
+    public typealias WrappedRequest = Left
     
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyThroughIncludingRequest<Left, MiddleAssociation, RightAssociation> {
+    public func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> HasManyThroughIncludingRequest {
         return HasManyThroughIncludingRequest(
             leftRequest: transform(leftRequest),
             association: association)

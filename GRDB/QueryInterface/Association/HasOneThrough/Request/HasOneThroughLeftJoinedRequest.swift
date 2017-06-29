@@ -1,17 +1,17 @@
 public struct HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> where
     MiddleAssociation: AssociationToOne,
-    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
+    RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
     RightAssociation: AssociationToOne,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
 {
-    typealias LeftRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
+    public typealias WrappedRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
     
-    var leftRequest: LeftRequest
+    var leftRequest: WrappedRequest
     let association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
-extension HasOneThroughLeftJoinedRequest : LeftRequestDerivable {
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasOneThroughLeftJoinedRequest<MiddleAssociation, RightAssociation> {
+extension HasOneThroughLeftJoinedRequest : RequestDerivableWrapper {
+    public func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> HasOneThroughLeftJoinedRequest {
         return HasOneThroughLeftJoinedRequest(leftRequest: transform(leftRequest), association: association)
     }
 }

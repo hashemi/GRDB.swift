@@ -1,17 +1,17 @@
 public struct HasManyThroughAnnotationPredicateRequest<MiddleAssociation, RightAssociation, Annotation> where
     MiddleAssociation: Association,
     RightAssociation: Association,
-    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
+    RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
     RightAssociation.LeftAssociated == MiddleAssociation.RightAssociated
 {
-    typealias LeftRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
+    public typealias WrappedRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
     
-    var leftRequest: LeftRequest
+    var leftRequest: WrappedRequest
     let annotationPredicate: HasManyThroughAnnotationPredicate<MiddleAssociation, RightAssociation, Annotation>
 }
 
-extension HasManyThroughAnnotationPredicateRequest : LeftRequestDerivable {
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyThroughAnnotationPredicateRequest<MiddleAssociation, RightAssociation, Annotation> {
+extension HasManyThroughAnnotationPredicateRequest : RequestDerivableWrapper {
+    public func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> HasManyThroughAnnotationPredicateRequest {
         return HasManyThroughAnnotationPredicateRequest(
             leftRequest: transform(leftRequest),
             annotationPredicate: annotationPredicate)

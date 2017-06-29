@@ -2,14 +2,14 @@ public struct HasManyAnnotationPredicateRequest<Left, Right, Annotation> where
     Left: TableMapping,
     Right: TableMapping
 {
-    typealias LeftRequest = QueryInterfaceRequest<Left>
+    public typealias WrappedRequest = QueryInterfaceRequest<Left>
     
-    var leftRequest: LeftRequest
+    var leftRequest: WrappedRequest
     let annotationPredicate: HasManyAnnotationPredicate<Left, Right, Annotation>
 }
 
-extension HasManyAnnotationPredicateRequest : LeftRequestDerivable {
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasManyAnnotationPredicateRequest<Left, Right, Annotation> {
+extension HasManyAnnotationPredicateRequest : RequestDerivableWrapper {
+    public func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> HasManyAnnotationPredicateRequest {
         return HasManyAnnotationPredicateRequest(
             leftRequest: transform(leftRequest),
             annotationPredicate: annotationPredicate)

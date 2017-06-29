@@ -2,14 +2,14 @@ public struct HasOneLeftJoinedRequest<Left, Right> where
     Left: TableMapping,
     Right: TableMapping
 {
-    typealias LeftRequest = QueryInterfaceRequest<Left>
+    public typealias WrappedRequest = QueryInterfaceRequest<Left>
     
-    var leftRequest: LeftRequest
+    var leftRequest: WrappedRequest
     let association: HasOneAssociation<Left, Right>
 }
 
-extension HasOneLeftJoinedRequest : LeftRequestDerivable {
-    func mapLeftRequest(_ transform: (LeftRequest) -> (LeftRequest)) -> HasOneLeftJoinedRequest<Left, Right> {
+extension HasOneLeftJoinedRequest : RequestDerivableWrapper {
+    public func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> HasOneLeftJoinedRequest {
         return HasOneLeftJoinedRequest(leftRequest: transform(leftRequest), association: association)
     }
 }

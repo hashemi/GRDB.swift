@@ -1,6 +1,6 @@
 public struct HasManyThroughAnnotation<MiddleAssociation, RightAssociation, Annotation> where
     MiddleAssociation: Association,
-    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
+    RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
     RightAssociation: Association,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
 {

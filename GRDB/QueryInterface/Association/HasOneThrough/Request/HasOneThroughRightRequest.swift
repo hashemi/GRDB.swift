@@ -1,7 +1,7 @@
-// Remove RightRequestDerivable conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
+// Remove RequestDerivableWrapper conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
 public struct HasOneThroughRightRequest<MiddleAssociation, RightAssociation> where
     MiddleAssociation: AssociationToOne,
-    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
+    RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
     RightAssociation: AssociationToOne,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated,
     MiddleAssociation.LeftAssociated: MutablePersistable
@@ -10,12 +10,12 @@ public struct HasOneThroughRightRequest<MiddleAssociation, RightAssociation> whe
     let association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
-// Derive conditional conformance to RightRequestDerivableonce once SE-0143 is implemented
-extension HasOneThroughRightRequest : RightRequestDerivable {
-    public typealias RightRequest = RightAssociation.RightRequest
+// Derive conditional conformance to RequestDerivableWrapperonce once SE-0143 is implemented
+extension HasOneThroughRightRequest : RequestDerivableWrapper {
+    public typealias WrappedRequest = RightAssociation.WrappedRequest
     
-    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> HasOneThroughRightRequest<MiddleAssociation, RightAssociation> {
-        return HasOneThroughRightRequest(record: record, association: association.mapRightRequest(transform))
+    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> HasOneThroughRightRequest {
+        return HasOneThroughRightRequest(record: record, association: association.mapRequest(transform))
     }
 }
 

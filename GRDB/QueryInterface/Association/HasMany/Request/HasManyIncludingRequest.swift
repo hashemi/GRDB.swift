@@ -8,11 +8,11 @@ public struct HasManyIncludingRequest<Left, Right> where
     let association: HasManyAssociation<Left.RowDecoder, Right>
 }
 
-// Derive conditional conformance to LeftRequestDerivable once SE-0143 is implemented
-extension HasManyIncludingRequest : LeftRequestDerivable {
-    typealias LeftRequest = Left
+// Derive conditional conformance to RequestDerivableWrapper once SE-0143 is implemented
+extension HasManyIncludingRequest : RequestDerivableWrapper {
+    public typealias WrappedRequest = Left
     
-    func mapLeftRequest(_ transform: (Left) -> (Left)) -> HasManyIncludingRequest<Left, Right> {
+    public func mapRequest(_ transform: (Left) -> (Left)) -> HasManyIncludingRequest {
         return HasManyIncludingRequest(
             leftRequest: transform(leftRequest),
             association: association)

@@ -7,7 +7,7 @@ public struct HasManyAssociation<Left, Right> : Association where
     public typealias RightAssociated = Right
     
     let joinMappingRequest: JoinMappingRequest
-    public let rightRequest: RightRequest
+    public let rightRequest: WrappedRequest
     
     public func mapping(_ db: Database) throws -> [(left: String, right: String)] {
         return try joinMappingRequest
@@ -16,10 +16,10 @@ public struct HasManyAssociation<Left, Right> : Association where
     }
 }
 
-extension HasManyAssociation : RightRequestDerivable {
-    public typealias RightRequest = QueryInterfaceRequest<Right>
+extension HasManyAssociation : RequestDerivableWrapper {
+    public typealias WrappedRequest = QueryInterfaceRequest<Right>
     
-    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> HasManyAssociation<Left, Right> {
+    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> HasManyAssociation {
         return HasManyAssociation(
             joinMappingRequest: joinMappingRequest,
             rightRequest: transform(self.rightRequest))

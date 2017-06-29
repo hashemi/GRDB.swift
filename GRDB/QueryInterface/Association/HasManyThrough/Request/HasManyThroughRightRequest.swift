@@ -1,6 +1,6 @@
 public struct HasManyThroughRightRequest<MiddleAssociation, RightAssociation> where
     MiddleAssociation: Association,
-    RightAssociation: RightRequestDerivable, // TODO: Remove once SE-0143 is implemented
+    RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
     RightAssociation: Association,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated,
     MiddleAssociation.LeftAssociated: MutablePersistable
@@ -9,14 +9,14 @@ public struct HasManyThroughRightRequest<MiddleAssociation, RightAssociation> wh
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
-// Derive conditional conformance to RightRequestDerivableonce once SE-0143 is implemented
-extension HasManyThroughRightRequest : RightRequestDerivable {
-    public typealias RightRequest = RightAssociation.RightRequest
+// Derive conditional conformance to RequestDerivableWrapperonce once SE-0143 is implemented
+extension HasManyThroughRightRequest : RequestDerivableWrapper {
+    public typealias WrappedRequest = RightAssociation.WrappedRequest
     
-    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> HasManyThroughRightRequest<MiddleAssociation, RightAssociation> {
+    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> HasManyThroughRightRequest {
         return HasManyThroughRightRequest(
             record: record,
-            association: association.mapRightRequest(transform))
+            association: association.mapRequest(transform))
     }
 }
 

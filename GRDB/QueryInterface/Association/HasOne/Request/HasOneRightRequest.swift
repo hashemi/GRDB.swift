@@ -6,11 +6,11 @@ public struct HasOneRightRequest<Left, Right> where
     let association: HasOneAssociation<Left, Right>
 }
 
-extension HasOneRightRequest : RightRequestDerivable {
-    public typealias RightRequest = HasOneAssociation<Left, Right>.RightRequest
+extension HasOneRightRequest : RequestDerivableWrapper {
+    public typealias WrappedRequest = HasOneAssociation<Left, Right>.WrappedRequest
     
-    public func mapRightRequest(_ transform: (RightRequest) -> RightRequest) -> HasOneRightRequest<Left, Right> {
-        return HasOneRightRequest(record: record, association: association.mapRightRequest(transform))
+    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> HasOneRightRequest {
+        return HasOneRightRequest(record: record, association: association.mapRequest(transform))
     }
 }
 

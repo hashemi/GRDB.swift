@@ -176,3 +176,58 @@ extension RequestDerivable {
         return self.limit(limit, offset: nil)
     }
 }
+
+/// TODO
+public protocol RequestDerivableWrapper : RequestDerivable {
+    /// TODO
+    associatedtype WrappedRequest: RequestDerivable
+    /// TODO
+    func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> Self
+}
+
+extension RequestDerivableWrapper {
+    /// TODO
+    public func select(_ selection: [SQLSelectable]) -> Self {
+        return mapRequest { $0.select(selection) }
+    }
+    
+    /// TODO
+    public func distinct() -> Self {
+        return mapRequest { $0.distinct() }
+    }
+    
+    /// TODO
+    public func filter(_ predicate: SQLExpressible) -> Self {
+        return mapRequest { $0.filter(predicate) }
+    }
+    
+    /// TODO
+    public func group(_ expressions: [SQLExpressible]) -> Self {
+        return mapRequest { $0.group(expressions) }
+    }
+    
+    /// TODO
+    public func having(_ predicate: SQLExpressible) -> Self {
+        return mapRequest { $0.having(predicate) }
+    }
+    
+    /// TODO
+    public func order(_ orderings: [SQLOrderingTerm]) -> Self {
+        return mapRequest { $0.order(orderings) }
+    }
+    
+    /// TODO
+    public func reversed() -> Self {
+        return mapRequest { $0.reversed() }
+    }
+    
+    /// TODO
+    public func limit(_ limit: Int, offset: Int?) -> Self {
+        return mapRequest { $0.limit(limit, offset: offset) }
+    }
+    
+    /// TODO
+    public func aliased(_ alias: String) -> Self {
+        return mapRequest { $0.aliased(alias) }
+    }
+}
