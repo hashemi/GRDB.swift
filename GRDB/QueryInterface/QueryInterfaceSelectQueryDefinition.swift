@@ -135,9 +135,22 @@ struct QueryInterfaceSelectQueryDefinition {
         return query
     }
     
+    var isQualified: Bool {
+        return source.isQualified
+    }
+    
+    // Apply eventual source qualifier to all unqualified query components
+    var eventuallyQualifiedQuery: QueryInterfaceSelectQueryDefinition {
+        if isQualified {
+            var qualifier = SQLSourceQualifier()
+            return qualified(by: &qualifier)
+        } else {
+            return self
+        }
+    }
+    
     func qualified(by qualifier: inout SQLSourceQualifier) -> QueryInterfaceSelectQueryDefinition {
         let qualifiedSource = source.qualified(by: &qualifier)
-        let selection = self.selection
         let qualifiedSelection = selection.map { $0.qualified(by: qualifier) }
         let qualifiedFilter = whereExpression.map { $0.qualified(by: qualifier) }
         let qualifiedGroupByExpressions = groupByExpressions.map { $0.qualified(by: qualifier) }
@@ -161,7 +174,7 @@ struct QueryInterfaceSelectQueryDefinition {
 extension QueryInterfaceSelectQueryDefinition : Request {
     func prepare(_ db: Database) throws -> (SelectStatement, RowAdapter?) {
         var arguments: StatementArguments? = StatementArguments()
-        let sql = self.sql(&arguments)
+        let sql = eventuallyQualifiedQuery.sql(&arguments)
         let statement = try db.makeSelectStatement(sql)
         try statement.setArgumentsWithValidation(arguments!)
         return (statement, nil)
@@ -225,6 +238,15 @@ struct SQLSource {
     private enum Origin {
         case table(tableName: String, qualifier: SQLSourceQualifier?)
         indirect case query(QueryInterfaceSelectQueryDefinition)
+        
+        var isQualified: Bool {
+            switch self {
+            case .table(_, let qualifier):
+                return qualifier != nil
+            case .query(let query):
+                return query.isQualified
+            }
+        }
         
         func sql(_ arguments: inout StatementArguments?) -> String {
             switch self {
@@ -332,6 +354,10 @@ struct SQLSource {
         case .query(let query):
             return query.source.tableName
         }
+    }
+    
+    var isQualified: Bool {
+        return origin.isQualified
     }
     
     static func table(_ tableName: String) -> SQLSource {

@@ -133,4 +133,107 @@ class HasOneJoinedRequestTests: GRDBTestCase {
             }
         }
     }
+    
+    func testRecursion() throws {
+        struct Person : TableMapping {
+            static let databaseTableName = "persons"
+        }
+        
+        let dbQueue = try makeDatabaseQueue()
+        try dbQueue.inDatabase { db in
+            try db.create(table: "persons") { t in
+                t.column("id", .integer).primaryKey()
+                t.column("parentId", .integer).references("persons")
+            }
+        }
+        
+        try dbQueue.inDatabase { db in
+            do {
+                let association = Person.hasOne(Person.self)
+                let request = Person.all().joined(with: association)
+                try assertSQL(db, request, "SELECT \"persons1\".*, \"persons2\".* FROM \"persons\" \"persons1\" JOIN \"persons\" \"persons2\" ON (\"persons2\".\"parentId\" = \"persons1\".\"id\")")
+            }
+        }
+    }
+    
+    func testLeftAlias() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                // alias first
+                let request = Country.all()
+                    .aliased("c")
+                    .filter(Column("code") != "FR")
+                    .joined(with: Country.profile)
+                try assertSQL(db, request, "SELECT \"c\".*, \"countryProfiles\".* FROM \"countries\" \"c\" JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"c\".\"code\") WHERE (\"c\".\"code\" <> \'FR\')")
+            }
+            
+            do {
+                // alias last
+                let request = Country
+                    .filter(Column("code") != "FR")
+                    .joined(with: Country.profile)
+                    .aliased("c")
+                try assertSQL(db, request, "SELECT \"c\".*, \"countryProfiles\".* FROM \"countries\" \"c\" JOIN \"countryProfiles\" ON (\"countryProfiles\".\"countryCode\" = \"c\".\"code\") WHERE (\"c\".\"code\" <> \'FR\')")
+            }
+        }
+    }
+    
+    func testRightAlias() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                // alias first
+                let request = Country.joined(with: Country.profile.aliased("p").filter(Column("currency") == "EUR"))
+                try assertSQL(db, request, "SELECT \"countries\".*, \"p\".* FROM \"countries\" JOIN \"countryProfiles\" \"p\" ON ((\"p\".\"countryCode\" = \"countries\".\"code\") AND (\"p\".\"currency\" = \'EUR\'))")
+            }
+            
+            do {
+                // alias last
+                let request = Country.joined(with: Country.profile.order(Column("area")).aliased("p"))
+                try assertSQL(db, request, "SELECT \"countries\".*, \"p\".* FROM \"countries\" JOIN \"countryProfiles\" \"p\" ON (\"p\".\"countryCode\" = \"countries\".\"code\") ORDER BY \"p\".\"area\"")
+            }
+        }
+    }
+    
+    func testLockedAlias() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                // alias left
+                let request = Country.joined(with: Country.profile).aliased("countryProfiles")
+                try assertSQL(db, request, "SELECT \"countryProfiles\".*, \"countryProfiles1\".* FROM \"countries\" \"countryProfiles\" JOIN \"countryProfiles\" \"countryProfiles1\" ON (\"countryProfiles1\".\"countryCode\" = \"countryProfiles\".\"code\")")
+            }
+            
+            do {
+                // alias right
+                let request = Country.joined(with: Country.profile.aliased("countries"))
+                try assertSQL(db, request, "SELECT \"countries1\".*, \"countries\".* FROM \"countries\" \"countries1\" JOIN \"countryProfiles\" \"countries\" ON (\"countries\".\"countryCode\" = \"countries1\".\"code\")")
+            }
+        }
+    }
+    
+    func testConflictingAlias() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                let request = Country.joined(with: Country.profile.aliased("a")).aliased("a")
+                _ = try request.fetchAll(db)
+                XCTFail("Expected error")
+            } catch let error as DatabaseError {
+                XCTAssertEqual(error.resultCode, .SQLITE_ERROR)
+                XCTAssertEqual(error.message!, "ambiguous column name: main.a.id")
+                XCTAssertEqual(error.sql, "SELECT \"a\".*, \"a\".* FROM \"books\" \"a\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"a\".\"authorId\")")
+                XCTAssertEqual(error.description, "SQLite error 1 with statement `SELECT \"a\".*, \"a\".* FROM \"books\" \"a\" JOIN \"authors\" \"a\" ON (\"a\".\"id\" = \"a\".\"authorId\")`: ambiguous column name: main.a.id")
+            }
+        }
+    }
 }
