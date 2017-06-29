@@ -12,7 +12,7 @@ public struct HasManyThroughIncludingRequest<Left, MiddleAssociation, RightAssoc
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
-// Derive conditional conformance to RequestDerivableWrapper once SE-0143 is implemented
+// TODO: Derive conditional conformance to RequestDerivableWrapper once once SE-0143 is implemented
 extension HasManyThroughIncludingRequest : RequestDerivableWrapper {
     public typealias WrappedRequest = Left
     

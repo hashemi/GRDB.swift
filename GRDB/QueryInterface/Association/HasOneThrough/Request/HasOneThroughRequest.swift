@@ -1,8 +1,7 @@
-// Remove RequestDerivableWrapper conformance once https://github.com/apple/swift-evolution/blob/master/proposals/0143-conditional-conformances.md is implemented
 public struct HasOneThroughRightRequest<MiddleAssociation, RightAssociation> where
-    MiddleAssociation: AssociationToOne,
+    MiddleAssociation: AssociationToOneNonOptional,
     RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
-    RightAssociation: AssociationToOne,
+    RightAssociation: AssociationToOneNonOptional,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated,
     MiddleAssociation.LeftAssociated: MutablePersistable
 {
@@ -10,7 +9,7 @@ public struct HasOneThroughRightRequest<MiddleAssociation, RightAssociation> whe
     let association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
-// Derive conditional conformance to RequestDerivableWrapperonce once SE-0143 is implemented
+// TODO: Derive conditional conformance to RequestDerivableWrapper once once SE-0143 is implemented
 extension HasOneThroughRightRequest : RequestDerivableWrapper {
     public typealias WrappedRequest = RightAssociation.WrappedRequest
     

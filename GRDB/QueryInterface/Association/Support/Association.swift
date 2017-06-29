@@ -12,5 +12,6 @@ extension Association {
     }
 }
 
-public protocol AssociationToOne : Association {
-}
+public protocol AssociationToOne : Association { }
+
+public protocol AssociationToOneNonOptional : AssociationToOne { }

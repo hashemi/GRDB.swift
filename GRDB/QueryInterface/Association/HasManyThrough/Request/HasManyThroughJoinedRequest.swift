@@ -10,6 +10,7 @@ public struct HasManyThroughJoinedRequest<MiddleAssociation, RightAssociation> w
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
+// TODO: Derive conditional conformance to RequestDerivableWrapper once once SE-0143 is implemented
 extension HasManyThroughJoinedRequest : RequestDerivableWrapper {
     public func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> HasManyThroughJoinedRequest {
         return HasManyThroughJoinedRequest(

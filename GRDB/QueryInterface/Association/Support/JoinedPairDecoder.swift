@@ -47,7 +47,6 @@ extension RowConvertible {
     }
 }
 
-// Support for XXXJoinedRequest and XXXLeftJoinedRequest
 func prepareJoinedPairRequest(
     _ db: Database,
     left leftQuery: QueryInterfaceSelectQueryDefinition,
@@ -58,15 +57,11 @@ func prepareJoinedPairRequest(
     rightScope: String) throws
     -> (SelectStatement, RowAdapter?)
 {
+    // Qualify queries
     var leftQualifier = SQLSourceQualifier()
     var rightQualifier = SQLSourceQualifier()
-    
-    // SELECT * FROM left ... -> SELECT left.* FROM left ...
     let leftQuery = leftQuery.qualified(by: &leftQualifier)
-    
-    // SELECT * FROM right ... -> SELECT right.* FROM right ...
     let rightQuery = rightQuery.qualified(by: &rightQualifier)
-    
     try [leftQualifier, rightQualifier].resolveAmbiguities()
     
     // SELECT left.*, right.*
@@ -102,6 +97,41 @@ func prepareJoinedPairRequest(
         having: leftQuery.havingExpression,
         limit: leftQuery.limit)
         .adapted(joinedAdapter)
+        .prepare(db)
+}
+
+func prepareJoinRequest(
+    _ db: Database,
+    left leftQuery: QueryInterfaceSelectQueryDefinition,
+    join joinOp: SQLJoinOperator,
+    right rightQuery: QueryInterfaceSelectQueryDefinition,
+    on mapping: [(left: String, right: String)]) throws
+    -> (SelectStatement, RowAdapter?)
+{
+    // Qualify queries
+    var leftQualifier = SQLSourceQualifier()
+    var rightQualifier = SQLSourceQualifier()
+    let leftQuery = leftQuery.qualified(by: &leftQualifier)
+    let rightQuery = rightQuery.qualified(by: &rightQualifier)
+    try [leftQualifier, rightQualifier].resolveAmbiguities()
+    
+    // ... FROM left JOIN right
+    let joinedSource = leftQuery.source.join(
+        joinOp,
+        on: mapping,
+        and: rightQuery.whereExpression,
+        to: rightQuery.source)
+    
+    return try QueryInterfaceSelectQueryDefinition(
+        select: leftQuery.selection,
+        isDistinct: leftQuery.isDistinct,
+        from: joinedSource,
+        filter: leftQuery.whereExpression,
+        groupBy: leftQuery.groupByExpressions,
+        orderBy: leftQuery.orderings,
+        isReversed: leftQuery.isReversed,
+        having: leftQuery.havingExpression,
+        limit: leftQuery.limit)
         .prepare(db)
 }
 

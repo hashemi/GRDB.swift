@@ -10,6 +10,7 @@ public struct HasManyThroughAnnotationRequest<MiddleAssociation, RightAssociatio
     let annotation: HasManyThroughAnnotation<MiddleAssociation, RightAssociation, Annotation>
 }
 
+// TODO: Derive conditional conformance to RequestDerivableWrapper once once SE-0143 is implemented
 extension HasManyThroughAnnotationRequest : RequestDerivableWrapper {
     public func mapRequest(_ transform: (WrappedRequest) -> (WrappedRequest)) -> HasManyThroughAnnotationRequest {
         return HasManyThroughAnnotationRequest(

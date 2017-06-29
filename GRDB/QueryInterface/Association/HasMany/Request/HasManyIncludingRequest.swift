@@ -8,7 +8,7 @@ public struct HasManyIncludingRequest<Left, Right> where
     let association: HasManyAssociation<Left.RowDecoder, Right>
 }
 
-// Derive conditional conformance to RequestDerivableWrapper once SE-0143 is implemented
+// TODO: Derive conditional conformance to RequestDerivableWrapper once once SE-0143 is implemented
 extension HasManyIncludingRequest : RequestDerivableWrapper {
     public typealias WrappedRequest = Left
     

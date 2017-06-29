@@ -9,7 +9,7 @@ public struct HasManyThroughRightRequest<MiddleAssociation, RightAssociation> wh
     let association: HasManyThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
-// Derive conditional conformance to RequestDerivableWrapperonce once SE-0143 is implemented
+// TODO: Derive conditional conformance to RequestDerivableWrapper once once SE-0143 is implemented
 extension HasManyThroughRightRequest : RequestDerivableWrapper {
     public typealias WrappedRequest = RightAssociation.WrappedRequest
     

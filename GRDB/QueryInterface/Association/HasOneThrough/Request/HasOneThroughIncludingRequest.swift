@@ -1,13 +1,14 @@
 public struct HasOneThroughJoinedRequest<MiddleAssociation, RightAssociation> where
-    MiddleAssociation: AssociationToOne,
+    MiddleAssociation: AssociationToOneNonOptional,
     RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
-    RightAssociation: AssociationToOne,
+    RightAssociation: AssociationToOneNonOptional,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
 {
     var leftRequest: QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
     let association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>
 }
 
+// TODO: Derive conditional conformance to RequestDerivableWrapper once once SE-0143 is implemented
 extension HasOneThroughJoinedRequest : RequestDerivableWrapper {
     public typealias WrappedRequest = QueryInterfaceRequest<MiddleAssociation.LeftAssociated>
     
@@ -75,7 +76,7 @@ extension HasOneThroughJoinedRequest : TypedRequest {
 }
 
 extension QueryInterfaceRequest where RowDecoder: TableMapping {
-    public func joined<MiddleAssociation, RightAssociation>(with association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>)
+    public func including<MiddleAssociation, RightAssociation>(_ association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>)
         -> HasOneThroughJoinedRequest<MiddleAssociation, RightAssociation>
         where MiddleAssociation.LeftAssociated == RowDecoder
     {
@@ -84,10 +85,10 @@ extension QueryInterfaceRequest where RowDecoder: TableMapping {
 }
 
 extension TableMapping {
-    public static func joined<MiddleAssociation, RightAssociation>(with association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>)
+    public static func including<MiddleAssociation, RightAssociation>(_ association: HasOneThroughAssociation<MiddleAssociation, RightAssociation>)
         -> HasOneThroughJoinedRequest<MiddleAssociation, RightAssociation>
         where MiddleAssociation.LeftAssociated == Self
     {
-        return all().joined(with: association)
+        return all().including(association)
     }
 }

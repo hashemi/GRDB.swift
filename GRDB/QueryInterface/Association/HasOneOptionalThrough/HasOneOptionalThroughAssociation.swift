@@ -1,7 +1,7 @@
-public struct HasOneThroughAssociation<MiddleAssociation, RightAssociation> where
-    MiddleAssociation: AssociationToOneNonOptional,
+public struct HasOneOptionalThroughAssociation<MiddleAssociation, RightAssociation> where
+    MiddleAssociation: AssociationToOne,
     RightAssociation: RequestDerivableWrapper, // TODO: Remove once SE-0143 is implemented
-    RightAssociation: AssociationToOneNonOptional,
+    RightAssociation: AssociationToOne,
     MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
 {
     let middleAssociation: MiddleAssociation
@@ -9,11 +9,11 @@ public struct HasOneThroughAssociation<MiddleAssociation, RightAssociation> wher
 }
 
 // TODO: Derive conditional conformance to RequestDerivableWrapper once once SE-0143 is implemented
-extension HasOneThroughAssociation : RequestDerivableWrapper {
+extension HasOneOptionalThroughAssociation : RequestDerivableWrapper {
     public typealias WrappedRequest = RightAssociation.WrappedRequest
     
-    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> HasOneThroughAssociation {
-        return HasOneThroughAssociation(
+    public func mapRequest(_ transform: (WrappedRequest) -> WrappedRequest) -> HasOneOptionalThroughAssociation {
+        return HasOneOptionalThroughAssociation(
             middleAssociation: middleAssociation,
             rightAssociation: rightAssociation.mapRequest(transform))
     }
@@ -21,12 +21,12 @@ extension HasOneThroughAssociation : RequestDerivableWrapper {
 
 extension TableMapping {
     public static func hasOne<MiddleAssociation, RightAssociation>(_ rightAssociation: RightAssociation, through middleAssociation: MiddleAssociation)
-        -> HasOneThroughAssociation<MiddleAssociation, RightAssociation>
+        -> HasOneOptionalThroughAssociation<MiddleAssociation, RightAssociation>
         where
         MiddleAssociation.LeftAssociated == Self,
         MiddleAssociation.RightAssociated == RightAssociation.LeftAssociated
     {
-        return HasOneThroughAssociation(
+        return HasOneOptionalThroughAssociation(
             middleAssociation: middleAssociation,
             rightAssociation: rightAssociation)
     }
