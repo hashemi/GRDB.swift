@@ -58,4 +58,50 @@ class HasOneRightRequestTests: GRDBTestCase {
             }
         }
     }
+    
+    func testRecursion() throws {
+        struct Person : TableMapping, MutablePersistable {
+            static let databaseTableName = "persons"
+            func encode(to container: inout PersistenceContainer) {
+                container["id"] = 1
+            }
+        }
+        
+        let dbQueue = try makeDatabaseQueue()
+        try dbQueue.inDatabase { db in
+            try db.create(table: "persons") { t in
+                t.column("id", .integer).primaryKey()
+                t.column("parentId", .integer).references("persons")
+            }
+        }
+        
+        try dbQueue.inDatabase { db in
+            do {
+                let association = Person.hasOne(Person.self)
+                let request = Person().makeRequest(association)
+                try assertSQL(db, request, "SELECT * FROM \"persons\" WHERE (\"parentId\" = 1)")
+            }
+        }
+    }
+    
+    func testRightAlias() throws {
+        let dbQueue = try makeDatabaseQueue()
+        try AssociationFixture().migrator.migrate(dbQueue)
+        
+        try dbQueue.inDatabase { db in
+            do {
+                // alias first
+                let country = try Country.fetchOne(db, key: "FR")!
+                let request = country.makeRequest(Country.profile.aliased("a"))
+                try assertSQL(db, request, "SELECT \"a\".* FROM \"countryProfiles\" \"a\" WHERE (\"a\".\"countryCode\" = 'FR')")
+            }
+            
+            do {
+                // alias last
+                let country = try Country.fetchOne(db, key: "FR")!
+                let request = country.makeRequest(Country.profile).aliased("a")
+                try assertSQL(db, request, "SELECT \"a\".* FROM \"countryProfiles\" \"a\" WHERE (\"a\".\"countryCode\" = 'FR')")
+            }
+        }
+    }
 }
